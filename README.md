@@ -13,4 +13,4 @@ link to the doc / copy-paste it here
 Event Ticket System
 
 ## Lab Section Preference
-<Insert Compatible Lab Here>
+L11 (Friday 08:00 - 10:00). This is the only one we can all attend
