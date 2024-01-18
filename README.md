@@ -1,10 +1,10 @@
 # Team <Insert Team Name Here>
 ## Team Members
 - Adams Chen
-- Bryce
+- Bryce Dixon
 - Kaycee Goel
 - Jared Waldroff
-- Yuki
+- Yuki Isomura
 
 ## Team Agreement
 link to the doc / copy-paste it here
