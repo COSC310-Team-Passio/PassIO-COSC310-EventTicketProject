@@ -45,7 +45,7 @@ L11 (Friday 08:00 - 10:00). This is the only one we can all attend
 - Follow all guidelines for online security and protection of user privacy as outlined by:
 - Freedom of Information and Protection of Privacy Act (FIPPA):
 https://www.bclaws.gov.bc.ca/civix/document/id/complete/statreg/96165_00
-Personal Information Protection and Electronics Documents Act (PIPA):
+- Personal Information Protection and Electronics Documents Act (PIPA):
 https://www.bclaws.gov.bc.ca/civix/document/id/complete/statreg/03063_01
 - All ticketing will be done virtually to limit paper use/ waste. 
 
