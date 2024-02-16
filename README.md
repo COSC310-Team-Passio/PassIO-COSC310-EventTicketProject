@@ -1,4 +1,4 @@
-# Team <Insert Team Name Here>
+# Team Passio
 ## Team Members
 - Adams Chen
 - Bryce Dixon
