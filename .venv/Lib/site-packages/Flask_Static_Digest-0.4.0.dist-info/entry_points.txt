@@ -1,0 +1,3 @@
+[flask.commands]
+digest = flask_static_digest.cli:digest
+
