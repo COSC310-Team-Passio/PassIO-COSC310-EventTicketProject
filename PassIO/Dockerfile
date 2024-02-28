@@ -2,8 +2,8 @@
 ARG INSTALL_PYTHON_VERSION=${INSTALL_PYTHON_VERSION:-PYTHON_VERSION_NOT_SET}
 ARG INSTALL_NODE_VERSION=${INSTALL_NODE_VERSION:-NODE_VERSION_NOT_SET}
 
-FROM node:${INSTALL_NODE_VERSION}-buster-slim AS node
-FROM python:${INSTALL_PYTHON_VERSION}-slim-buster AS builder
+FROM node:${INSTALL_NODE_VERSION}-slim AS node
+FROM python:${INSTALL_PYTHON_VERSION}-slim AS builder
 
 WORKDIR /app
 
@@ -25,7 +25,7 @@ COPY .env.example .env
 RUN npm run-script build
 
 # ================================= PRODUCTION =================================
-FROM python:${INSTALL_PYTHON_VERSION}-slim-buster as production
+FROM python:${INSTALL_PYTHON_VERSION}-slim as production
 
 WORKDIR /app
 

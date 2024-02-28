@@ -2,7 +2,7 @@ version: "3.6"
 
 x-build-args: &build_args
   INSTALL_PYTHON_VERSION: "3.12.2"
-  INSTALL_NODE_VERSION: "6.14.0"
+  INSTALL_NODE_VERSION: "20.11.1"
 
 x-default-volumes: &default_volumes
   volumes:
@@ -17,10 +17,13 @@ services:
       target: development
       args:
         <<: *build_args
-    image: "PassIO-development"
+    image: "passio-development"
     ports:
       - "8080:5000"
       - "2992:2992"
+    environment:
+      - FLASK_APP=autoapp.py
+      - FLASK_ENV=development
     <<: *default_volumes
 
   flask-prod:
@@ -29,7 +32,7 @@ services:
       target: production
       args:
         <<: *build_args
-    image: "PassIO-production"
+    image: "passio-production"
     ports:
       - "8080:5000"
     environment:
@@ -49,7 +52,7 @@ services:
     environment:
       FLASK_ENV: production
       FLASK_DEBUG: 0
-    image: "PassIO-manage"
+    image: "passio-manage"
     stdin_open: true
     tty: true
     <<: *default_volumes
