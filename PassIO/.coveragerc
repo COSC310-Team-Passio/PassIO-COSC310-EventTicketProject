@@ -1,6 +1,0 @@
-[run]
-source = PassIO
-omit = 
-    tests/*
-    autoapp.py
-
