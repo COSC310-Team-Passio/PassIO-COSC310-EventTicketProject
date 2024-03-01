@@ -24,7 +24,7 @@ hs_err_pid*
 replay_pid*
 .DS_Store
 
-# virtual environment logs 
+# virtual environment logs
 .venv/pyvenv.cfg
 .venv/bin/activate
 .venv/bin/activate.csh
