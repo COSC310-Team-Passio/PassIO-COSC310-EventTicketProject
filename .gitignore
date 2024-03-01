@@ -22,9 +22,11 @@
 # virtual machine crash logs, see http://www.java.com/en/download/help/error_hotspot.xml
 hs_err_pid*
 replay_pid*
+
+# Mac logs
 .DS_Store
 
-# virtual environment logs
+# virtual environment files
 .venv/pyvenv.cfg
 .venv/bin/activate
 .venv/bin/activate.csh
