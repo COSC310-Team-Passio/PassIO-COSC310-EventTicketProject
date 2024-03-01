@@ -1,19 +1,14 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
+    <link href="{{ url_for('static', filename='css/bootstrap.min.css') }}" rel="stylesheet">
+    <link rel="stylesheet" type="text/css" href="{{url_for('static',filename='style.css')}}">
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>PassIO - Events</title>
 </head>
 <body>
-    <header>
-        <h1>PassIO Events!</h1>
-        <nav>
-            <a href="/">Home</a>
-            <a href="/events">Events</a>
-            <a href="/about">About Us</a>
-        </nav>
-    </header>
+    {% include 'header.html' %}
     <main>
         <section>
             <h2>Here are our events</h2>
