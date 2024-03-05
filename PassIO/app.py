@@ -1,8 +1,8 @@
 import time
-
 import redis
 from flask import Flask, render_template
 from flask_pymongo import PyMongo
+from databaseTest import *
 
 app = Flask(__name__)
 app.config['MONGO_URI'] = 'mongodb://localhost:5000/passio_db'
@@ -28,3 +28,5 @@ def about():
 
 if __name__ == '__main__':
     app.run(debug=True)
+
+connect()
