@@ -13,6 +13,13 @@ def home():
     #mongo.db.host.insert_one({"name": "biggest venue", "address": "3430 big valley street, MA"})
     return render_template('home.html')
 
+@app.route('/index')
+def index():
+    return render_template('index.html')
+
+@app.route('/styleguide')
+def styleguide():
+    return render_template('styleguide.html')
 
 @app.route('/events')
 def events():
