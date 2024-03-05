@@ -3,7 +3,7 @@ from pymongo.server_api import ServerApi
 
 def connect():
     username = "kaycee.goel.42%40gmail.com"
-    password = "haramemes_69"
+    password = null
     uri = "mongodb+srv://"+username+":"+password+"@passioatlas.foiwof6.mongodb.net/?retryWrites=true&w=majority"
     # Create a new client and connect to the server
     client = MongoClient(uri, server_api=ServerApi('1'))
