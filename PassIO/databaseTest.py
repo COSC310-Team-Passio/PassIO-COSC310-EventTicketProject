@@ -2,7 +2,7 @@ from pymongo.mongo_client import MongoClient
 from pymongo.server_api import ServerApi
 
 def connect():
-    username = "kaycee.goel.42%40gmail.com"
+    username = ""
     password = ""
     uri = "mongodb+srv://"+username+":"+password+"@passioatlas.foiwof6.mongodb.net/?retryWrites=true&w=majority"
     # Create a new client and connect to the server
@@ -14,4 +14,4 @@ def connect():
     except Exception as e:
         print(e)
         
-connect()
+# connect()
