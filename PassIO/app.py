@@ -30,7 +30,13 @@ def events():
 def about():
     return render_template('about.html')
 
+@app.route('/checkout')
+def checkout():
+    return render_template('checkout.html')
 
+@app.route('/admin')
+def admin():
+    return render_template('admin.html')
 
 if __name__ == '__main__':
     app.run(debug=True)
