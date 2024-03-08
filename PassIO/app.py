@@ -1,6 +1,6 @@
 import time
 import redis
-from flask import Flask, render_template
+from flask import *
 from flask_pymongo import PyMongo
 from databaseTest import *
 
@@ -35,12 +35,15 @@ def about():
 def KayceeTest():
     return render_template('KayceeTest.html')
 
-@app.route("/forward/", methods=["POST"])
-def move_forward():
-    print("Thing so I know I can do code stuff")
-    notification()
-    forward_message = "Moving Forward..."
-    return render_template("KayceeTest.html", forward_message=forward_message)
+@app.route('/counterTest', methods=["POST"])
+def countingTest():
+    counter = request.form['']
+    if counter == None:
+        counter = 0
+    else:
+        counter += 1
+    
+    return render_template('KayceeTest.html', counter=counter)
 
 if __name__ == '__main__':
     app.run(debug=True)
