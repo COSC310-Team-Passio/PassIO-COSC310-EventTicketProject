@@ -26,6 +26,11 @@ replay_pid*
 # Mac logs
 .DS_Store
 
+
+# Python cache directory 
+__pycache__
+
+
 # virtual environment files
 .venv/pyvenv.cfg
 .venv/bin/activate
