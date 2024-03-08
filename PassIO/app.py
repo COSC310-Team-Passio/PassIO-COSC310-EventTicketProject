@@ -37,13 +37,13 @@ def KayceeTest():
 
 @app.route('/counterTest', methods=["POST"])
 def countingTest():
-    counter = request.form['']
-    if counter == None:
-        counter = 0
-    else:
-        counter += 1
+    #counter = request.form['']
+    #if counter == None:
+    #    counter = 0
+    #else:
+    #    counter += 1
     
-    return render_template('KayceeTest.html', counter=counter)
+    return render_template('KayceeTest.html', counter="<b><i>You clicked the button YAY!</i></b>")
 
 if __name__ == '__main__':
     app.run(debug=True)
