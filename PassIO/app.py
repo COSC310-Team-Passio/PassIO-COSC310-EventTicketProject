@@ -10,7 +10,7 @@ cache = redis.Redis(host='redis', port=6379)
 
 @app.route('/')
 def home():
-    #mongo.db.host.insert_one({"name": "biggest venue", "address": "3430 big valley street, MA"})
+    mongo.db.host.insert_one({"name": "venue 1", "address 1": "3430 big valley street, MA"})
     return render_template('home.html')
 
 @app.route('/index')
