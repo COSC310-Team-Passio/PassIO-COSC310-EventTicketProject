@@ -37,15 +37,27 @@ def KayceeTest():
 
 @app.route('/login', methods=["POST"])
 def login():
-    #counter = request.form['']
-    #if counter == None:
-    #    counter = 0
-    #else:
-    #    counter += 1
-    return render_template('loginandregister.html', counter="<b><i>You clicked the button YAY!</i></b>")
+    email = request.form.get('Log In Fields.email')
+    if email == None:
+        return render_template('loginandregister.html', confirmText="your functions suck")
+    return render_template('loginandregister.html', confirmText=email)
 
 @app.route('/register', methods=["POST"])
 def register():
-    return render_template('loginandregister.html', var=1)
+    email = request.form["regEmail"]
+    return render_template('loginandregister.html', confirmText=email)
+
+@app.route('/checkout')
+def checkout():
+    return render_template('checkout.html')
+
+@app.route('/admin')
+def admin():
+    return render_template('admin.html')
+
+@app.route('/search')
+def search():
+    return render_template('search.html')
+
 if __name__ == '__main__':
     app.run(debug=True)
