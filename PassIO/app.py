@@ -62,13 +62,16 @@ def register():
         if mongo.db.TestAdminKey.find_one({"admin key:": haKey}):
             print("handle giving user admin privileges")
             mongo.db.Users.insert_one({"email": email, "name": name, "password": password, "special key": haKey})
+            regSuccess = True
         elif mongo.db.TestAdminKey.find_one({"host key:": haKey}):
             print("handle giving appropriate host privileges and add")
             mongo.db.Users.insert_one({"email": email, "name": name, "password": password, "special key": haKey})
+            regSuccess = True
         else:
             haKey = ""
             mongo.db.Users.insert_one({"email": email, "name": name, "password": password, "special key": haKey})
-    
+            regSuccess = True
+            
     # Probably will go back to the home page and give a little "successfully registered/logged in instead"
     return render_template('loginandregister.html', regSuccess=regSuccess)
 
