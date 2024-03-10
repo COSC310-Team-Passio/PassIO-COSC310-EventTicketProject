@@ -31,19 +31,21 @@ def events():
 def about():
     return render_template('about.html')
 
-@app.route('/KayceeTest')
+@app.route('/loginandregister')
 def KayceeTest():
-    return render_template('KayceeTest.html')
+    return render_template('loginandregister.html')
 
-@app.route('/counterTest', methods=["POST"])
-def countingTest():
+@app.route('/login', methods=["POST"])
+def login():
     #counter = request.form['']
     #if counter == None:
     #    counter = 0
     #else:
     #    counter += 1
-    
-    return render_template('KayceeTest.html', counter="<b><i>You clicked the button YAY!</i></b>")
+    return render_template('loginandregister.html', counter="<b><i>You clicked the button YAY!</i></b>")
 
+@app.route('/register', methods=["POST"])
+def register():
+    return render_template('loginandregister.html', var=1)
 if __name__ == '__main__':
     app.run(debug=True)
