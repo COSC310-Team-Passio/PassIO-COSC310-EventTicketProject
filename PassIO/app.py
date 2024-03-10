@@ -37,7 +37,7 @@ def KayceeTest():
 
 @app.route('/login', methods=["POST"])
 def login():
-    email = request.form.get('Log In Fields.email')
+    email = request.form.get('email')
     if email == None:
         return render_template('loginandregister.html', confirmText="your functions suck")
     return render_template('loginandregister.html', confirmText=email)
