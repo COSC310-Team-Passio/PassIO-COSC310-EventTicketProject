@@ -42,5 +42,9 @@ def admin():
 def search():
     return render_template('search.html')
 
+@app.route('/host')
+def admin():
+    return render_template('host.html')
+
 if __name__ == '__main__':
     app.run(debug=True)
