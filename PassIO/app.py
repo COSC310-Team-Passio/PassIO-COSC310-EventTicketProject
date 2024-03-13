@@ -2,13 +2,14 @@ import time
 import redis
 from flask import *
 from flask_pymongo import PyMongo
-from databaseTest import *
 
 app = Flask(__name__)
 app.config["MONGO_URI"] = "mongodb+srv://passio:passio@passioatlas.foiwof6.mongodb.net/passio_db?retryWrites=true&w=majority"
 mongo = PyMongo(app)
 app.debug = True
 cache = redis.Redis(host='redis', port=6379)
+
+
 
 @app.route('/')
 def home():
@@ -32,19 +33,29 @@ def about():
     return render_template('about.html')
 
 @app.route('/loginandregister')
-def KayceeTest():
+def loginRegister():
     return render_template('loginandregister.html')
 
 @app.route('/login', methods=["POST"])
 def login():
     email = request.form.get('lemail')
     password = request.form.get('lpassword')
-    haKey = request.form.get('hostadminkey')
+    haKey = request.form.get('lhostadminkey')
+    logSuccess = None
+
+    condition1 = mongo.db.Users.find_one({"email": email, "special key": haKey})
+    condition2 = mongo.db.Users.find_one({"email": email, "password": password, "special key": haKey})
     
-    if haKey == None:
-        print('pt text')
-        # things n stuff
-        
+    if condition1 and not condition2:
+        logSuccess = True
+    elif mongo.db.Users.find_one({"email": email, "password": password, "special key": haKey}):
+        logSuccess = True
+    else:
+        email = "Rip bozo not in the db"
+        logSuccess = False
+    
+    # Probably will go back to the home page and give a little "successfully registered/logged in instead"
+    # Failed login would not change the page
     return render_template('loginandregister.html', confirmText=email)
 
 @app.route('/register', methods=["POST"])
