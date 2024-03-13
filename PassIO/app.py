@@ -43,7 +43,7 @@ def search():
     return render_template('search.html')
 
 @app.route('/host')
-def admin():
+def host():
     return render_template('host.html')
 
 if __name__ == '__main__':
