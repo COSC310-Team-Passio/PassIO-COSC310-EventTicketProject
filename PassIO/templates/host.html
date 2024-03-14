@@ -209,45 +209,65 @@
 
 
     <!-- My code under here -->
-    <!-- Navbar -->
-    <nav class="navbar navbar-expand-md fixed-top navbar-dark bg-dark">
-        <div class="container">
-            <button class="navbar-toggler navbar-toggler-right" type="button" data-toggle="collapse" data-target="#navbar2SupportedContent" aria-controls="navbar2SupportedContent" aria-expanded="false" aria-label="Toggle navigation"> <span class="navbar-toggler-icon"></span> </button>
-            <div class="collapse navbar-collapse justify-content-center" id="navbar2SupportedContent">
-                <ul class="navbar-nav">
-                    <li class="nav-item mx-2">
-                        <a class="nav-link" href="#">Home</a>
-                    </li>
-                    <li class="nav-item mx-2">
-                        <a class="nav-link" href="#profile">Profile</a>
-                    </li>
-                    <li class="nav-item mx-2">
-                        <a class="nav-link" href="#add_new">Add New</a>
-                    </li>
-                    <li class="nav-item mx-2">
-                        <a class="nav-link" href="#upcomings">Upcoming Events</a>
-                    </li>
-                    <li class="nav-item mx-2">
-                        <a class="nav-link" href="#history">History</a>
-                    </li>
-                </ul>
+    <nav class="fixed-top bg-dark">
+        {% include 'header.html' %}
+        <nav class="navbar navbar-expand-md navbar-dark">
+            <div class="container">
+                <button class="navbar-toggler navbar-toggler-right" type="button" data-toggle="collapse" data-target="#navbar2SupportedContent" aria-controls="navbar2SupportedContent" aria-expanded="false" aria-label="Toggle navigation"> <span class="navbar-toggler-icon"></span> </button>
+                <div class="collapse navbar-collapse justify-content-center" id="navbar2SupportedContent">
+                    <ul class="navbar-nav">
+                        <li class="nav-item mx-2">
+                            <a class="nav-link" href="#">Home</a>
+                        </li>
+                        <li class="nav-item mx-2">
+                            <a class="nav-link" href="#profile">Profile</a>
+                        </li>
+                        <li class="nav-item mx-2">
+                            <a class="nav-link" href="#add_new">Add New</a>
+                        </li>
+                        <li class="nav-item mx-2">
+                            <a class="nav-link" href="#upcomings">Upcoming Events</a>
+                        </li>
+                        <li class="nav-item mx-2">
+                            <a class="nav-link" href="#history">History</a>
+                        </li>
+                    </ul>
+                </div>
             </div>
-        </div>
+        </nav>
     </nav>
 
+    <!-- Navbar -->
+    
 
-    <div class="my-3 col-lg-4 col-md-6" id="profile">
-        <h3>Profile</h3>
-        <form>
-            <fieldset class="form-group my-3">
-                <input type="email" class="form-control" id="Input Email" placeholder="Email" value="ActualEmail"> 
-            </fieldset>
-            <fieldset class="form-group my-3">
-                <input type="message" class="form-control" id="Input Message" placeholder="Message"> 
-            </fieldset>
-            <button type="submit" class="btn btn-outline-primary">Submit</button>
-        </form>
+
+    <!-- Cover -->
+    <div class="d-flex align-items-center py-5 cover" id="profile">
+        <div class="container">
+            <div class="row">
+                <div class="col-12 mt-5">
+                    <h1 class="display-4">Profile</h1>
+                    <p class="lead">December 12-14, NYC </p>
+                    <a href="#register" class="btn btn-lg mt-4 btn-primary shadowed">Register now</a><i class="d-block fa fa-angle-down pt-5 fa-3x"></i>
+                </div>
+                <div class="my-3 col-lg-5 col-md-6" >
+                    <h3>Profile</h3>
+                    <form>
+                        <fieldset class="form-group my-3">
+                            <!-- TODO: Replace value with email retrieved from db -->
+                            <input type="email" class="form-control" id="Input Email" placeholder="Email" value="ActualEmail"> 
+                        </fieldset>
+                        <fieldset class="form-group my-3">
+                            <input type="password" class="form-control" id="Input Password" placeholder="Password"> 
+                        </fieldset>
+                        <button type="submit" class="btn btn-primary">Save Change</button>
+                    </form>
+                </div>
+            </div>
+        </div>
     </div>
+
+    
     <!-- Profile -->
         <!-- Name -->
         <!-- Email -->
