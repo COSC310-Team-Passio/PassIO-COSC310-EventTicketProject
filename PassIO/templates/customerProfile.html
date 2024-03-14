@@ -20,198 +20,102 @@
 
 <body class="text-center">
   <!-- Navbar -->
-  <nav class="navbar navbar-expand-md fixed-top navbar-dark bg-dark">
-    <div class="container">
-      <button class="navbar-toggler navbar-toggler-right" type="button" data-toggle="collapse" data-target="#navbar2SupportedContent" aria-controls="navbar2SupportedContent" aria-expanded="false" aria-label="Toggle navigation"> <span class="navbar-toggler-icon"></span> </button>
-      <div class="collapse navbar-collapse justify-content-center" id="navbar2SupportedContent">
-        <ul class="navbar-nav">
-          <li class="nav-item mx-2">
-            <a class="nav-link" href="#">Home</a>
-          </li>
-          <li class="nav-item mx-2">
-            <a class="nav-link" href="#speakers">Speakers</a>
-          </li>
-          <li class="nav-item mx-2">
-            <a class="nav-link" href="#schedule">Schedule</a>
-          </li>
+  <!-- Cover -->
+  <nav class="navbar navbar-expand-md navbar-dark bg-dark" style="">
+    <div class="container"> <button class="navbar-toggler navbar-toggler-right border-0" type="button" data-toggle="collapse" data-target="#navbar12">
+        <span class="navbar-toggler-icon"></span>
+      </button>
+      <div class="collapse navbar-collapse" id="navbar12"> <a class="navbar-brand d-none d-md-block" href="#">PassIO</a>
+        <ul class="navbar-nav mx-auto">
+          <li class="nav-item"> <a class="nav-link" href="#">Home</a> </li>
+          <li class="nav-item"> <a class="nav-link" href="#">Events</a> </li>
+          <li class="nav-item"> <a class="nav-link" href="#">Account</a> </li>
+          <li class="nav-item"> <a class="nav-link" href="#">Checkout</a> </li>
         </ul>
-        <a class="btn navbar-btn mx-2 btn-outline-primary" href="#register">Register now</a>
+        <ul class="navbar-nav">
+          <li class="nav-item"> <a class="nav-link" href="#">Log in</a> </li>
+          <li class="nav-item"> <a class="nav-link text-primary" href="#">Register</a> </li>
+        </ul>
       </div>
     </div>
   </nav>
-  <!-- Cover -->
-  <div class="d-flex align-items-center py-5 cover section-fade-in-out" style="background-image: url(../static/assets/conference/cover.jpg);">
+  <div class="py-1">
     <div class="container">
       <div class="row">
-        <div class="col-12 mt-5">
-          <h1 class="display-4">Conference Pingendo</h1>
-          <p class="lead">December 12-14, NYC </p>
-          <a href="#register" class="btn btn-lg mt-4 btn-primary shadowed">Register now</a><i class="d-block fa fa-angle-down pt-5 fa-3x"></i>
+        <div class="col-md-12">
+          <h1 class="display-4">Profile</h1>
+        </div>
+      </div>
+    </div>
+  </div>
+  <div class="py-2">
+    <div class="container">
+      <div class="row">
+        <div class="col-md-12 order-md-1">
+          <form class="needs-validation" novalidate="">
+            <div class="row">
+              <div class="col-md-6 mb-3"> <label for="firstName">First name</label>
+                <input type="text" class="form-control" id="firstName" placeholder="" value="" required="">
+                <div class="invalid-feedback"> Valid first name is required. </div>
+              </div>
+              <div class="col-md-6 mb-3"> <label for="lastName">Last name</label>
+                <input type="text" class="form-control" id="lastName" placeholder="" value="" required="">
+                <div class="invalid-feedback"> Valid last name is required. </div>
+              </div>
+            </div>
+            <div class="row">
+              <div class="col-md-6"><img class="img-fluid d-block" src="https://static.pingendo.com/img-placeholder-1.svg"></div>
+              <div class="col-md-6"></div>
+            </div>
+            <div class="mb-3"> <label for="username">Username</label>
+              <div class="input-group">
+                <div class="input-group-prepend"> <span class="input-group-text">@</span> </div>
+                <input type="text" class="form-control" id="username" placeholder="Username" required="">
+                <div class="invalid-feedback" style="width: 100%;"> Your username is required. </div>
+              </div>
+            </div>
+            <div class="mb-3"> <label for="email">Email <span class="text-muted">(Optional)</span></label>
+              <input type="email" class="form-control" id="email" placeholder="you@example.com">
+              <div class="invalid-feedback"> Please enter a valid email address for shipping updates. </div>
+            </div>
+            <div class="mb-3"> <label for="address">Address</label>
+              <input type="text" class="form-control" id="address" placeholder="1234 Main St" required="">
+              <div class="invalid-feedback"> Please enter your shipping address. </div>
+            </div>
+            <div class="mb-3"> <label for="address2">Address 2 <span class="text-muted">(Optional)</span></label>
+              <input type="text" class="form-control" id="address2" placeholder="Apartment or suite"> </div>
+            <div class="row">
+              <div class="col-md-5 mb-3"> <label for="country">Country</label> <select class="custom-select d-block w-100" id="country" required="">
+                  <option value="">Choose...</option>
+                  <option value="United States">United States</option>
+                </select>
+                <div class="invalid-feedback"> Please select a valid country. </div>
+              </div>
+              <div class="col-md-4 mb-3"> <label for="state">State</label> <select class="custom-select d-block w-100" id="state" required="">
+                  <option value="">Choose...</option>
+                  <option value="California">California</option>
+                </select>
+                <div class="invalid-feedback"> Please provide a valid state. </div>
+              </div>
+              <div class="col-md-3 mb-3"> <label for="zip">Zip</label>
+                <input type="text" class="form-control" id="zip" placeholder="" required="">
+                <div class="invalid-feedback"> Zip code required. </div>
+              </div>
+            </div>
+            <hr class="mb-4">
+            <hr class="mb-4">
+            <hr class="mb-4">
+            <button class="btn btn-primary btn-lg btn-block" type="submit">Submit</button>
+          </form>
         </div>
       </div>
     </div>
   </div>
   <!-- Intro section -->
-  <div class="py-5 section-fade-in" style="background-image: url(../static/assets/conference/venue.jpg);">
-    <div class="container p-4 my-5">
-      <div class="row">
-        <div class="col-12">
-          <h1 class="mb-3">About the event</h1>
-          <p>Three days immersion in the world of UX/UI prototyping. Meet the most important design influencer of the moment, assist to speeches given by worldwide known designers and much, much more. The unique possibility to enhance your professionality with the smallest effort.</p>
-          <a href="#schedule" class="btn btn-outline-primary btn-lg m-2">Schedule</a>
-          <a class="btn btn-primary btn-lg m-2 shadowed" href="#register">Register</a>
-        </div>
-      </div>
-    </div>
-  </div>
   <!-- Speakers -->
-  <div class="py-5" id="speakers">
-    <div class="container">
-      <div class="row">
-        <div class="col-12">
-          <h1>Speakers</h1>
-        </div>
-      </div>
-      <div class="row">
-        <div class="col-lg-4 col-md-6">
-          <a href="#">
-            <img src="../static/assets/conference/people_2.jpg" class="center-block img-fluid my-3 shadowed" width="300">
-            <h3 class="mb-0"><b>Matthew Jong</b></h3>
-            <p class="text-muted">UI designer</p>
-          </a>
-        </div>
-        <div class="col-lg-4 col-md-6">
-          <a href="#">
-            <img src="../static/assets/conference/people_1.jpg" class="center-block img-fluid my-3 shadowed" width="300">
-            <h3 class="mb-0"><b>Anna da Vinci</b></h3>
-            <p class="text-muted">UX/UI designer</p>
-          </a>
-        </div>
-        <div class="col-lg-4 col-md-6">
-          <a href="#">
-            <img src="../static/assets/conference/people_3.jpg" class="center-block img-fluid my-3 shadowed" width="300">
-            <h3 class="mb-0"><b>Michael Philips</b></h3>
-            <p class="text-muted">UX designer</p>
-          </a>
-        </div>
-        <div class="col-lg-4 col-md-6">
-          <a href="#">
-            <img src="../static/assets/conference/people_4.jpg" class="center-block img-fluid my-3 shadowed" width="300">
-            <h3 class="mb-0"><b>Emily Wang</b></h3>
-            <p class="text-muted">Front-end developer</p>
-          </a>
-        </div>
-        <div class="col-lg-4 col-md-6">
-          <a href="#">
-            <img src="../static/assets/conference/people_5.jpg" class="center-block img-fluid my-3 shadowed" width="300">
-            <h3 class="mb-0"><b>John Morgan</b></h3>
-            <p class="text-muted">Bootstrap evangelist</p>
-          </a>
-        </div>
-        <div class="col-lg-4 col-md-6">
-          <a href="#">
-            <img src="../static/assets/conference/people_6.jpg" class="center-block img-fluid my-3 shadowed" width="300">
-            <h3 class="mb-0"><b>Giona Potter</b></h3>
-            <p class="text-muted">Front-end developer</p>
-          </a>
-        </div>
-      </div>
-    </div>
-  </div>
   <!-- Schedule -->
-  <div class="py-5 section-fade-in-out" id="schedule" style="background-image: url(../static/assets/conference/live.jpg);">
-    <div class="container my-5">
-      <div class="row">
-        <div class="col-12">
-          <h1>Schedule</h1>
-        </div>
-      </div>
-      <div class="row text-left">
-        <div class="p-4 col-lg-4 col-md-6">
-          <div class="card shadowed">
-            <div class="card-block text-center card-primary p-2">
-              <h2>Day 1</h2>
-              <p class="lead">Prototype</p>
-            </div>
-            <ul class="list-group list-group-flush">
-              <li class="list-group-item"><i class="mx-auto fa d-inline fa-clock-o text-primary"></i>&nbsp;09:30-10:00 –&nbsp;<b>Welcome</b></li>
-              <li class="list-group-item"><i class="mx-auto fa d-inline fa-clock-o text-primary"></i>&nbsp;10:00-12:00 –&nbsp;<b>Bootstrap for UX</b></li>
-              <li class="list-group-item"><i class="mx-auto fa d-inline fa-clock-o text-primary"></i>&nbsp;12:00-13:00 –&nbsp;<b>Q&amp;A</b></li>
-              <li class="list-group-item bg-secondary"><i class="mx-auto fa d-inline fa-clock-o text-primary"></i>&nbsp;13:00-14:30 –&nbsp;<b>Lunch break</b></li>
-              <li class="list-group-item"><i class="mx-auto fa d-inline fa-clock-o text-primary"></i>&nbsp;14:30-16:00 –&nbsp;<b>Best practices</b></li>
-              <li class="list-group-item"><i class="mx-auto fa d-inline fa-clock-o text-primary"></i>&nbsp;16:00-18:00 –&nbsp;<b>Editing workshop</b></li>
-            </ul>
-          </div>
-        </div>
-        <div class="p-4 col-lg-4 col-md-6">
-          <div class="card shadowed">
-            <div class="card-block text-center card-primary p-2">
-              <h2>Day 2</h2>
-              <p class="lead">Design</p>
-            </div>
-            <ul class="list-group list-group-flush">
-              <li class="list-group-item"><i class="mx-auto fa d-inline fa-clock-o text-primary"></i>&nbsp;09:30-10:00 –&nbsp;<b>Guest speech</b></li>
-              <li class="list-group-item"><i class="mx-auto fa d-inline fa-clock-o text-primary"></i>&nbsp;10:00-12:00 –&nbsp;<b>Mobile design</b></li>
-              <li class="list-group-item"><i class="mx-auto fa d-inline fa-clock-o text-primary"></i>&nbsp;12:00-13:00 –&nbsp;<b>UI trends</b></li>
-              <li class="list-group-item bg-secondary"><i class="mx-auto fa d-inline fa-clock-o text-primary"></i>&nbsp;13:00-14:30 –&nbsp;<b class="">Lunch break</b></li>
-              <li class="list-group-item"><i class="mx-auto fa d-inline fa-clock-o text-primary"></i>&nbsp;14:30-16:00 –&nbsp;<b>Discussion</b></li>
-              <li class="list-group-item"><i class="mx-auto fa d-inline fa-clock-o text-primary"></i>&nbsp;16:00-18:00 –&nbsp;<b>Party!</b></li>
-            </ul>
-          </div>
-        </div>
-        <div class="p-4 col-lg-4">
-          <div class="card shadowed">
-            <div class="card-block text-center p-2">
-              <h2>Day 3</h2>
-              <p class="lead">Publish</p>
-            </div>
-            <ul class="list-group list-group-flush">
-              <li class="list-group-item"><i class="mx-auto fa d-inline fa-clock-o text-primary"></i>&nbsp;09:30-10:00 –&nbsp;<b>Intro to WBN</b></li>
-              <li class="list-group-item"><i class="mx-auto fa d-inline fa-clock-o text-primary"></i>&nbsp;10:00-12:00 –&nbsp;<b>Publishing</b></li>
-              <li class="list-group-item"><i class="mx-auto fa d-inline fa-clock-o text-primary"></i>&nbsp;12:00-13:00 –&nbsp;<b>Implementation</b></li>
-              <li class="list-group-item bg-secondary"><i class="mx-auto fa d-inline fa-clock-o text-primary"></i>&nbsp;13:00-14:30 –&nbsp;<b>Lunch break</b></li>
-              <li class="list-group-item"><i class="mx-auto fa d-inline fa-clock-o text-primary"></i>&nbsp;14:30-16:00 –&nbsp;<b>Farewell</b></li>
-              <li class="list-group-item"><i class="mx-auto fa d-inline fa-clock-o text-primary"></i>&nbsp;16:00-18:00 –&nbsp;<b>Party!</b></li>
-            </ul>
-          </div>
-        </div>
-      </div>
-    </div>
-  </div>
   <!-- Sponsor logos -->
-  <div class="py-5 section">
-    <div class="container">
-      <div class="row">
-        <div class="col-md-12">
-          <h1 class="mb-4">Sponsors</h1>
-        </div>
-      </div>
-      <div class="row">
-        <div class="col-md-3 col-6">
-          <img class="center-block img-fluid d-block" src="../static/assets/conference/logo_1.png"> </div>
-        <div class="col-md-3 col-6">
-          <img class="center-block img-fluid d-block" src="../static/assets/conference/logo_4.png"> </div>
-        <div class="col-md-3 col-6">
-          <img class="center-block img-fluid d-block" src="../static/assets/conference/logo_3.png"> </div>
-        <div class="col-md-3 col-6">
-          <img class="center-block img-fluid d-block" src="../static/assets/conference/logo_2.png"> </div>
-      </div>
-    </div>
-  </div>
   <!-- Call to action -->
-  <div class="py-5 section section-fade-in-out" id="register" style="background-image: url(../static/assets/conference/action.jpg);">
-    <div class="container">
-      <div class="row">
-        <div class="col-md-8 text-left">
-          <h1 class="mb-3">Registrations are open</h1>
-          <p>Pre-register to get a priority access to the event. Fares will be published later on.&nbsp; <br>Get the maximum from the lectures together with the possibility of joining exclusive side-events.</p>
-        </div>
-        <div class="col-md-4 align-self-center">
-          <a href="#" class="btn btn-lg btn-dark shadowed">Register now</a>
-        </div>
-      </div>
-    </div>
-  </div>
   <!-- Footer -->
   <footer class="text-md-left text-center p-4">
     <div class="container">
@@ -252,12 +156,17 @@
       </div>
     </div>
   </footer>
+  <div class="py-5">
+    <div class="container">
+      <div class="row"></div>
+    </div>
+  </div>
   <!-- JavaScript dependencies -->
   <script src="https://code.jquery.com/jquery-3.3.1.min.js"></script>
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.3/umd/popper.min.js" integrity="sha384-ZMP7rVo3mIykV+2+9J3UJ46jBk0WLaUAdn689aCwoqbBJiSnjAK/l8WvCWPIPm49" crossorigin="anonymous"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.3/umd/popper.min.js" crossorigin="anonymous" integrity="sha384-ZMP7rVo3mIykV+2+9J3UJ46jBk0WLaUAdn689aCwoqbBJiSnjAK/l8WvCWPIPm49"></script>
   <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.1.3/js/bootstrap.min.js" integrity="sha384-ChfqqxuZUCnJSK3+MXmPNIyE6ZbWh2IMqE241rYiqJxyMiZ6OW/JmZQ5stwEULTy" crossorigin="anonymous"></script>
   <!-- Script: Smooth scrolling between anchors in a same page -->
-  <script src="../../../../Pingendo/PassIO/js/smooth-scroll.js"></script>
+  <script src="../static/js/smooth-scroll.js"></script>
 </body>
 
 </html>

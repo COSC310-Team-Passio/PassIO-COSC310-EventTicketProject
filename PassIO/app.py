@@ -42,5 +42,9 @@ def admin():
 def search():
     return render_template('search.html')
 
+@app.route('/customerProfile')
+def customerprofile():
+    return render_template('customerProfile.html')
+
 if __name__ == '__main__':
     app.run(debug=True)
