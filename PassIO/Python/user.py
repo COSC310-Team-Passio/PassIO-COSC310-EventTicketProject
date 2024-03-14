@@ -1,5 +1,3 @@
-from pymongo import *
-
 class User:
 
     id_counter = 0
@@ -18,5 +16,7 @@ class User:
         return self.email == email and self.password == password
 
     def __del__(self):
-        mongo.db.findOneAndRemove({})
+        # Need to import the pymongo stuff but want to make a general db connection function that all classes can use
+        # mongo.db.findOneAndRemove({})
         print("Your account has been deleted.")
+        return True # Status of if account is successfully deleted

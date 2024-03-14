@@ -41,22 +41,30 @@ def login():
     email = request.form.get('lemail')
     password = request.form.get('lpassword')
     haKey = request.form.get('lhostadminkey')
-    logSuccess = None
-
-    condition1 = mongo.db.Users.find_one({"email": email, "special key": haKey})
-    condition2 = mongo.db.Users.find_one({"email": email, "password": password, "special key": haKey})
     
-    if condition1 and not condition2:
+    logSuccess = None
+    logIssue = None
+    
+    condition1 = mongo.db.Users.find_one({"email": email})
+    condition2 = mongo.db.Users.find_one({"email": email, "password": password})
+    condition3 = mongo.db.Users.find_one({"email": email, "password": password, "special key": haKey})
+    
+    if condition3:
         logSuccess = True
-    elif mongo.db.Users.find_one({"email": email, "password": password, "special key": haKey}):
-        logSuccess = True
-    else:
-        email = "Rip bozo not in the db"
+        logIssue = ""
+    elif condition2:
         logSuccess = False
+        logIssue = "Incorrect host/admin key. Leave blank if you don't have one"
+    elif condition1:
+        logSuccess = False
+        logIssue = "Incorrect password"
+    else:
+        logSuccess = False
+        logIssue = "No user found under: "+email
     
     # Probably will go back to the home page and give a little "successfully registered/logged in instead"
     # Failed login would not change the page
-    return render_template('loginandregister.html', confirmText=email)
+    return render_template('loginandregister.html', loginStatus=logSuccess, loginIssue=logIssue)
 
 @app.route('/register', methods=["POST"])
 def register():
