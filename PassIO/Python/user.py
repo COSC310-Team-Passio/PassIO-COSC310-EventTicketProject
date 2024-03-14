@@ -1,3 +1,5 @@
+from pymongo import *
+
 class User:
 
     id_counter = 0
@@ -16,4 +18,5 @@ class User:
         return self.email == email and self.password == password
 
     def __del__(self):
+        mongo.db.findOneAndRemove({})
         print("Your account has been deleted.")

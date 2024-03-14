@@ -1,5 +1,6 @@
+import time
 import redis
-from flask import Flask, render_template
+from flask import *
 from flask_pymongo import PyMongo
 
 app = Flask(__name__)
@@ -8,9 +9,11 @@ mongo = PyMongo(app)
 app.debug = True
 cache = redis.Redis(host='redis', port=6379)
 
+
+
 @app.route('/')
 def home():
-    mongo.db.host.insert_one({"name": "venue 1", "address 1": "3430 big valley street, MA"})
+    # mongo.db.host.insert_one({"name": "Venue for Ants", "address": "I know where you live"})
     return render_template('home.html')
 
 @app.route('/index')
@@ -25,10 +28,63 @@ def styleguide():
 def events():
     return render_template('events.html')
 
-
 @app.route('/about')
 def about():
     return render_template('about.html')
+
+@app.route('/loginandregister')
+def loginRegister():
+    return render_template('loginandregister.html')
+
+@app.route('/login', methods=["POST"])
+def login():
+    email = request.form.get('lemail')
+    password = request.form.get('lpassword')
+    haKey = request.form.get('lhostadminkey')
+    logSuccess = None
+
+    condition1 = mongo.db.Users.find_one({"email": email, "special key": haKey})
+    condition2 = mongo.db.Users.find_one({"email": email, "password": password, "special key": haKey})
+    
+    if condition1 and not condition2:
+        logSuccess = True
+    elif mongo.db.Users.find_one({"email": email, "password": password, "special key": haKey}):
+        logSuccess = True
+    else:
+        email = "Rip bozo not in the db"
+        logSuccess = False
+    
+    # Probably will go back to the home page and give a little "successfully registered/logged in instead"
+    # Failed login would not change the page
+    return render_template('loginandregister.html', confirmText=email)
+
+@app.route('/register', methods=["POST"])
+def register():
+    email = request.form.get("remail")
+    name = request.form.get("name")
+    password = request.form.get("rpassword")
+    haKey = request.form.get("rhostadminkey")
+    regSuccess = None
+    
+    if mongo.db.Users.find_one({"email": email}):
+        regSuccess = False
+        print("user already exists, invalid email")
+    else:
+        if mongo.db.TestAdminKey.find_one({"admin key:": haKey}):
+            print("handle giving user admin privileges")
+            mongo.db.Users.insert_one({"email": email, "name": name, "password": password, "special key": haKey})
+            regSuccess = True
+        elif mongo.db.TestAdminKey.find_one({"host key:": haKey}):
+            print("handle giving appropriate host privileges and add")
+            mongo.db.Users.insert_one({"email": email, "name": name, "password": password, "special key": haKey})
+            regSuccess = True
+        else:
+            haKey = ""
+            mongo.db.Users.insert_one({"email": email, "name": name, "password": password, "special key": haKey})
+            regSuccess = True
+            
+    # Probably will go back to the home page and give a little "successfully registered/logged in instead"
+    return render_template('loginandregister.html', regSuccess=regSuccess)
 
 @app.route('/checkout')
 def checkout():

@@ -5,19 +5,23 @@
     <link rel="stylesheet" type="text/css" href="{{url_for('static',filename='style.css')}}">
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>PassIO - Your Event Ticketing Solution</title>
+    <title>As Jogoat, the strongest curse battled the king of curses, the fraud</title>
 </head>
 {% include 'header.html' %}
 <body>
     <main>
         <section>
-            <h2>Events</h2>
-            <a href="/loginandregister">This is How5html and testing stuff</a>
+            <h3>&nbsp;Ok now this is how we do it</h3>
+            <br>
+            <form action="/counterTest" method="post">
+                &nbsp;&nbsp;<button name="counterBtn" type="submit">Increment</button>
+            </form>
+            
+            &nbsp;Times pressed: {{counter}}
+
         </section>
+        <br>
     </main>
-    <footer>
-        <p>Footer</p>
-    </footer>
-{% include 'footer.html' %}
 </body>
+{% include 'footer.html' %}
 </html>
