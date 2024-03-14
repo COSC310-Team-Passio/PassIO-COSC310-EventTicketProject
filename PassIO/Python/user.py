@@ -17,6 +17,6 @@ class User:
 
     def __del__(self):
         # Need to import the pymongo stuff but want to make a general db connection function that all classes can use
-        # mongo.db.findOneAndRemove({})
+        # mongo.db.findOneAndRemove({account info here})
         print("Your account has been deleted.")
-        return True # Status of if account is successfully deleted
+        return True # Status of if account is successfully deleted or not
