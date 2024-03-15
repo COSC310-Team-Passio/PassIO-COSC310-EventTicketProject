@@ -2,6 +2,7 @@ import time
 import redis
 from flask import *
 from flask_pymongo import PyMongo
+from attendee
 
 app = Flask(__name__)
 app.config["MONGO_URI"] = "mongodb+srv://passio:passio@passioatlas.foiwof6.mongodb.net/passio_db?retryWrites=true&w=majority"
@@ -9,7 +10,7 @@ mongo = PyMongo(app)
 app.debug = True
 cache = redis.Redis(host='redis', port=6379)
 
-
+CurrentUser = None
 
 @app.route('/')
 def home():
@@ -50,8 +51,21 @@ def login():
     condition3 = mongo.db.Users.find_one({"email": email, "password": password, "special key": haKey})
     
     if condition3:
+        # Change these from the TestAdminKey to the actual collection that they are stored
+        if mongo.db.TestAdminKey.find_one({"host key": haKey}):
+            print("user is a host")
+            # Initialize global CurrentUser here
+            global CurrentUser = attendee
+        elif mongo.db.TestAdminKey.find_one({"admin key": haKey}):
+            print("user is an admin")
+            # Initialize global CurrentUser here
+        else:
+            print("user is an atendee")
+            # Initialize global CurrentUser here
+            
         logSuccess = True
         logIssue = ""
+        
     elif condition2:
         logSuccess = False
         logIssue = "Incorrect host/admin key. Leave blank if you don't have one"
