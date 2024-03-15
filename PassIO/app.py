@@ -3,8 +3,8 @@ from flask import Flask, render_template, request, redirect, url_for
 from flask_pymongo import PyMongo
 
 app = Flask(__name__)
-app.config[
-    "MONGO_URI"] = "mongodb+srv://passio:passio@passioatlas.foiwof6.mongodb.net/passio_db?retryWrites=true&w=majority"
+app.config["MONGO_URI"] = ("mongodb+srv://passio:passio@passioatlas.foiwof6.mongodb.net/passio_db?retryWrites=true&w"
+                           "=majority")
 mongo = PyMongo(app)
 app.debug = True
 cache = redis.Redis(host='redis', port=6379)
@@ -59,20 +59,15 @@ def customerprofile():
 @app.route('/update_profile', methods=['POST'])
 def update_profile():
     # Get info from form
-    name = request.form.get('name')
+    name = request.form.get("firstName")
     email = request.form.get('email')
     password = request.form.get('password')
 
-    # Create user object
-    from PassIO.python.user import User
-    user = User(name, email, password)
-
     # Send data to db
     mongo.db.Users.insert_one({
-        '_id': user.get_id(),
-        'name': user.name,
-        'email': user.email,
-        'password': user.password
+        'name': name,
+        'email': email,
+        'password': password
     })
 
     return redirect('/index')
