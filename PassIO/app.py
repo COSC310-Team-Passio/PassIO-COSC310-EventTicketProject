@@ -2,7 +2,7 @@ import time
 import redis
 from flask import *
 from flask_pymongo import PyMongo
-from attendee
+from attendee import *
 
 app = Flask(__name__)
 app.config["MONGO_URI"] = "mongodb+srv://passio:passio@passioatlas.foiwof6.mongodb.net/passio_db?retryWrites=true&w=majority"
