@@ -22,7 +22,7 @@ class User:
 
 # import venue, event
 
-class Admin:
+class Admin(User):
     def __init__(self, name, email, password, admin_key):
         super().__init__(name, email, password)
         self.__admin_key = admin_key
@@ -35,7 +35,7 @@ class Admin:
         # TODO: complete function
         return True
 
-class Host:
+class Host(User):
     def __init__(self, name, email, password, host_key, hosting_history):
         super().__init__(name, email, password)
         self.__host_key = host_key
@@ -45,13 +45,15 @@ class Host:
         self.hosting_history.append(e)
 
     def __create_event(self, name, genre, artist, date):
-        event.Event(name, genre, artist, date)
+        print("")
+        # event.Event(name, genre, artist, date)
 
     def __add_venue(self, name, location, capacity):
-        venue.Venue(name, location, capacity)
+        print("")
+        # venue.Venue(name, location, capacity)
         
 # import user, ticket, review
-class Attendee(user.User):
+class Attendee(User):
 
     def __init__(self, name, email, password):
         super().__init__(name, email, password)

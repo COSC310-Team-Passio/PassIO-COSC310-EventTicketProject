@@ -2,7 +2,7 @@ import time
 import redis
 from flask import *
 from flask_pymongo import PyMongo
-from attendee import *
+from user import *
 
 app = Flask(__name__)
 app.config["MONGO_URI"] = "mongodb+srv://passio:passio@passioatlas.foiwof6.mongodb.net/passio_db?retryWrites=true&w=majority"
@@ -55,7 +55,7 @@ def login():
         if mongo.db.TestAdminKey.find_one({"host key": haKey}):
             print("user is a host")
             # Initialize global CurrentUser here
-            global CurrentUser = attendee
+            global CurrentUser = Attendee.__init__()
         elif mongo.db.TestAdminKey.find_one({"admin key": haKey}):
             print("user is an admin")
             # Initialize global CurrentUser here
