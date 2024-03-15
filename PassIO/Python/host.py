@@ -1,10 +1,16 @@
+from user import User
 import event, venue
-class Host:
+
+class Host(User):
 
     def __init__(self, name, email, password, host_key, hosting_history):
         super().__init__(name, email, password)
         self.__host_key = host_key
         self.hosting_history = []
+    
+
+
+
 
     def add_hosting_history(self, e):
         self.hosting_history.append(e)
