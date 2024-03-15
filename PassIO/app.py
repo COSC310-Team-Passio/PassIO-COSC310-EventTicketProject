@@ -55,7 +55,8 @@ def login():
         if mongo.db.TestAdminKey.find_one({"host key": haKey}):
             print("user is a host")
             # Initialize global CurrentUser here
-            global CurrentUser = Attendee.__init__()
+            # Syntax error with this one idk why
+            # global CurrentUser = Host("testName", "testEmail", "testPW", "testHKey", ["test", "host", "history"])
         elif mongo.db.TestAdminKey.find_one({"admin key": haKey}):
             print("user is an admin")
             # Initialize global CurrentUser here

@@ -1,4 +1,4 @@
-class User:
+class User(object):
     id_counter = 0
 
     def __init__(self, name, email, password):
