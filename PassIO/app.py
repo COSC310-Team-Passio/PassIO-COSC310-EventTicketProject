@@ -56,10 +56,13 @@ def login():
             print("user is a host")
             # Initialize global CurrentUser here
             # Syntax error with this one idk why
-            # global CurrentUser = Host("testName", "testEmail", "testPW", "testHKey", ["test", "host", "history"])
+            global CurrentUser
+            CurrentUser = Host("testHostName", "testHostEmail", """testHostPassword",""" "testHKey", ["test", "host", "history"])
         elif mongo.db.TestAdminKey.find_one({"admin key": haKey}):
             print("user is an admin")
             # Initialize global CurrentUser here
+            global CurrentUser
+            CurrentUser = Admin("testAdminName", "testAdminEmail", """testAdminPassword",""" "testAKey")
         else:
             print("user is an atendee")
             # Initialize global CurrentUser here
