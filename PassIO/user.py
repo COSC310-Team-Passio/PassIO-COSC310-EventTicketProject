@@ -21,7 +21,6 @@ class User(object):
         return True # Status of if account is successfully deleted or not
 
 # import venue, event
-
 class Admin(User):
     def __init__(self, name, email, password, admin_key):
         super().__init__(name, email, password)
