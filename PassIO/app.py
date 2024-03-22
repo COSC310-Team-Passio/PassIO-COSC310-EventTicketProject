@@ -1,5 +1,5 @@
 import redis
-from flask import Flask, render_template, request, redirect, url_for, jsonify
+from flask import Flask, render_template, request, redirect, url_for, flash
 from flask_pymongo import PyMongo
 
 app = Flask(__name__)
@@ -63,6 +63,13 @@ def update_profile():
     email = request.form.get('email')
     password = request.form.get('password')
 
+    print('debug line below')
+    print(name, email, password)
+
+    name = 'jared'
+    email = 'jared@jared.com'
+    password = 'password'
+
     # Send data to db
     mongo.db.Users.insert_one({
         'name': name,
@@ -77,10 +84,15 @@ def update_profile():
         'password': password
     })
 
-    if user:
-        return jsonify({"success": True, "message": "Profile updated successfully"}), 200
-    else:
-        return jsonify({"success": False, "message": "Error updating profile"}), 400
+
+    app.logger.debug(f"Debug line - info sent to db: {name}, {email}, {password}")
+    app.logger.debug(f"Debug line - info returned from db: {user}")
+
+    print('user below')
+    print(user)
+
+    # Flash a message containing user info
+    # flash(f"Profile Updated: {name}, {email}", 'info')
 
     return redirect('/index')
 

@@ -94,14 +94,14 @@
     <div class="container">
       <div class="row">
         <div class="col-md-12 order-md-1">
-          <form class="needs-validation" novalidate="" action={ url_for("updateProfile")}} method="post">
+          <form class="needs-validation" novalidate="" action="{{ url_for('update_profile') }}" method="post">
             <div class="row">
               <div class="col-md-6 mb-3"> <label for="firstName">Name</label>
-                <input type="text" class="form-control" id="firstName" name="name" placeholder="name" required>
+                <input type="text" class="form-control" id="firstName" name="name" placeholder="Name" required>
                 <div class="invalid-feedback"> Valid name is required. </div>
               </div>
               <div class="col-md-6 mb-3"> <label for="password">Password</label>
-                <input type="text" class="form-control" name="password" id="password" placeholder="" value="" required="">
+                <input type="text" class="form-control" name="password" id="password" placeholder="Password" required>
                 <div class="invalid-feedback"> Valid name is required. </div>
               </div>
               <div class="mb-3"> <label for="email">Email <span class="text-muted">(Optional)</span></label>
@@ -145,6 +145,8 @@
               </div>
             </div>
             <button class="btn btn-primary btn-lg btn-block" type="submit">Submit</button>
+              <!-- Your form fields -->
+              <button class="btn btn-primary btn-lg btn-block" type="submit">Submit</button>
           </form>
         </div>
       </div>
