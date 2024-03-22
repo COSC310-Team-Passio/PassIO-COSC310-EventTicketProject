@@ -2,6 +2,7 @@ import time
 import redis
 from flask import *
 from flask_pymongo import PyMongo
+from user import *
 
 app = Flask(__name__)
 app.config["MONGO_URI"] = "mongodb+srv://passio:passio@passioatlas.foiwof6.mongodb.net/passio_db?retryWrites=true&w=majority"
@@ -9,7 +10,7 @@ mongo = PyMongo(app)
 app.debug = True
 cache = redis.Redis(host='redis', port=6379)
 
-
+CurrentUser = None
 
 @app.route('/')
 def home():
@@ -41,22 +42,44 @@ def login():
     email = request.form.get('lemail')
     password = request.form.get('lpassword')
     haKey = request.form.get('lhostadminkey')
-    logSuccess = None
-
-    condition1 = mongo.db.Users.find_one({"email": email, "special key": haKey})
-    condition2 = mongo.db.Users.find_one({"email": email, "password": password, "special key": haKey})
     
-    if condition1 and not condition2:
+    logSuccess = None
+    logIssue = None
+    
+    condition1 = mongo.db.Users.find_one({"email": email})
+    condition2 = mongo.db.Users.find_one({"email": email, "password": password})
+    condition3 = mongo.db.Users.find_one({"email": email, "password": password, "special key": haKey})
+    
+    if condition3:
+        # Change these from the TestAdminKey to the actual collection that they are stored
+        if mongo.db.TestAdminKey.find_one({"host key": haKey}):
+            print("user is a host")
+            # Initialize global CurrentUser here
+            # Syntax error with this one idk why
+            # global CurrentUser = Host("testName", "testEmail", "testPW", "testHKey", ["test", "host", "history"])
+        elif mongo.db.TestAdminKey.find_one({"admin key": haKey}):
+            print("user is an admin")
+            # Initialize global CurrentUser here
+        else:
+            print("user is an atendee")
+            # Initialize global CurrentUser here
+            
         logSuccess = True
-    elif mongo.db.Users.find_one({"email": email, "password": password, "special key": haKey}):
-        logSuccess = True
-    else:
-        email = "Rip bozo not in the db"
+        logIssue = ""
+        
+    elif condition2:
         logSuccess = False
+        logIssue = "Incorrect host/admin key. Leave blank if you don't have one"
+    elif condition1:
+        logSuccess = False
+        logIssue = "Incorrect password"
+    else:
+        logSuccess = False
+        logIssue = "No user found under: "+email
     
     # Probably will go back to the home page and give a little "successfully registered/logged in instead"
     # Failed login would not change the page
-    return render_template('loginandregister.html', confirmText=email)
+    return render_template('loginandregister.html', loginStatus=logSuccess, loginIssue=logIssue)
 
 @app.route('/register', methods=["POST"])
 def register():
