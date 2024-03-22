@@ -11,3 +11,6 @@ pymongo==4.6.2
 redis==5.0.2
 Werkzeug==3.0.1
 pymongo[srv]
+flask-testing==0.8.1
+pytest==7.1.2
+mongomock==3.23.0
