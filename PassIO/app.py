@@ -1,5 +1,5 @@
 import redis
-from flask import Flask, render_template, request, redirect, url_for
+from flask import Flask, render_template, request, redirect, url_for, jsonify
 from flask_pymongo import PyMongo
 
 app = Flask(__name__)
@@ -59,7 +59,7 @@ def customerprofile():
 @app.route('/update_profile', methods=['POST'])
 def update_profile():
     # Get info from form
-    name = request.form.get("firstName")
+    name = request.form.get('firstName')
     email = request.form.get('email')
     password = request.form.get('password')
 
@@ -69,6 +69,18 @@ def update_profile():
         'email': email,
         'password': password
     })
+
+    # Get data from db
+    user = mongo.db.Users.find_one({
+        'name': name,
+        'email': email,
+        'password': password
+    })
+
+    if user:
+        return jsonify({"success": True, "message": "Profile updated successfully"}), 200
+    else:
+        return jsonify({"success": False, "message": "Error updating profile"}), 400
 
     return redirect('/index')
 
