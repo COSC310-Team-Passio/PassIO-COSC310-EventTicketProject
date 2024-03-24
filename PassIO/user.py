@@ -7,14 +7,12 @@ class User(object):
         self.name = name
         self.email = email
         # self.password = password
-        self.__id = User.id_counter
-        User.id_counter += 1
-
+        
     def get_id(self):
         return self.__id
 
-    def log_in(self, email, password):
-        return self.email == email and self.password == password
+    #def log_in(self, email, password):
+    #   return self.email == email and self.password == password
 
     def __del__(self):
         # Need to import the pymongo stuff but want to make a general db connection function that all classes can use
@@ -55,13 +53,12 @@ class Host(User):
         print("")
         # Just needs to make a venue in the Venues collection if all fields are valid 
         # mongo.db.Venues.createOne({name, location, capacity, date})
-
-        
+       
 # import user, ticket, review
 class Attendee(User):
 
-    def __init__(self, name, email, password):
-        super().__init__(name, email, password)
+    def __init__(self, name, email):
+        super().__init__(name, email)
         self.preferred_genres = []
         self.purchase_history = []
 
