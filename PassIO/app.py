@@ -27,6 +27,19 @@ def styleguide():
 @app.route('/events')
 def events():
     return render_template('events.html')
+@app.route('/events_create', methods = ["POST"])
+def events_create():
+    name = request.form.get('e_name')
+    location = request.form.get('e_location')
+    description = request.form.get('e_description')
+    artist = request.form.get('e_artist')
+    genre = request.form.get('e_genre')
+    mongo.db.Event.insert_one({'name': name, 'location': location, 'description': description, 'artist': artist,  'genre': genre})
+    return render_template('eventEntry.html', confirm=name)
+
+@app.route('/event_entry')
+def event_entry():
+    return render_template('eventEntry.html')
 
 @app.route('/about')
 def about():

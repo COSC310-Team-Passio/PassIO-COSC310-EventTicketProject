@@ -15,6 +15,20 @@
             <p>Buy tickets here</p>
         </section>
     </main>
+    {{confirm}}
+        <form action="/events_create" method = "post">
+            <label for="e_name">Event name:</label><br>
+            <input type="text" id="e_name" name="e_name" value=""><br>
+            <label for="e_location">Event Location:</label><br>
+            <input type="text" id="e_location" name="e_location" value=""><br><br>
+            <label for="e_genre">Event Genre:</label><br>
+            <input type="text" id="e_genre" name="e_genre" value=""><br><br>
+            <label for="e_artist">Event Artist:</label><br>
+            <input type="text" id="e_artist" name="e_artist" value=""><br><br>
+            <label for="e_description">Event Description:</label><br>
+            <input type="text" id="e_description" name="e_description" value=""><br><br>
+            <button type="submit" value="Submit"> Submit </button>
+        </form>
     <footer>
         <p>Footer</p>
     </footer>
