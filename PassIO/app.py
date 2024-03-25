@@ -50,19 +50,23 @@ def login():
     condition2 = mongo.db.Users.find_one({"email": email, "password": password})
     condition3 = mongo.db.Users.find_one({"email": email, "password": password, "special key": haKey})
     
+    global CurrentUser
+    uName = condition3["name"]
+    
     if condition3:
         # Change these from the TestAdminKey to the actual collection that they are stored
         if mongo.db.TestAdminKey.find_one({"host key": haKey}):
             print("user is a host")
-            # Initialize global CurrentUser here
-            # Syntax error with this one idk why
-            # global CurrentUser = Host("testName", "testEmail", "testPW", "testHKey", ["test", "host", "history"])
+            
+            CurrentUser = Host(uName, email, haKey, ["dummy", "data", "for now"])
         elif mongo.db.TestAdminKey.find_one({"admin key": haKey}):
             print("user is an admin")
             # Initialize global CurrentUser here
+            CurrentUser = Admin(uName, email, haKey)
         else:
-            print("user is an atendee")
+            print("user is an attendee")
             # Initialize global CurrentUser here
+            CurrentUser = Attendee(uName, email)
             
         logSuccess = True
         logIssue = ""
@@ -79,7 +83,7 @@ def login():
     
     # Probably will go back to the home page and give a little "successfully registered/logged in instead"
     # Failed login would not change the page
-    return render_template('loginandregister.html', loginStatus=logSuccess, loginIssue=logIssue)
+    return render_template('loginandregister.html', loginStatus=uName, loginIssue=logIssue)
 
 @app.route('/register', methods=["POST"])
 def register():
