@@ -29,10 +29,6 @@ def styleguide():
 def events():
     return render_template('events.html')
 
-@app.route('/about')
-def about():
-    return render_template('about.html')
-
 @app.route('/loginandregister')
 def loginRegister():
     return render_template('loginandregister.html')
