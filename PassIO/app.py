@@ -15,11 +15,11 @@ CurrentUser = None
 @app.route('/')
 def home():
     # mongo.db.host.insert_one({"name": "Venue for Ants", "address": "I know where you live"})
-    return render_template('home.html')
-
-@app.route('/index')
-def index():
     return render_template('index.html')
+
+# @app.route('/index')
+# def index():
+#     return render_template('index.html')
 
 @app.route('/styleguide')
 def styleguide():
