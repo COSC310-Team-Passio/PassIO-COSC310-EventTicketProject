@@ -5,7 +5,8 @@ from flask_pymongo import PyMongo
 from user import *
 
 app = Flask(__name__)
-app.config["MONGO_URI"] = "mongodb+srv://passio:passio@passioatlas.foiwof6.mongodb.net/passio_db?retryWrites=true&w=majority"
+app.config["MONGO_URI"] = ("mongodb+srv://passio:passio@passioatlas.foiwof6.mongodb.net/passio_db?retryWrites=true&w"
+                           "=majority")
 mongo = PyMongo(app)
 app.debug = True
 cache = redis.Redis(host='redis', port=6379)
@@ -17,13 +18,16 @@ def home():
     # mongo.db.host.insert_one({"name": "Venue for Ants", "address": "I know where you live"})
     return render_template('home.html')
 
+
 @app.route('/index')
 def index():
     return render_template('index.html')
 
+
 @app.route('/styleguide')
 def styleguide():
     return render_template('styleguide.html')
+
 
 @app.route('/events')
 def events():
@@ -117,13 +121,62 @@ def register():
 def checkout():
     return render_template('checkout.html')
 
+
 @app.route('/admin')
 def admin():
     return render_template('admin.html')
 
+
 @app.route('/search')
 def search():
     return render_template('search.html')
+
+
+@app.route('/customerProfile')
+def customerprofile():
+    return render_template('customerProfile.html')
+
+
+@app.route('/update_profile', methods=['POST'])
+def update_profile():
+    # Get info from form
+    name = request.form.get('firstName')
+    email = request.form.get('email')
+    password = request.form.get('password')
+
+    print('debug line below')
+    print(name, email, password)
+
+    name = 'jared'
+    email = 'jared@jared.com'
+    password = 'password'
+
+    # Send data to db
+    mongo.db.Users.insert_one({
+        'name': name,
+        'email': email,
+        'password': password
+    })
+
+    # Get data from db
+    user = mongo.db.Users.find_one({
+        'name': name,
+        'email': email,
+        'password': password
+    })
+
+
+    app.logger.debug(f"Debug line - info sent to db: {name}, {email}, {password}")
+    app.logger.debug(f"Debug line - info returned from db: {user}")
+
+    print('user below')
+    print(user)
+
+    # Flash a message containing user info
+    # flash(f"Profile Updated: {name}, {email}", 'info')
+
+    return redirect('/index')
+
 
 if __name__ == '__main__':
     app.run(debug=True)
