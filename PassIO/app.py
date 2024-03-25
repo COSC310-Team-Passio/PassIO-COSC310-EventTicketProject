@@ -15,18 +15,7 @@ CurrentUser = None
 
 @app.route('/')
 def home():
-    # mongo.db.host.insert_one({"name": "Venue for Ants", "address": "I know where you live"})
-    return render_template('home.html')
-
-
-@app.route('/index')
-def index():
     return render_template('index.html')
-
-
-@app.route('/styleguide')
-def styleguide():
-    return render_template('styleguide.html')
 
 
 @app.route('/events')
@@ -134,7 +123,18 @@ def search():
 
 @app.route('/customerProfile')
 def customerprofile():
-    return render_template('customerProfile.html')
+    if CurrentUser is not None:
+        # Assuming CurrentUser.email is the email of the logged-in user
+        user_info = mongo.db.Users.find_one({"email": CurrentUser.email})
+        if user_info:
+            # Pass the user_info to the template
+            return render_template('customerProfile.html', user=user_info)
+        else:
+            # User info not found, handle accordingly (e.g., redirect or show an error message)
+            return render_template('customerProfile.html', error="User information not found.")
+    else:
+        # No user is logged in, redirect to login page
+        return redirect(url_for('loginRegister'))
 
 
 @app.route('/update_profile', methods=['POST'])
@@ -176,6 +176,14 @@ def update_profile():
     # flash(f"Profile Updated: {name}, {email}", 'info')
 
     return redirect('/index')
+
+@app.route('/logout', methods=['GET', 'POST'])
+def logout():
+    # Your logic to handle logout, e.g., clearing the CurrentUser or session
+    global CurrentUser
+    CurrentUser = None
+    # Redirect to home page or login page after logout
+    return redirect('/')
 
 
 if __name__ == '__main__':
