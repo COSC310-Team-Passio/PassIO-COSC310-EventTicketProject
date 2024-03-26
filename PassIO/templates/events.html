@@ -45,19 +45,21 @@
       <div class="row">
         <div class="col-12 mt-5">
           <h1 class="display-4">Current Events</h1>
-    <h1>All Events</h1>
-
-    <!-- Iterate over the events using Jinja2 for loop -->
+          <!-- Iterate over the events in the database using Jinja2 for loop. events was passed in as a variable. -->
     {% for event in events %}
+      <hr>
         <div class="event">
+          <div style="text-align: center;">
             <h2>{{ event.name }}</h2>
             <p><strong>Location:</strong> {{ event.location }}</p>
             <p><strong>Description:</strong> {{ event.description }}</p>
             <p><strong>Artist:</strong> {{ event.artist }}</p>
             <p><strong>Genre:</strong> {{ event.genre }}</p>
+            <p><button type="submit">Purchase Event</button></p>
         </div>
+       </div>
+      <hr>
     {% endfor %}
-
 
           <!-- {% for event in events %}
             <div class="event">
