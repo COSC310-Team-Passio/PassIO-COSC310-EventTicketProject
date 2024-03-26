@@ -8,9 +8,16 @@ mongo = PyMongo(app)
 app.debug = True
 cache = redis.Redis(host='redis', port=6379)
 
+users = mongo.db.Users.find({})
+for user in users: 
+    print(user)
+
 @app.route('/')
 def home():
-    mongo.db.host.insert_one({"name": "venue 1", "address 1": "3430 big valley street, MA"})
+    mongo.db.host.insert_one({"name": "venue 1", "address 1": "3430 big valley street, MAAAAAAAAAA"})
+    user0 = mongo.db.Users.find_one({"name": "Kaycee Goel"})
+    app.logger.debug(user0)
+    print(user0)
     return render_template('home.html')
 
 @app.route('/index')
@@ -44,6 +51,9 @@ def search():
 
 @app.route('/host')
 def host():
+    users = mongo.db.User.find({})
+    for user in users: 
+        app.logger.debug(user)
     return render_template('host.html')
 
 if __name__ == '__main__':
