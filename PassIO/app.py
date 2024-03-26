@@ -37,9 +37,12 @@ def events_create():
     mongo.db.Event.insert_one({'name': name, 'location': location, 'description': description, 'artist': artist,  'genre': genre})
     return render_template('eventEntry.html', confirm=name)
 
-@app.route('/event_entry')
-def event_entry():
-    return render_template('eventEntry.html')
+@app.route('/events_display', methods = ["GET"])
+def events_display():
+   # events = mongo.db.Event
+    all_events = mongo.db.Event.find()
+    return render_template('events.html', events=all_events)
+
 
 @app.route('/about')
 def about():
