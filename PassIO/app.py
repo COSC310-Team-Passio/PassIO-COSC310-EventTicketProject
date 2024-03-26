@@ -5,7 +5,8 @@ from flask_pymongo import PyMongo
 from user import *
 
 app = Flask(__name__)
-app.config["MONGO_URI"] = "mongodb+srv://passio:passio@passioatlas.foiwof6.mongodb.net/passio_db?retryWrites=true&w=majority"
+app.config["MONGO_URI"] = ("mongodb+srv://passio:passio@passioatlas.foiwof6.mongodb.net/passio_db?retryWrites=true&w"
+                           "=majority")
 mongo = PyMongo(app)
 app.debug = True
 cache = redis.Redis(host='redis', port=6379)
@@ -24,6 +25,7 @@ def home():
 @app.route('/styleguide')
 def styleguide():
     return render_template('styleguide.html')
+
 
 @app.route('/events')
 def events():
@@ -46,19 +48,23 @@ def login():
     condition2 = mongo.db.Users.find_one({"email": email, "password": password})
     condition3 = mongo.db.Users.find_one({"email": email, "password": password, "special key": haKey})
     
+    global CurrentUser
+    uName = condition3["name"]
+    
     if condition3:
         # Change these from the TestAdminKey to the actual collection that they are stored
         if mongo.db.TestAdminKey.find_one({"host key": haKey}):
             print("user is a host")
-            # Initialize global CurrentUser here
-            # Syntax error with this one idk why
-            # global CurrentUser = Host("testName", "testEmail", "testPW", "testHKey", ["test", "host", "history"])
+            
+            CurrentUser = Host(uName, email, haKey, ["dummy", "data", "for now"])
         elif mongo.db.TestAdminKey.find_one({"admin key": haKey}):
             print("user is an admin")
             # Initialize global CurrentUser here
+            CurrentUser = Admin(uName, email, haKey)
         else:
-            print("user is an atendee")
+            print("user is an attendee")
             # Initialize global CurrentUser here
+            CurrentUser = Attendee(uName, email)
             
         logSuccess = True
         logIssue = ""
@@ -75,7 +81,7 @@ def login():
     
     # Probably will go back to the home page and give a little "successfully registered/logged in instead"
     # Failed login would not change the page
-    return render_template('loginandregister.html', loginStatus=logSuccess, loginIssue=logIssue)
+    return render_template('loginandregister.html', loginStatus=uName, loginIssue=logIssue)
 
 @app.route('/register', methods=["POST"])
 def register():
@@ -109,13 +115,62 @@ def register():
 def checkout():
     return render_template('checkout.html')
 
+
 @app.route('/admin')
 def admin():
     return render_template('admin.html')
 
+
 @app.route('/search')
 def search():
     return render_template('search.html')
+
+
+@app.route('/customerProfile')
+def customerprofile():
+    return render_template('customerProfile.html')
+
+
+@app.route('/update_profile', methods=['POST'])
+def update_profile():
+    # Get info from form
+    name = request.form.get('firstName')
+    email = request.form.get('email')
+    password = request.form.get('password')
+
+    print('debug line below')
+    print(name, email, password)
+
+    name = 'jared'
+    email = 'jared@jared.com'
+    password = 'password'
+
+    # Send data to db
+    mongo.db.Users.insert_one({
+        'name': name,
+        'email': email,
+        'password': password
+    })
+
+    # Get data from db
+    user = mongo.db.Users.find_one({
+        'name': name,
+        'email': email,
+        'password': password
+    })
+
+
+    app.logger.debug(f"Debug line - info sent to db: {name}, {email}, {password}")
+    app.logger.debug(f"Debug line - info returned from db: {user}")
+
+    print('user below')
+    print(user)
+
+    # Flash a message containing user info
+    # flash(f"Profile Updated: {name}, {email}", 'info')
+
+    return redirect('/index')
+
 
 if __name__ == '__main__':
     app.run(debug=True)
