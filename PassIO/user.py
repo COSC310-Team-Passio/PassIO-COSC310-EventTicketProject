@@ -81,4 +81,5 @@ class Attendee(User):
         return True
 
     def write_review(self, rating, description):
-        review.Review(rating, description)
+        print("") # blank code so that the function stops screaming at me
+        #review.Review(rating, description)
