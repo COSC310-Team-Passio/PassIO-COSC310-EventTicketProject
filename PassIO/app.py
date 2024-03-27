@@ -22,9 +22,9 @@ def home():
 # def index():
 #     return render_template('index.html')
 
-@app.route('/styleguide')
-def styleguide():
-    return render_template('styleguide.html')
+#@app.route('/styleguide')
+#def styleguide():
+#    return render_template('styleguide.html')
 
 
 @app.route('/events')
@@ -113,6 +113,8 @@ def register():
 
 @app.route('/checkout')
 def checkout():
+    eventID = request.args.get('eventID')
+    print(eventID)
     return render_template('checkout.html')
 
 
