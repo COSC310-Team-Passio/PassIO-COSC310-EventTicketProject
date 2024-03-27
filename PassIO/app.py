@@ -27,7 +27,8 @@ def styleguide():
 @app.route('/events')
 def events():
     return render_template('events.html')
-@app.route('/events_entry', methods = ["POST"])
+
+@app.route('/events_entry')#, methods = ["POST"])
 def events_entry():
     name = request.form.get('e_name')
     location = request.form.get('e_location')
