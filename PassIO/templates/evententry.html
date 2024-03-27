@@ -44,36 +44,25 @@
     <div class="container">
       <div class="row">
         <div class="col-12 mt-5">
-          <h1 class="display-4">Current Events</h1>
-          <!-- Iterate over the events in the database using Jinja2 for loop. events was passed in as a variable. -->
-    {% for event in events %}
-      <hr>
-        <div class="event">
-          <div style="text-align: center;">
-            <h2>{{ event.name }}</h2>
-            <p><strong>Location:</strong> {{ event.location }}</p>
-            <p><strong>Description:</strong> {{ event.description }}</p>
-            <p><strong>Artist:</strong> {{ event.artist }}</p>
-            <p><strong>Genre:</strong> {{ event.genre }}</p>
-            <form action="/checkout?{{event._id}}">
-              <p><button type="submit">Purchase Event</button></p>
+          <h1 class="display-4">Create Event</h1>
+            <form action="/events_submit" method="post">
+              <label for="e_name">Event name:</label><br>
+              <input type="text" id="e_name" name="e_name" value=""><br><br>
+              <label for="e_location">Event Location:</label><br>
+              <input type="text" id="e_location" name="e_location" value=""><br><br>
+              <label for="e_genre">Event Genre:</label><br>
+              <input type="text" id="e_genre" name="e_genre" value=""><br><br>
+              <label for="e_artist">Event Artist:</label><br>
+              <input type="text" id="e_artist" name="e_artist" value=""><br><br>
+              <label for="e_description">Event Description:</label><br>
+              <input type="text" id="e_description" name="e_description" value=""><br><br>
+              <button type="submit" value="Submit"> Submit </button>
             </form>
-
-
-        </div>
-       </div>
-      <hr>
-    {% endfor %}
-
-          <!-- {% for event in events %}
-            <div class="event">
-            <p>{{ event['name'] }} {{ event['location']}} {{ event['description']}} {{ event['artist']}} {{ event['genre']}}</p>
-            </div>
-          {% endfor %} -->
         </div>
       </div>
     </div>
   </div>
+
   <!-- JavaScript dependencies -->
   <script src="https://code.jquery.com/jquery-3.3.1.min.js"></script>
   <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.3/umd/popper.min.js" integrity="sha384-ZMP7rVo3mIykV+2+9J3UJ46jBk0WLaUAdn689aCwoqbBJiSnjAK/l8WvCWPIPm49" crossorigin="anonymous"></script>
