@@ -13,6 +13,10 @@ cache = redis.Redis(host='redis', port=6379)
 
 CurrentUser = None
 
+users = mongo.db.Users.find({})
+for user in users: 
+    print(user)
+
 @app.route('/')
 def home():
     # mongo.db.host.insert_one({"name": "Venue for Ants", "address": "I know where you live"})
@@ -171,6 +175,13 @@ def update_profile():
 
     return redirect('/index')
 
+
+@app.route('/host')
+def host():
+    users = mongo.db.User.find({})
+    for user in users: 
+        app.logger.debug(user)
+    return render_template('host.html')
 
 if __name__ == '__main__':
     app.run(debug=True)
