@@ -55,7 +55,11 @@
             <p><strong>Description:</strong> {{ event.description }}</p>
             <p><strong>Artist:</strong> {{ event.artist }}</p>
             <p><strong>Genre:</strong> {{ event.genre }}</p>
-            <p><button type="submit">Purchase Event</button></p>
+            <form action="/checkout?{{event._id}}">
+              <p><button type="submit">Purchase Event</button></p>
+            </form>
+
+
         </div>
        </div>
       <hr>
