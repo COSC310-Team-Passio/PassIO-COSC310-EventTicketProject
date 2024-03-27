@@ -28,8 +28,8 @@ def styleguide():
 def events():
     return render_template('events.html')
 
-@app.route('/events_entry')#, methods = ["POST"])
-def events_entry():
+@app.route('/events_submit', methods = ["POST"]) #This is throwing an error currently
+def events_submit():
     name = request.form.get('e_name')
     location = request.form.get('e_location')
     description = request.form.get('e_description')
@@ -39,10 +39,14 @@ def events_entry():
     mongo.db.Event.insert_one({'name': name, 'location': location, 'description': description, 'artist': artist, 'genre': genre, 'verified': verified})
     return render_template('evententry.html')
 
+@app.route('/events_entry')
+def events_entry():
+    return render_template('evententry.html')
+
 @app.route('/events_display', methods = ["GET"])
 def events_display():
     all_events = mongo.db.Event.find()
-    return render_template('events.html', events=all_events)
+    return render_template('events.html', events=all_events) #pass all events into html to be used in for loop in html
 
 
 @app.route('/about')
