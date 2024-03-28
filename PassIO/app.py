@@ -13,6 +13,10 @@ cache = redis.Redis(host='redis', port=6379)
 
 CurrentUser = None
 
+users = mongo.db.Users.find({})
+for user in users: 
+    print(user)
+
 @app.route('/')
 def home():
     # mongo.db.host.insert_one({"name": "Venue for Ants", "address": "I know where you live"})
@@ -26,10 +30,29 @@ def home():
 #def styleguide():
 #    return render_template('styleguide.html')
 
-
 @app.route('/events')
 def events():
     return render_template('events.html')
+
+@app.route('/events_submit', methods = ["POST"]) #This is throwing an error currently
+def events_submit():
+    name = request.form.get('e_name')
+    location = request.form.get('e_location')
+    description = request.form.get('e_description')
+    artist = request.form.get('e_artist')
+    genre = request.form.get('e_genre')
+    verified = request.form.get('e_verified')
+    mongo.db.Event.insert_one({'name': name, 'location': location, 'description': description, 'artist': artist, 'genre': genre, 'verified': verified})
+    return render_template('evententry.html')
+
+@app.route('/events_entry')
+def events_entry():
+    return render_template('evententry.html')
+
+@app.route('/events_display', methods = ["GET"])
+def events_display():
+    all_events = mongo.db.Event.find()
+    return render_template('events.html', events=all_events) #pass all events into html to be used in for loop in html
 
 @app.route('/loginandregister')
 def loginRegister():
@@ -173,6 +196,13 @@ def update_profile():
 
     return redirect('/index')
 
+
+@app.route('/host')
+def host():
+    users = mongo.db.User.find({})
+    for user in users: 
+        app.logger.debug(user)
+    return render_template('host.html')
 
 if __name__ == '__main__':
     app.run(debug=True)
