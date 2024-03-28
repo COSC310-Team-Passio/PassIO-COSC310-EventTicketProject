@@ -143,8 +143,8 @@ def register():
 @app.route('/checkout')
 def checkout():
     eventID = request.args.get('eventID')
-    print(eventID)
-    return render_template('checkout.html')
+    tickets = mongo.db.Ticket.find({{"eventID":eventID, "userID":""}})
+    return render_template('checkout.html', tickets=tickets)
 
 
 @app.route('/admin')
