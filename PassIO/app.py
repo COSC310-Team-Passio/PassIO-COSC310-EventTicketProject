@@ -148,16 +148,16 @@ def admin():
 def search():
     if request.method == 'POST':
         # Get the search term from search bar
-        search_term = request.form['search_term']
+        search_term = request.form['search_term'].strip() # Trim whitespaces
 
         # Build the query based on search term
         query = {
             "$or": [
-                {"name": search_term},
-                {"location": search_term},
-                {"description": search_term},
-                {"artist": search_term},
-                {"genre": search_term} 
+                { "name": { "$regex": f".*{search_term}.*", "$options": "i" } },
+                { "location": { "$regex": f".*{search_term}.*", "$options": "i" } },
+                { "description": { "$regex": f".*{search_term}.*", "$options": "i" } },
+                { "artist": { "$regex": f".*{search_term}.*", "$options": "i" } },
+                { "genre": { "$regex": f".*{search_term}.*", "$options": "i" } } 
             ]
         }
         # Fetch results from db
