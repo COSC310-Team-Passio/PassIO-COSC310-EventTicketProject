@@ -1,0 +1,74 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <!-- PAGE settings -->
+  <link rel="icon" href="https://templates.pingendo.com/assets/Pingendo_favicon.ico">
+  <title>Conference Neon - Pingendo template</title>
+  <meta name="description" content="Free Bootstrap 4 Pingendo Neon template for unique events.">
+  <meta name="keywords" content="Pingendo conference event neon free template bootstrap 4">
+  <!-- CSS dependencies -->
+  <link rel="stylesheet" href="../static/neon.css">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css" type="text/css">
+  <!-- Script: Make my navbar transparent when the document is scrolled to top -->
+  <script src="../static/js/navbar-ontop.js"></script>
+  <!-- Script: Animated entrance -->
+  <script src="../static/js/animate-in.js"></script>
+</head>
+
+<body class="text-center">
+  <!-- Navbar -->
+  <nav class="navbar navbar-expand-md fixed-top navbar-dark bg-dark">
+    <div class="container">
+      <button class="navbar-toggler navbar-toggler-right" type="button" data-toggle="collapse" data-target="#navbar2SupportedContent" aria-controls="navbar2SupportedContent" aria-expanded="false" aria-label="Toggle navigation"> <span class="navbar-toggler-icon"></span> </button>
+      <div class="collapse navbar-collapse justify-content-center" id="navbar2SupportedContent">
+        <ul class="navbar-nav">
+          <li class="nav-item mx-2">
+            <a class="nav-link" href="#">Home</a>
+          </li>
+          <li class="nav-item mx-2">
+            <a class="nav-link" href="#speakers">Speakers</a>
+          </li>
+          <li class="nav-item mx-2">
+            <a class="nav-link" href="#schedule">Schedule</a>
+          </li>
+        </ul>
+        <a class="btn navbar-btn mx-2 btn-outline-primary" href="#register">Register now</a>
+      </div>
+    </div>
+  </nav>
+  <!-- Cover -->
+  <div class="d-flex align-items-center py-5 cover section-fade-in-out" style="background-image: url(../static/assets/conference/cover.jpg);">
+    <div class="container">
+      <div class="row">
+        <div class="col-12 mt-5">
+          <h1 class="display-4">Create Event</h1>
+            <form action="/events_submit" method="post">
+              <label for="e_name">Event name:</label><br>
+              <input type="text" id="e_name" name="e_name" value=""><br><br>
+              <label for="e_location">Event Location:</label><br>
+              <input type="text" id="e_location" name="e_location" value=""><br><br>
+              <label for="e_genre">Event Genre:</label><br>
+              <input type="text" id="e_genre" name="e_genre" value=""><br><br>
+              <label for="e_artist">Event Artist:</label><br>
+              <input type="text" id="e_artist" name="e_artist" value=""><br><br>
+              <label for="e_description">Event Description:</label><br>
+              <input type="text" id="e_description" name="e_description" value=""><br><br>
+              <button type="submit" value="Submit"> Submit </button>
+            </form>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- JavaScript dependencies -->
+  <script src="https://code.jquery.com/jquery-3.3.1.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.3/umd/popper.min.js" integrity="sha384-ZMP7rVo3mIykV+2+9J3UJ46jBk0WLaUAdn689aCwoqbBJiSnjAK/l8WvCWPIPm49" crossorigin="anonymous"></script>
+  <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.1.3/js/bootstrap.min.js" integrity="sha384-ChfqqxuZUCnJSK3+MXmPNIyE6ZbWh2IMqE241rYiqJxyMiZ6OW/JmZQ5stwEULTy" crossorigin="anonymous"></script>
+  <!-- Script: Smooth scrolling between anchors in a same page -->
+  <script src="../static/js/smooth-scroll.js"></script>
+</body>
+
+</html>

@@ -22,9 +22,25 @@ def home():
 def events():
     return render_template('events.html')
 
-@app.route('/about')
-def about():
-    return render_template('about.html')
+@app.route('/events_submit', methods = ["POST"]) #This is throwing an error currently
+def events_submit():
+    name = request.form.get('e_name')
+    location = request.form.get('e_location')
+    description = request.form.get('e_description')
+    artist = request.form.get('e_artist')
+    genre = request.form.get('e_genre')
+    verified = request.form.get('e_verified')
+    mongo.db.Event.insert_one({'name': name, 'location': location, 'description': description, 'artist': artist, 'genre': genre, 'verified': verified})
+    return render_template('evententry.html')
+
+@app.route('/events_entry')
+def events_entry():
+    return render_template('evententry.html')
+
+@app.route('/events_display', methods = ["GET"])
+def events_display():
+    all_events = mongo.db.Event.find()
+    return render_template('events.html', events=all_events) #pass all events into html to be used in for loop in html
 
 @app.route('/loginandregister')
 def loginRegister():
@@ -116,8 +132,27 @@ def admin():
     return render_template('admin.html')
 
 
-@app.route('/search')
+@app.route('/search', methods=['GET', 'POST'])
 def search():
+    if request.method == 'POST':
+        # Get the search term from search bar
+        search_term = request.form['search_term'].strip() # Trim whitespaces
+
+        # Build the query based on search term
+        query = {
+            "$or": [
+                { "name": { "$regex": f".*{search_term}.*", "$options": "i" } },
+                { "location": { "$regex": f".*{search_term}.*", "$options": "i" } },
+                { "description": { "$regex": f".*{search_term}.*", "$options": "i" } },
+                { "artist": { "$regex": f".*{search_term}.*", "$options": "i" } },
+                { "genre": { "$regex": f".*{search_term}.*", "$options": "i" } } 
+            ]
+        }
+        # Fetch results from db
+        results = mongo.db.Event.find(query)
+        
+        return render_template('events.html', events=results)
+        
     return render_template('search.html')
 
 
@@ -185,6 +220,34 @@ def logout():
     # Redirect to home page or login page after logout
     return redirect('/')
 
+
+@app.route('/host')
+def host():
+    users = mongo.db.User.find({})
+    for user in users: 
+        app.logger.debug(user)
+    return render_template('host.html')
+
+@app.route('/host')
+def host():
+    users = mongo.db.User.find({})
+    for user in users: 
+        app.logger.debug(user)
+    return render_template('host.html')
+
+@app.route('/host')
+def host():
+    users = mongo.db.User.find({})
+    for user in users: 
+        app.logger.debug(user)
+    return render_template('host.html')
+
+@app.route('/host')
+def host():
+    users = mongo.db.User.find({})
+    for user in users: 
+        app.logger.debug(user)
+    return render_template('host.html')
 
 if __name__ == '__main__':
     app.run(debug=True)

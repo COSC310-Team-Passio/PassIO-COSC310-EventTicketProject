@@ -1,5 +1,6 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
@@ -15,17 +16,45 @@
   <!-- Script: Animated entrance -->
   <script src="../static/js/animate-in.js"></script>
 </head>
-<body>
+
+<body class="text-center">
+  <!-- Navbar -->
   {% include 'navbar.html' %}
-    <main>
-        <section>
-            <h2>Here are our events</h2>
-            <p>Buy tickets here</p>
-        </section>
-    </main>
-    <footer>
-        <p>Footer</p>
-    </footer>
+  <!-- Cover -->
+  <div class="d-flex align-items-center py-5 cover section-fade-in-out" style="background-image: url(../static/assets/conference/cover.jpg);">
+    <div class="container">
+      <div class="row">
+        <div class="col-12 mt-5">
+          <h1 class="display-4">Current Events</h1>
+          <!-- Iterate over the events in the database using Jinja2 for loop. events was passed in as a variable. -->
+    {% for event in events %}
+      <hr>
+        <div class="event">
+          <div style="text-align: center;">
+            <h2>{{ event.name }}</h2>
+            <p><strong>Location:</strong> {{ event.location }}</p>
+            <p><strong>Description:</strong> {{ event.description }}</p>
+            <p><strong>Artist:</strong> {{ event.artist }}</p>
+            <p><strong>Genre:</strong> {{ event.genre }}</p>
+            <form action="/checkout?{{event._id}}">
+              <p><button type="submit">Purchase Event</button></p>
+            </form>
+
+
+        </div>
+       </div>
+      <hr>
+    {% endfor %}
+
+          <!-- {% for event in events %}
+            <div class="event">
+            <p>{{ event['name'] }} {{ event['location']}} {{ event['description']}} {{ event['artist']}} {{ event['genre']}}</p>
+            </div>
+          {% endfor %} -->
+        </div>
+      </div>
+    </div>
+  </div>
   <!-- JavaScript dependencies -->
   <script src="https://code.jquery.com/jquery-3.3.1.min.js"></script>
   <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.3/umd/popper.min.js" integrity="sha384-ZMP7rVo3mIykV+2+9J3UJ46jBk0WLaUAdn689aCwoqbBJiSnjAK/l8WvCWPIPm49" crossorigin="anonymous"></script>
@@ -33,4 +62,5 @@
   <!-- Script: Smooth scrolling between anchors in a same page -->
   <script src="../static/js/smooth-scroll.js"></script>
 </body>
+
 </html>
