@@ -45,6 +45,10 @@ def events_submit():
 def events_entry():
     return render_template('evententry.html')
 
+@app.route('/hostEntry')
+def hostentry():
+    return render_template('hostEntry.html')
+
 @app.route('/events_display', methods = ["GET"])
 def events_display():
     all_events = mongo.db.Event.find()
