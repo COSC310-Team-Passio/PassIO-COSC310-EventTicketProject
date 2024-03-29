@@ -228,26 +228,5 @@ def host():
         app.logger.debug(user)
     return render_template('host.html')
 
-@app.route('/host')
-def host():
-    users = mongo.db.User.find({})
-    for user in users: 
-        app.logger.debug(user)
-    return render_template('host.html')
-
-@app.route('/host')
-def host():
-    users = mongo.db.User.find({})
-    for user in users: 
-        app.logger.debug(user)
-    return render_template('host.html')
-
-@app.route('/host')
-def host():
-    users = mongo.db.User.find({})
-    for user in users: 
-        app.logger.debug(user)
-    return render_template('host.html')
-
 if __name__ == '__main__':
     app.run(debug=True)
