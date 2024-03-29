@@ -1,0 +1,30 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <title>Search Results</title>
+</head>
+
+<body>
+    <h1>Search Results</h1>
+    {% if results %}
+        {% for event in results %}
+        <hr>
+        <div class="event">
+            <div style="text-align: center;">
+                <h2>{{ event.name }}</h2>
+                <p><strong>Location:</strong> {{ event.location }}</p>
+                <p><strong>Description:</strong> {{ event.description }}</p>
+                <p><strong>Artist:</strong> {{ event.artist }}</p>
+                <p><strong>Genre:</strong> {{ event.genre }}</p>
+                <p><button type="submit">Purchase Event</button></p>
+            </div>
+        </div>
+        <hr>
+        {% endfor %}
+    {% else %}
+    <p>No documents found matching your search.</p>
+    {% endif %}
+</body>
+
+</html>

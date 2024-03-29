@@ -144,8 +144,27 @@ def admin():
     return render_template('admin.html')
 
 
-@app.route('/search')
+@app.route('/search', methods=['GET', 'POST'])
 def search():
+    if request.method == 'POST':
+        # Get the search term from search bar
+        search_term = request.form['search_term'].strip() # Trim whitespaces
+
+        # Build the query based on search term
+        query = {
+            "$or": [
+                { "name": { "$regex": f".*{search_term}.*", "$options": "i" } },
+                { "location": { "$regex": f".*{search_term}.*", "$options": "i" } },
+                { "description": { "$regex": f".*{search_term}.*", "$options": "i" } },
+                { "artist": { "$regex": f".*{search_term}.*", "$options": "i" } },
+                { "genre": { "$regex": f".*{search_term}.*", "$options": "i" } } 
+            ]
+        }
+        # Fetch results from db
+        results = mongo.db.Event.find(query)
+        
+        return render_template('events.html', events=results)
+        
     return render_template('search.html')
 
 
