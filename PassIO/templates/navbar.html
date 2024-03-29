@@ -1,0 +1,25 @@
+<nav class="navbar navbar-expand-md navbar-dark bg-dark">
+    <div class="container">
+        <button class="navbar-toggler navbar-toggler-right border-0" type="button" data-toggle="collapse" data-target="#navbar12">
+            <span class="navbar-toggler-icon"></span>
+        </button>
+        <div class="collapse navbar-collapse" id="navbar12">
+            <a class="navbar-brand d-none d-md-block" href="/">PassIO</a>
+            <ul class="navbar-nav mx-auto">
+                <li class="nav-item"> <a class="nav-link" href="/events">Events</a> </li>
+                <li class="nav-item"> <a class="nav-link" href="/checkout">Checkout</a> </li>
+                <li class="nav-item"> <a class="nav-link" href="/hostEntry">Host Entry</a> </li>
+                <li class="nav-item"> <a class="nav-link" href="/events_entry">Event Entry</a> </li>
+            </ul>
+            <ul class="navbar-nav">
+                {% if user %}
+                <!-- If user is logged in, show 'Account' -->
+                <li class="nav-item"> <a class="nav-link" href="/customerProfile">Account</a> </li>
+                {% else %}
+                <!-- If no user is logged in, show 'Log in' -->
+                <li class="nav-item"> <a class="nav-link" href="/loginandregister">Log in</a> </li>
+                {% endif %}
+            </ul>
+        </div>
+    </div>
+</nav>
