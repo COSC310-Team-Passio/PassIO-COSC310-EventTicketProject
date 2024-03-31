@@ -26,7 +26,7 @@ CurrentUser = None
 @app.route('/')
 def home():
     # mongo.db.host.insert_one({"name": "Venue for Ants", "address": "I know where you live"})
-    return render_template('events.html')
+    return events()
 
 # @app.route('/index')
 # def index():
