@@ -3,7 +3,7 @@ import redis
 from flask import *
 from flask_pymongo import PyMongo
 from user import *
-from ticket import *
+#from ticket import *
 
 app = Flask(__name__)
 app.config["MONGO_URI"] = ("mongodb+srv://passio:passio@passioatlas.foiwof6.mongodb.net/passio_db?retryWrites=true&w"
@@ -48,7 +48,7 @@ def events_submit():
     genre = request.form.get('e_genre')
     verified = request.form.get('e_verified')
     mongo.db.Event.insert_one({'name': name, 'location': location, 'description': description, 'artist': artist, 'genre': genre, 'verified': verified})
-    generateTickets(mongo.db.find_one({'name': name, 'location': location, 'description': description, 'artist': artist, 'genre': genre, 'verified': verified})["ObjectId"], 2, 29.99)
+    generateTickets(mongo.db.Event.find_one({'name': name, 'location': location, 'description': description, 'artist': artist, 'genre': genre, 'verified': verified})['_id'], 2, 29.99)
     return render_template('evententry.html')
 
 def generateTickets(eventID, capacity:int, price:float):
