@@ -24,15 +24,15 @@ CurrentUser = None
 #def styleguide():
 #   return render_template('styleguide.html')
 
-@app.route('/')
-def home():
+#@app.route('/')
+#def home():
     # mongo.db.host.insert_one({"name": "Venue for Ants", "address": "I know where you live"})
-    return events()
+#    return reroute()
 
 # @app.route('/index')
 # def index():
 #     return render_template('index.html')
-
+@app.route('/')
 @app.route('/events')
 def events():
     all_events = mongo.db.Event.find()
@@ -56,7 +56,7 @@ def generateTickets(eventID, capacity:int, price:float):
     for i in range(0, capacity):
         tickets.append({"price": price, "user_id":"", "eventID": eventID, "seat_number":i})
     mongo.db.Ticket.insert_many(tickets)
-    return None
+    return
 
 @app.route('/events_entry')
 def events_entry():
