@@ -3,6 +3,7 @@ import redis
 from flask import *
 from flask_pymongo import PyMongo
 from user import *
+from ticket import *
 
 app = Flask(__name__)
 app.config["MONGO_URI"] = ("mongodb+srv://passio:passio@passioatlas.foiwof6.mongodb.net/passio_db?retryWrites=true&w"
@@ -37,6 +38,7 @@ def events():
     all_events = mongo.db.Event.find()
     return render_template('events.html', events=all_events) #pass all events into html to be used in for loop in html
 
+# USING TEST VARIABLES FOR TICKET CREATION WE SHOULD PROBABLY ADD OPTIONS FOR TICKET PRICE AND EVENT CAPACITY
 @app.route('/events_submit', methods = ["POST"]) #This is throwing an error currently
 def events_submit():
     name = request.form.get('e_name')
@@ -46,7 +48,15 @@ def events_submit():
     genre = request.form.get('e_genre')
     verified = request.form.get('e_verified')
     mongo.db.Event.insert_one({'name': name, 'location': location, 'description': description, 'artist': artist, 'genre': genre, 'verified': verified})
+    generateTickets(mongo.db.find_one({'name': name, 'location': location, 'description': description, 'artist': artist, 'genre': genre, 'verified': verified})["ObjectId"], 2, 29.99)
     return render_template('evententry.html')
+
+def generateTickets(eventID, capacity:int, price:float):
+    tickets = []
+    for i in range(0, capacity):
+        tickets.append({"price": price, "user_id":"", "eventID": eventID, "seat_number":i})
+    mongo.db.Ticket.insert_many(tickets)
+    return None
 
 @app.route('/events_entry')
 def events_entry():
@@ -142,7 +152,7 @@ def register():
 @app.route('/checkout')
 def checkout():
     eventID = request.args.get('eventID')
-    tickets = mongo.db.Ticket.find({"eventID":eventID, "userID":""})
+    # tickets = mongo.db.Ticket.find({"eventID":eventID, "userID":""})
     return render_template('checkout.html', tickets=tickets)
 
 
@@ -243,7 +253,6 @@ def host():
     for user in users: 
         app.logger.debug(user)
     return render_template('host.html')
-
 
 if __name__ == '__main__':
     app.run(debug=True)
