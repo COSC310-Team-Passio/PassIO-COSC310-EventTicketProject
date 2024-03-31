@@ -34,8 +34,8 @@ def home():
 
 @app.route('/events')
 def events():
-    return render_template('events.html')
-
+    all_events = mongo.db.Event.find()
+    return render_template('events.html', events=all_events) #pass all events into html to be used in for loop in html
 
 @app.route('/events_submit', methods = ["POST"]) #This is throwing an error currently
 def events_submit():
@@ -48,7 +48,6 @@ def events_submit():
     mongo.db.Event.insert_one({'name': name, 'location': location, 'description': description, 'artist': artist, 'genre': genre, 'verified': verified})
     return render_template('evententry.html')
 
-
 @app.route('/events_entry')
 def events_entry():
     return render_template('evententry.html')
@@ -56,12 +55,6 @@ def events_entry():
 @app.route('/hostEntry')
 def hostentry():
     return render_template('hostEntry.html')
-
-@app.route('/events_display', methods = ["GET"])
-def events_display():
-    all_events = mongo.db.Event.find()
-    return render_template('events.html', events=all_events) #pass all events into html to be used in for loop in html
-
 
 @app.route('/loginandregister')
 def loginRegister():
