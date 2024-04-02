@@ -158,9 +158,10 @@ def register():
 
 @app.route('/checkout')
 def checkout():
-    eventID = request.args.get('eventID')
-    eventID = ObjectId(eventID)
-    ticketQuery = {"event_id": eventID, "user_id": ""}
+    event_id = request.args.get('event_id')
+    return render_template ('checkout.html', tickets=[event_id, "make it iterable for laziness reasons"])
+    #eventID = ObjectId(eventID)
+    ticketQuery = {"event_id": event_id, "user_id": ""}
     tickets_DB = mongo.db.Ticket.find(ticketQuery)
     tickets = []
     for t in tickets_DB:
