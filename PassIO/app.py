@@ -152,10 +152,8 @@ def register():
 @app.route('/checkout')
 def checkout():
     eventID = request.args.get('eventID')
-    tickets = []
-    for ticket in mongo.db.Ticket.find():
-        if ticket['event_id'] == eventID and ticket['user_id'] == "":
-            tickets.append(ticket)
+    ticketQuery = {"event_id": eventID, "user_id": ""}
+    tickets = mongo.db.Ticket.find(ticketQuery)
     return render_template('checkout.html', tickets=tickets)
 
 
