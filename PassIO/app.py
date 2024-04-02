@@ -159,14 +159,13 @@ def register():
 @app.route('/checkout')
 def checkout():
     event_id = request.args.get('event_id')
-    return render_template ('checkout.html', tickets=[event_id, "make it iterable for laziness reasons"])
     #eventID = ObjectId(eventID)
     ticketQuery = {"event_id": event_id, "user_id": ""}
-    tickets_DB = mongo.db.Ticket.find(ticketQuery)
-    tickets = []
-    for t in tickets_DB:
-        tickets.append({"price":t['price'], "seat_number":t['seat_number'], "event_id":t['event_id'], "user_id":t['user_id']})
-    return render_template('checkout.html', tickets=[{"demo_dict_field_1":tickets_DB},1])
+    tickets = mongo.db.Ticket.find(ticketQuery)
+    # tickets = []
+    # for t in tickets_DB:
+    #     tickets.append({"price":t['price'], "seat_number":t['seat_number'], "event_id":t['event_id'], "user_id":t['user_id']})
+    return render_template('checkout.html', tickets=tickets)
 
 
 @app.route('/admin')
