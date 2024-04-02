@@ -2,6 +2,7 @@ import time
 import redis
 from flask import *
 from flask_pymongo import PyMongo
+from bson.objectid import *
 from user import *
 #from ticket import *
 
@@ -152,9 +153,13 @@ def register():
 @app.route('/checkout')
 def checkout():
     eventID = request.args.get('eventID')
+    eventID = ObjectId(eventID)
     ticketQuery = {"event_id": eventID, "user_id": ""}
-    tickets = mongo.db.Ticket.find(ticketQuery)
-    return render_template('checkout.html', tickets=tickets)
+    tickets_DB = mongo.db.Ticket.find(ticketQuery)
+    tickets = []
+    for t in tickets_DB:
+        tickets.append({"price":t['price'], "seat_number":t['seat_number'], "event_id":t['event_id'], "user_id":t['user_id']})
+    return render_template('checkout.html', tickets=[{"demo_dict_field_1":tickets_DB},1])
 
 
 @app.route('/admin')
