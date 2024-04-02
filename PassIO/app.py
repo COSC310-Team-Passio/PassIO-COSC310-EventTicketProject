@@ -54,7 +54,7 @@ def events_submit():
 def generateTickets(eventID, capacity:int, price:float):
     tickets = []
     for i in range(0, capacity):
-        tickets.append({"price": price, "user_id":"", "eventID": eventID, "seat_number":i})
+        tickets.append({"price": price, "user_id":"", "event_id": eventID, "seat_number":i})
     mongo.db.Ticket.insert_many(tickets)
     return
 
@@ -152,7 +152,10 @@ def register():
 @app.route('/checkout')
 def checkout():
     eventID = request.args.get('eventID')
-    # tickets = mongo.db.Ticket.find({"eventID":eventID, "userID":""})
+    tickets = []
+    for ticket in mongo.db.Ticket.find():
+        if ticket['event_id'] == eventID and ticket['user_id'] == "":
+            tickets.append(ticket)
     return render_template('checkout.html', tickets=tickets)
 
 
