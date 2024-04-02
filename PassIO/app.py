@@ -48,6 +48,10 @@ def events_submit():
     artist = request.form.get('e_artist')
     genre = request.form.get('e_genre')
     verified = request.form.get('e_verified')
+    # In theory needs to delete any old events before inserting the new one otherwise 
+    # there could be duplicate event_id fields but shouldn't matter for the scope of our program
+    # But like, if the program was bigger I'm sure I'd just figure out how to do the queries with the event's
+    # ObjectId instead so maybe this is a pointless comment
     tickets = mongo.db.Event.insert_one({'name': name, 'location': location, 'description': description, 
                                          'artist': artist, 'genre': genre, 'event_id': mongo.db.Event.count_documents(), 
                                          'verified': verified})
