@@ -48,8 +48,10 @@ def events_submit():
     artist = request.form.get('e_artist')
     genre = request.form.get('e_genre')
     verified = request.form.get('e_verified')
-    mongo.db.Event.insert_one({'name': name, 'location': location, 'description': description, 'artist': artist, 'genre': genre, 'verified': verified})
-    generateTickets(mongo.db.Event.find_one({'name': name, 'location': location, 'description': description, 'artist': artist, 'genre': genre, 'verified': verified})['_id'], 2, 29.99)
+    tickets = mongo.db.Event.insert_one({'name': name, 'location': location, 'description': description, 
+                                         'artist': artist, 'genre': genre, 'event_id': mongo.db.Event.count_documents(), 
+                                         'verified': verified})
+    generateTickets(tickets['event_id'], 2, 29.99)
     return render_template('evententry.html')
 
 def generateTickets(eventID, capacity:int, price:float):
