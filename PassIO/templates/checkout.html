@@ -20,6 +20,7 @@
 </head>
 
 <body class="bg-light">
+  {% include navbar.html %}
   <!--<div class="py-5">
     <div class="container">
       <div class="row">
@@ -48,7 +49,7 @@
               </div> <span class="text-success">-$5</span>
             </li>-->
             <br>
-            <span>Total (CAD)</span> <b>$Incorrect<!--sum(tickets.price) needs jinja braces--></b> 
+            <span>Total (CAD)</span> <b>${{total}}</b> 
           <!--<form class="card p-2 my-4">
             <div class="input-group">
               <input type="text" class="form-control" placeholder="Promo code">
@@ -96,7 +97,7 @@
                 <div class="invalid-feedback"> Please select a valid country. </div>-->
               </div>
               <div class="col-md-4 mb-3"> <label for="state">Province</label> <select class="custom-select d-block w-100" id="state" required="">
-                  <option value="">Choose...</option>
+                  <option value="">British </option>
                   <option value="California">California</option>
                 </select>
                 <div class="invalid-feedback"> Please provide a valid state. </div>

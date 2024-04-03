@@ -159,9 +159,11 @@ def checkout():
     ticketQuery = {"event_id": event_id, "user_id": ""}
     ticketQuery = mongo.db.Ticket.find(ticketQuery)
     tickets = []
+    total = 0
     for t in ticketQuery:
          tickets.append({"price":t['price'], "seat_number":t['seat_number'], "event_id":t['event_id'], "user_id":t['user_id']})
-    return render_template('checkout.html', tickets=tickets, count=len(tickets))
+         total += t['price']
+    return render_template('checkout.html', tickets=tickets, total=total)
 
 @app.route('/')
 
