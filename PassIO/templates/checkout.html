@@ -53,7 +53,9 @@
           </form>-->
         </div>
         <div class="col-md-8 order-md-1">
+        {{count}}
         {% for ticket in tickets %}
+        <h2>{{ticket.seat_number}}
           <div class="ticket">
             <h6 class="my-0"><b>Seat Number: {{ticket.seat_number}}</b></h6> 
             <small class="text-muted">Brief description</small>

@@ -161,11 +161,11 @@ def checkout():
     event_id = request.args.get('event_id')
     event_id = ObjectId(event_id)
     ticketQuery = {"event_id": event_id, "user_id": ""}
-    tickets = mongo.db.Ticket.find(ticketQuery)
-    # tickets = []
-    # for t in tickets_DB:
-    #     tickets.append({"price":t['price'], "seat_number":t['seat_number'], "event_id":t['event_id'], "user_id":t['user_id']})
-    return render_template('checkout.html', tickets=tickets)
+    ticketQuery = mongo.db.Ticket.find(ticketQuery)
+    tickets = []
+    for t in ticketQuery:
+         tickets.append({"price":t['price'], "seat_number":t['seat_number'], "event_id":t['event_id'], "user_id":t['user_id']})
+    return render_template('checkout.html', tickets=tickets, count=len(tickets))
 
 
 @app.route('/admin')
