@@ -159,7 +159,7 @@ def register():
 @app.route('/checkout')
 def checkout():
     event_id = request.args.get('event_id')
-    #eventID = ObjectId(eventID)
+    event_id = ObjectId(event_id)
     ticketQuery = {"event_id": event_id, "user_id": ""}
     tickets = mongo.db.Ticket.find(ticketQuery)
     # tickets = []
