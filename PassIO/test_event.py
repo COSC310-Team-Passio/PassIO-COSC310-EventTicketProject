@@ -33,7 +33,7 @@ class TestEventsSubmit(unittest.TestCase):
             self.assertEqual(response.status_code, 200)  # this is referring to the HTTP status code (404 is one we see all the time). code of 200 just means that the request was successful)
            #mock_db.Event.insert_one is using the mock db object to run the Event.insert_one function
            #".assert_called_once_with" is from the unittest.mock library
-            #overall this makes sure that this is only run once and runs with these specific arguments. 
+            #overall this makes sure that this is only run once and runs with these specific arguments.
             mock_db.Event.insert_one.assert_called_once_with({'name': 'Test Event',
                                                               'location': 'Test Location',
                                                               'description': 'Test Description',
