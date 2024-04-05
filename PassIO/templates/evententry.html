@@ -22,10 +22,10 @@
   <!-- Navbar -->
 {% include 'navbar.html' %}
   <!-- Cover -->
-  <div class="d-flex align-items-center py-5 cover section-fade-in-out" style="background-image: url(../static/assets/conference/cover.jpg);">
+  <div class="d-flex align-items-center cover section-fade-in-out" style="background-image: url(../static/assets/conference/cover.jpg);">
     <div class="container">
       <div class="row">
-        <div class="col-12 mt-5">
+        <div class="col-12 mt-3">
           <h1 class="display-4">Create Event</h1>
             <form action="/events_submit" method="post">
               <label for="e_name">Event name:</label><br>
@@ -44,7 +44,7 @@
       </div>
     </div>
   </div>
-
+{% include 'footer.html' %}
   <!-- JavaScript dependencies -->
   <script src="https://code.jquery.com/jquery-3.3.1.min.js"></script>
   <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.3/umd/popper.min.js" integrity="sha384-ZMP7rVo3mIykV+2+9J3UJ46jBk0WLaUAdn689aCwoqbBJiSnjAK/l8WvCWPIPm49" crossorigin="anonymous"></script>
