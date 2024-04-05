@@ -36,9 +36,9 @@
     <div class="row justify-content-center">
       <!-- User's profile information -->
       <div class="col-md-8 text-center">
-        <h2>{{ user.name | default('Name not provided') }}</h2>
-        <p>Email: {{ user.email | default('Email not provided') }}</p>
-        <p>Username: {{ user.username | default('Username not provided') }}</p>
+        <h2>{{ CurrentUser.name | default('Name not provided') }}</h2>
+        <p>Email: {{ CurrentUser.email | default('Email not provided') }}</p>
+        <p>Username: {{ CurrentUser.username | default('Username not provided') }}</p>
       </div>
     </div>
     <div class="row justify-content-center">
@@ -46,17 +46,17 @@
         <form class="needs-validation" novalidate="" action="/update_profile" method="post">
           <div class="mb-3">
             <label for="name">Name</label>
-            <input type="text" class="form-control" id="name" name="name" value="{{ user.name | default('') }}" required>
+            <input type="text" class="form-control" id="name" name="name" value="{{ CurrentUser.name | default('') }}" required>
             <div class="invalid-feedback">Valid name is required.</div>
           </div>
           <div class="mb-3">
             <label for="email">Email</label>
-            <input type="email" class="form-control" id="email" name="email" value="{{ user.email | default('') }}" required>
+            <input type="email" class="form-control" id="email" name="email" value="{{ CurrentUser.email | default('') }}" required>
             <div class="invalid-feedback">Please enter a valid email address.</div>
           </div>
           <div class="mb-3">
             <label for="username">Username</label>
-            <input type="text" class="form-control" id="username" name="username" value="{{ user.username | default('') }}" required>
+            <input type="text" class="form-control" id="username" name="username" value="{{ CurrentUser.username | default('') }}" required>
             <div class="invalid-feedback">Your username is required.</div>
           </div>
             <button class="btn btn-primary btn-lg btn-block" type="submit">Update Profile</button>

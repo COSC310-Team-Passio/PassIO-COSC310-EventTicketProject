@@ -131,7 +131,9 @@ def register():
     password = request.form.get("rpassword")
     haKey = request.form.get("rhostadminkey")
     regSuccess = None
-    
+    global CurrentUser
+    CurrentUser = None
+
     if mongo.db.Users.find_one({"email": email}):
         regSuccess = False
         print("user already exists, invalid email")
@@ -140,17 +142,20 @@ def register():
             print("handle giving user admin privileges")
             mongo.db.Users.insert_one({"email": email, "name": name, "password": password, "special key": haKey})
             regSuccess = True
+            CurrentUser = Admin(name, email, haKey)
         elif mongo.db.TestAdminKey.find_one({"host key:": haKey}):
             print("handle giving appropriate host privileges and add")
             mongo.db.Users.insert_one({"email": email, "name": name, "password": password, "special key": haKey})
             regSuccess = True
+            CurrentUser = Host(name, email, haKey, ["dummy", "data", "for now"])
         else:
             haKey = ""
             mongo.db.Users.insert_one({"email": email, "name": name, "password": password, "special key": haKey})
             regSuccess = True
+            CurrentUser = Attendee(name, email)
             
     # Probably will go back to the home page and give a little "successfully registered/logged in instead"
-    return render_template('loginandregister.html', regSuccess=regSuccess)
+    return render_template('customerprofile.html', regSuccess=regSuccess)
 
 
 @app.route('/checkout')
