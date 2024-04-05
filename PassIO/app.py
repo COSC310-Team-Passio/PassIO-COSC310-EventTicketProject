@@ -220,19 +220,15 @@ def customerprofile():
 def update_profile():
     current_user_email = CurrentUser.email
 
-    first_name = request.form.get('firstName')
-    last_name = request.form.get('lastName')
+    name = request.form.get('name')
     email = request.form.get('email')
     username = request.form.get('username')
-    address = request.form.get('address')
 
     update = {
         '$set': {
-            'firstName': first_name,
-            'lastName': last_name,
+            'name': name,
             'email': email,
-            'username': username,
-            'address': address
+            'username': username
         }
     }
     if email and email != current_user_email:
@@ -240,7 +236,7 @@ def update_profile():
 
     mongo.db.Users.update_one({'email': current_user_email}, update)
 
-    return redirect('/profile')
+    return redirect('/customerprofile')
 
 @app.route('/logout', methods=['GET', 'POST'])
 def logout():
