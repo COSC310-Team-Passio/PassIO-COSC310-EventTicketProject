@@ -64,45 +64,23 @@
     </div>
   </div>
 </div>
-      <!-- Upcoming Events Section -->
-    <div class="py-2">
-        <div class="container">
-            <div class="row">
-                <div class="col-md-12">
-                    <h3>Upcoming Events</h3>
-                    <!-- fake event, replace with real ones later -->
-                    <div class="card mb-3">
-                        <div class="row no-gutters">
-                            <div class="col-md-8">
-                                <div class="card-body">
-                                    <h5 class="card-title">Event Name Goes Here</h5>
-                                    <p class="card-text">You're going to some super awesome super fun events and the info goes here</p>
-                                    <p class="card-text"><small class="text-muted">Event Date: 2024-03-30</small></p>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </div>
-    </div>
     <!-- Unapproved Events Section -->
     {% if CurrentUser.special_key == "admin" %}
     <div class="py-2">
       <div class="container">
-        <div class="row">
+        <div class="row mt-3">
           <div class="col-md-12">
             <h3>Unapproved Events</h3>
             {% for event in unapproved_events %}
               <div class="card mb-3">
                 <div class="row no-gutters">
-                  <div class="col-md-8">
-                    <div class="card-body">
+                  <div class="col align-items-center">
+                    <div class="card-body align-items-center">
                       <h5 class="card-title">{{ event.name }}</h5>
                       <p class="card-text">{{ event.description }}</p>
                       <form action="/approve_event" method="post">
                         <input type="hidden" name="event_id" value="{{ event._id }}">
-                        <button type="submit" class="btn btn-success">Approve</button>
+                        <button type="submit" class="btn btn-primary">Approve</button>
                       </form>
                     </div>
                   </div>
@@ -115,7 +93,7 @@
     </div>
     {% endif %}
 
-<div class="container text-center mt-4">
+<div class="container text-center mt-3">
     <a href="/logout" class="btn btn-primary">Sign Out</a>
 </div>
   {% include 'footer.html' %}

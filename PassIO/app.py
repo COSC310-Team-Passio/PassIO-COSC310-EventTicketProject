@@ -154,26 +154,21 @@ def search():
     return render_template('search.html')
 
 
-#@app.route('/customerprofile')
-#def customerprofile():
-#    if CurrentUser is not None:
-#        # Assuming CurrentUser.email is the email of the logged-in user
-#        user_info = mongo.db.Users.find_one({"email": CurrentUser.email})
-#        if user_info.get("special key") == admin:
-#            unapproved_events = mongo.db.Event.find({"verified": "false"})
-#            print(list(unapproved_events))  # Debug print to see what the query returns
-#            return render_template('customerprofile.html', user=CurrentUser, unapproved_events=unapproved_events)
-#        elif user_info:
-#            # Pass the user_info to the template
-#            return render_template('customerprofile.html', user=user_info)
-#        else:
-#            flash("User information not found.", "error")
-#            # User info not found, handle accordingly (e.g., redirect or show an error message)
-#            return render_template(url_for('loginandregister'), error="User information not found.")
-#    else:
-#        flash("You must be logged in to view this page.", "info")
-#        # No user is logged in, redirect to login page
-#        return redirect(url_for('loginRegister'))
+@app.route('/customerprofile')
+def customerprofile():
+    if CurrentUser is not None:
+        user_info = mongo.db.Users.find_one({"email": CurrentUser.email})
+        if user_info.get("special key") == "admin":
+            unapproved_events = mongo.db.Event.find({"verified": "false"})
+            return render_template('customerprofile.html', user=CurrentUser, unapproved_events=unapproved_events)
+        elif user_info:
+            return render_template('customerprofile.html', user=user_info)
+        else:
+            flash("User information not found.", "error")
+            return render_template(url_for('loginandregister'), error="User information not found.")
+    else:
+        flash("You must be logged in to view this page.", "info")
+        return redirect(url_for('loginRegister'))
 
 
 @app.route('/update_profile', methods=['POST'])
@@ -225,10 +220,10 @@ def approve_event():
         event_id = request.form.get('event_id')
         mongo.db.Event.update_one({'_id': ObjectId(event_id)}, {'$set': {'verified': 'verified'}})
         flash('Event approved successfully.', 'success')
+        return redirect(url_for('customerprofile'))
     else:
         flash('You do not have permission to perform this action.', 'error')
-
-    return render_template('customerprofile.html')
+        return redirect(url_for('customerprofile'))
 
 
 if __name__ == '__main__':
