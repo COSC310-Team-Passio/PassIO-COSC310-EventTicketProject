@@ -78,50 +78,29 @@ def loginRegister():
 def login():
     email = request.form.get('lemail')
     password = request.form.get('lpassword')
-    haKey = request.form.get('lhostadminkey')
-    
-    logSuccess = None
-    logIssue = None
-    
-    condition1 = mongo.db.Users.find_one({"email": email})
-    condition2 = mongo.db.Users.find_one({"email": email, "password": password})
-    condition3 = mongo.db.Users.find_one({"email": email, "password": password, "special key": haKey})
-    
-    global CurrentUser
-    CurrentUser = None
-    uName = condition3["name"]
-    logIssue = ""
-    
-    if condition3:
-        # Change these from the TestAdminKey to the actual collection that they are stored
-        if mongo.db.TestAdminKey.find_one({"host key": haKey}):
-            print("user is a host")
-            CurrentUser = Host(uName, email, haKey, ["dummy", "data", "for now"])
-        elif mongo.db.TestAdminKey.find_one({"admin key": haKey}):
-            print("user is an admin")
-            # Initialize global CurrentUser here
-            CurrentUser = Admin(uName, email, haKey)
-        else:
-            print("user is an attendee")
-            # Initialize global CurrentUser here
-            CurrentUser = Attendee(uName, email)
-        logSuccess = True
-        # Redirect to home page or dashboard after successful login
-        return redirect(url_for('customerprofile'))
 
-    elif condition2:
-        logSuccess = False
-        logIssue = "Incorrect host/admin key. Leave blank if you don't have one."
-    elif condition1:
-        logSuccess = False
-        logIssue = "Incorrect password"
+    found_user = mongo.db.Users.find_one({"email": email, "password": password})
+
+    if found_user:
+        # Basic user details
+        name = found_user.get("name", "User")
+        global CurrentUser
+
+        # Role-based access control
+        if found_user.get("special key") == "admin":
+            print("User is an admin")
+            CurrentUser = Admin(name, email)
+        elif found_user.get("special key") == "host":
+            print("User is a host")
+            CurrentUser = Host(name, email)
+        else:
+            print("User is an attendee")
+            CurrentUser = Attendee(name, email)
+
+        return redirect(url_for('customerprofile'))
     else:
-        logSuccess = False
-        logIssue = "No user found under: "+email
-    
-    # Probably will go back to the home page and give a little "successfully registered/logged in instead"
-    # Failed login would not change the page
-    return render_template(url_for('loginandregister'), loginStatus=uName, loginIssue=logIssue)
+        logIssue = "Incorrect email or password"
+        return render_template('loginandregister.html', loginIssue=logIssue)
 
 
 @app.route('/register', methods=["POST"])
