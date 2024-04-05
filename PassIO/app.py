@@ -2,7 +2,9 @@ import time
 import redis
 from flask import *
 from flask_pymongo import PyMongo
+from bson.objectid import *
 from user import *
+#from ticket import *
 
 app = Flask(__name__)
 app.config["MONGO_URI"] = ("mongodb+srv://passio:passio@passioatlas.foiwof6.mongodb.net/passio_db?retryWrites=true&w"
@@ -13,23 +15,31 @@ cache = redis.Redis(host='redis', port=6379)
 
 CurrentUser = None
 
-users = mongo.db.Users.find({})
-for user in users: 
-    print(user)
+#users = mongo.db.Users.find({})
+#for user in users: 
+#   print(user)
+#@app.route('/index')
+#def index():
+#   return render_template('index.html')
+#@app.route('/styleguide')
+#def styleguide():
+#   return render_template('styleguide.html')
 
-@app.route('/')
-def home():
+#@app.route('/')
+#def home():
     # mongo.db.host.insert_one({"name": "Venue for Ants", "address": "I know where you live"})
-    return render_template('index.html')
+#    return reroute()
 
 # @app.route('/index')
 # def index():
 #     return render_template('index.html')
-
+@app.route('/')
 @app.route('/events')
 def events():
-    return render_template('events.html')
+    all_events = mongo.db.Event.find()
+    return render_template('events.html', events=all_events) #pass all events into html to be used in for loop in html
 
+# USING TEST VARIABLES FOR TICKET CREATION WE SHOULD PROBABLY ADD OPTIONS FOR TICKET PRICE AND EVENT CAPACITY
 @app.route('/events_submit', methods = ["POST"]) #This is throwing an error currently
 def events_submit():
     name = request.form.get('e_name')
@@ -38,8 +48,18 @@ def events_submit():
     artist = request.form.get('e_artist')
     genre = request.form.get('e_genre')
     verified = request.form.get('e_verified')
-    mongo.db.Event.insert_one({'name': name, 'location': location, 'description': description, 'artist': artist, 'genre': genre, 'verified': verified})
+    tickets = mongo.db.Event.insert_one({'name': name, 'location': location, 'description': description, 
+                                         'artist': artist, 'genre': genre, 
+                                         'verified': verified})
+    generateTickets(tickets['event_id'], 2, 29.99)
     return render_template('evententry.html')
+
+def generateTickets(eventID, capacity:int, price:float):
+    tickets = []
+    for i in range(0, capacity):
+        tickets.append({"price": price, "user_id":"", "event_id": eventID, "seat_number":i})
+    mongo.db.Ticket.insert_many(tickets)
+    return
 
 @app.route('/events_entry')
 def events_entry():
@@ -49,14 +69,10 @@ def events_entry():
 def hostentry():
     return render_template('hostEntry.html')
 
-@app.route('/events_display', methods = ["GET"])
-def events_display():
-    all_events = mongo.db.Event.find()
-    return render_template('events.html', events=all_events) #pass all events into html to be used in for loop in html
-
 @app.route('/loginandregister')
 def loginRegister():
     return render_template('loginandregister.html')
+
 
 @app.route('/login', methods=["POST"])
 def login():
@@ -106,6 +122,7 @@ def login():
     # Failed login would not change the page
     return render_template('loginandregister.html', loginStatus=uName, loginIssue=logIssue)
 
+
 @app.route('/register', methods=["POST"])
 def register():
     email = request.form.get("remail")
@@ -134,9 +151,21 @@ def register():
     # Probably will go back to the home page and give a little "successfully registered/logged in instead"
     return render_template('loginandregister.html', regSuccess=regSuccess)
 
+
 @app.route('/checkout')
 def checkout():
-    return render_template('checkout.html')
+    event_id = request.args.get('event_id')
+    event_id = ObjectId(event_id)
+    ticketQuery = {"event_id": event_id, "user_id": ""}
+    ticketQuery = mongo.db.Ticket.find(ticketQuery)
+    tickets = []
+    total = 0
+    for t in ticketQuery:
+         tickets.append({"price":t['price'], "seat_number":t['seat_number'], "event_id":t['event_id'], "user_id":t['user_id']})
+         total += t['price']
+    return render_template('checkout.html', tickets=tickets, total=total)
+
+@app.route('/')
 
 
 @app.route('/admin')
@@ -211,7 +240,6 @@ def update_profile():
         'email': email,
         'password': password
     })
-
 
     app.logger.debug(f"Debug line - info sent to db: {name}, {email}, {password}")
     app.logger.debug(f"Debug line - info returned from db: {user}")

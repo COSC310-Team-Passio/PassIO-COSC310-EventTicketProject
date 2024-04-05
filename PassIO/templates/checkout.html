@@ -7,9 +7,9 @@
   <!-- PAGE settings -->
   <link rel="icon" href="https://templates.pingendo.com/assets/Pingendo_favicon.ico">
   <title>Checkout</title>
-  <meta name="description" content="Wireframe design of a checkout form by Pingendo">
-  <meta name="keywords" content="Pingendo bootstrap example template wireframe checkout form">
-  <meta name="author" content="Pingendo">
+  <meta name="description" content="Buy your tickets">
+  <meta name="keywords" content="PassIO checkout purchase">
+  <meta name="author" content="Team PassIO">
   <!-- CSS dependencies -->
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css" type="text/css">
   <link rel="stylesheet" href="../static/wireframe.css">
@@ -18,9 +18,11 @@
   <script src="../static/js/animate-in.js"></script>
   <script src="../static/js/smooth-scroll.js"></script>
 </head>
+
 <body>
-  {% include 'navbar.html' %}
-  <div class="py-5">
+{% include 'navbar.html' %}
+
+  <!--<div class="py-5">
     <div class="container">
       <div class="row">
         <div class="text-center col-md-7 mx-auto"> <i class="fa d-block fa-bullseye fa-5x mb-4 text-info"></i>
@@ -29,43 +31,34 @@
         </div>
       </div>
     </div>
-  </div>
+  </div>-->
   <div class="">
     <div class="container">
       <div class="row">
         <div class="col-md-4 order-md-2">
-          <h4 class="d-flex justify-content-between mb-3"> <span class="text-muted"><b>Your cart</b></span> <span class="badge badge-secondary badge-pill">3</span> </h4>
-          <ul class="list-group">
-            <li class="list-group-item d-flex justify-content-between">
-              <div>
-                <h6 class="my-0"><b>Product name</b></h6> <small class="text-muted">Brief description</small>
-              </div> <span class="text-muted">$12</span>
-            </li>
-            <li class="list-group-item d-flex justify-content-between">
-              <div>
-                <h6 class="my-0"><b>Second product</b></h6> <small class="text-muted">Brief description</small>
-              </div> <span class="text-muted">$8</span>
-            </li>
-            <li class="list-group-item d-flex justify-content-between">
-              <div>
-                <h6 class="my-0"><b>Third item</b></h6> <small class="text-muted">Brief description</small>
-              </div> <span class="text-muted">$5</span>
-            </li>
-            <li class="list-group-item d-flex justify-content-between bg-light">
+          <h4 class="d-flex justify-content-between mb-3"> <span class="text-muted"><b>Your cart</b></span> <span class="badge badge-secondary badge-pill">{{tickets.length}}</span> </h4>
+          {% for ticket in tickets %}
+          <div class="ticket">
+            <h6 class="my-0"><b>Seat Number: {{ticket.seat_number}}</b></h6> 
+            <!--<small class="text-muted">Brief description</small>-->
+          </div>
+          <span class="text-muted">${{ticket.price}}</span>
+          {% endfor %}
+            <!--<li class="list-group-item d-flex justify-content-between bg-light">
               <div class="text-success">
                 <h6 class="my-0"><b>Promo code</b></h6> <small>EXAMPLECODE</small>
               </div> <span class="text-success">-$5</span>
-            </li>
-            <li class="list-group-item d-flex justify-content-between"> <span>Total (USD)</span> <b>$20</b> </li>
-          </ul>
-          <form class="card p-2 my-4">
+            </li>-->
+            <br>
+            <span>Total (CAD)</span> <b>${{total}}</b> 
+          <!--<form class="card p-2 my-4">
             <div class="input-group">
               <input type="text" class="form-control" placeholder="Promo code">
               <div class="input-group-append">
                 <button type="submit" class="btn btn-secondary">Redeem</button>
               </div>
             </div>
-          </form>
+          </form>-->
         </div>
         <div class="col-md-8 order-md-1">
           <h4 class="mb-3"><b>Billing address</b></h4>
@@ -80,7 +73,7 @@
                 <div class="invalid-feedback"> Valid last name is required. </div>
               </div>
             </div>
-            <div class="mb-3"> <label for="username">Username</label>
+            <!--<div class="mb-3"> <label for="username">Username</label>
               <div class="input-group">
                 <div class="input-group-prepend"> <span class="input-group-text">@</span> </div>
                 <input type="text" class="form-control" id="username" placeholder="Username" required="">
@@ -90,7 +83,7 @@
             <div class="mb-3"> <label for="email">Email <span class="text-muted">(Optional)</span></label>
               <input type="email" class="form-control" id="email" placeholder="you@example.com">
               <div class="invalid-feedback"> Please enter a valid email address for shipping updates. </div>
-            </div>
+            </div>-->
             <div class="mb-3"> <label for="address">Address</label>
               <input type="text" class="form-control" id="address" placeholder="1234 Main St" required="">
               <div class="invalid-feedback"> Please enter your shipping address. </div>
@@ -98,15 +91,27 @@
             <div class="mb-3"> <label for="address2">Address 2 <span class="text-muted">(Optional)</span></label>
               <input type="text" class="form-control" id="address2" placeholder="Apartment or suite"> </div>
             <div class="row">
-              <div class="col-md-5 mb-3"> <label for="country">Country</label> <select class="custom-select d-block w-100" id="country" required="">
+              <div class="col-md-5 mb-3"> <!--<label for="country">Country</label> <select class="custom-select d-block w-100" id="country" required="">
                   <option value="">Choose...</option>
                   <option value="United States">United States</option>
                 </select>
-                <div class="invalid-feedback"> Please select a valid country. </div>
+                <div class="invalid-feedback"> Please select a valid country. </div>-->
               </div>
-              <div class="col-md-4 mb-3"> <label for="state">State</label> <select class="custom-select d-block w-100" id="state" required="">
-                  <option value="">Choose...</option>
-                  <option value="California">California</option>
+              <div class="col-md-4 mb-3"> <label for="state">Province</label> 
+                <select class="custom-select d-block w-100" id="state" required="">
+                  <option value="Alberta">Alberta</option>  
+                  <option value="British Colombia">British Colombia</option>
+                  <option value="Manitoba">Manitoba</option>
+                  <option value="New Brunswick">New Brunswick</option>
+                  <option value="Newfoundland and Labrador">Newfoundland and Labrador</option>
+                  <option value="Northwest Territory">Northwest Territory</option>
+                  <option value="Nova Scotia">Nova Scotia</option>
+                  <option value="Nunavut">Nunavut</option>
+                  <option value="Ontario">Ontario</option>
+                  <option value="Prince Edward Island">Prince Edward Island</option>
+                  <option value="Quebec">Quebec</option>
+                  <option value="Saskatchewan">Saskatchewan</option>
+                  <option value="Yukon">Yukon</option>
                 </select>
                 <div class="invalid-feedback"> Please provide a valid state. </div>
               </div>
@@ -116,7 +121,7 @@
               </div>
             </div>
             <hr class="mb-4">
-            <div class="custom-control custom-checkbox">
+            <!--<div class="custom-control custom-checkbox">
               <input type="checkbox" class="custom-control-input" id="same-address" value="on"> <label class="custom-control-label" for="same-address">Shipping address is the same as my billing address</label> </div>
             <div class="custom-control custom-checkbox">
               <input type="checkbox" class="custom-control-input" id="save-info" value="on"> <label class="custom-control-label" for="save-info">Save this information for next time</label> </div>
@@ -129,7 +134,8 @@
                 <input id="debit" name="paymentMethod" type="radio" class="custom-control-input" required="" value="on"> <label class="custom-control-label" for="debit">Debit card</label> </div>
               <div class="custom-control custom-radio">
                 <input id="paypal" name="paymentMethod" type="radio" class="custom-control-input" required="" value="on"> <label class="custom-control-label" for="paypal">Paypal</label> </div>
-            </div>
+            </div>-->
+            <h4 class="mb-3"><b>Credit Card Information</b></h4>
             <div class="row">
               <div class="col-md-6 mb-3"> <label for="cc-name">Name on card</label>
                 <input type="text" class="form-control" id="cc-name" placeholder="" required=""> <small class="text-muted">Full name as displayed on card</small>
@@ -161,8 +167,8 @@
     <div class="container">
       <div class="row">
         <div class="col-md-12 my-4">
-          <p class="mb-1">© 2017-2018 Company Name</p>
-          <ul class="list-inline">
+          <p class="mb-1">PassIO Event Ticketing Solution</p>
+          <!--<ul class="list-inline">
             <li class="list-inline-item">
               <a href="#">Privacy</a>
             </li>
@@ -172,7 +178,7 @@
             <li class="list-inline-item">
               <a href="#">Support</a>
             </li>
-          </ul>
+          </ul>-->
         </div>
       </div>
     </div>

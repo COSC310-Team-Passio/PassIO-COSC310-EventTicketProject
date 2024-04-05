@@ -6,7 +6,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <!-- PAGE settings -->
   <link rel="icon" href="https://templates.pingendo.com/assets/Pingendo_favicon.ico">
-  <title>Conference Neon - Pingendo template</title>
+  <title>PassIO - View Events</title>
   <meta name="description" content="Free Bootstrap 4 Pingendo Neon template for unique events.">
   <meta name="keywords" content="Pingendo conference event neon free template bootstrap 4">
   <!-- CSS dependencies -->
@@ -37,11 +37,12 @@
             <p><strong>Description:</strong> {{ event.description }}</p>
             <p><strong>Artist:</strong> {{ event.artist }}</p>
             <p><strong>Genre:</strong> {{ event.genre }}</p>
+            <a href="/checkout?event_id={{event._id}}">Purchase Tickets<a>
+            <!-- Made this an <a> tag so that I can test with it, maybe we should implement this in the final instead of using a button
             <form action="/checkout?{{event._id}}">
               <p><button type="submit">Purchase Event</button></p>
             </form>
-
-
+            -->
         </div>
        </div>
       <hr>
