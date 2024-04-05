@@ -239,6 +239,8 @@ def update_profile():
     if email and email != current_user_email:
         CurrentUser.email = email
 
+    CurrentUser.name = name
+    CurrentUser.username = username
     mongo.db.Users.update_one({'email': current_user_email}, update)
 
     return redirect('/customerprofile')
