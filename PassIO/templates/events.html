@@ -22,10 +22,10 @@
   <!-- Navbar -->
   {% include 'navbar.html' %}
   <!-- Cover -->
-  <div class="d-flex align-items-center py-5 cover section-fade-in-out" style="background-image: url(../static/assets/conference/cover.jpg);">
+  <div class="d-flex align-items-center section-fade-in-out" style="background-image: url(../static/assets/conference/cover.jpg);">
     <div class="container">
       <div class="row">
-        <div class="col-12 mt-5">
+        <div class="col-12">
           <h1 class="display-4">Current Events</h1>
           <!-- Iterate over the events in the database using Jinja2 for loop. events was passed in as a variable. -->
     {% for event in events %}
