@@ -22,9 +22,9 @@ class User(object):
 
 # import venue, event
 class Admin(User):
-    def __init__(self, name, email, admin_key): # password, see the comment in the user class to see why this is here
+    def __init__(self, name, email, special_key): # password, see the comment in the user class to see why this is here
         super().__init__(name, email)
-        self.__admin_key = admin_key # Not removing admin key bc this is going to need to be verified for a lot of admin actions so faster to keep in ram of server
+        self.__special_key = special_key # Not removing admin key bc this is going to need to be verified for a lot of admin actions so faster to keep in ram of server
 
     def __verify_venue(venue):
         # TODO: complete function
@@ -35,9 +35,9 @@ class Admin(User):
         return True
 
 class Host(User):
-    def __init__(self, name, email, host_key, hosting_history): #, password 
+    def __init__(self, name, email, special_key, hosting_history): #, password
         super().__init__(name, email) # , password
-        self.__host_key = host_key
+        self.__special_key = special_key
         self.hosting_history = []
 
     def add_hosting_history(self, e):

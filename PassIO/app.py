@@ -15,28 +15,10 @@ cache = redis.Redis(host='redis', port=6379)
 
 CurrentUser = None
 
-#users = mongo.db.Users.find({})
-#for user in users: 
-#   print(user)
-#@app.route('/index')
-#def index():
-#   return render_template('index.html')
-#@app.route('/styleguide')
-#def styleguide():
-#   return render_template('styleguide.html')
-
-#@app.route('/')
-#def home():
-    # mongo.db.host.insert_one({"name": "Venue for Ants", "address": "I know where you live"})
-#    return reroute()
-
-# @app.route('/index')
-# def index():
-#     return render_template('index.html')
 @app.route('/')
 @app.route('/events')
 def events():
-    all_events = mongo.db.Event.find()
+    all_events = mongo.db.Event.find({"verified": "verified"})
     return render_template('events.html', events=all_events) #pass all events into html to be used in for loop in html
 
 # USING TEST VARIABLES FOR TICKET CREATION WE SHOULD PROBABLY ADD OPTIONS FOR TICKET PRICE AND EVENT CAPACITY
@@ -79,28 +61,24 @@ def login():
     email = request.form.get('lemail')
     password = request.form.get('lpassword')
 
-    found_user = mongo.db.Users.find_one({"email": email, "password": password})
-
-    if found_user:
-        # Basic user details
-        name = found_user.get("name", "User")
+    user = mongo.db.Users.find_one({"email": email, "password": password})
+    if user:
+        special_key = user.get("special key", "")
         global CurrentUser
-
-        # Role-based access control
-        if found_user.get("special key") == "admin":
-            print("User is an admin")
-            CurrentUser = Admin(name, email)
-        elif found_user.get("special key") == "host":
-            print("User is a host")
-            CurrentUser = Host(name, email)
+        if special_key == "admin":
+            CurrentUser = Admin(user["name"], email, special_key)
+            CurrentUser.special_key = special_key
+        elif special_key == "host":
+            CurrentUser = Host(user["name"], email, special_key, [])
+            CurrentUser.special_key = special_key
         else:
-            print("User is an attendee")
-            CurrentUser = Attendee(name, email)
+            CurrentUser = Attendee(user["name"], email)
 
+        # Redirect to a dashboard or profile page
         return redirect(url_for('customerprofile'))
     else:
-        logIssue = "Incorrect email or password"
-        return render_template('loginandregister.html', loginIssue=logIssue)
+        # Handle login failure
+        return render_template('loginandregister.html', error="Invalid credentials")
 
 
 @app.route('/register', methods=["POST"])
@@ -108,7 +86,6 @@ def register():
     email = request.form.get("remail")
     name = request.form.get("name")
     password = request.form.get("rpassword")
-    special_key = request.form.get("rhostadminkey")  # Could be admin or host key, or None
 
     if mongo.db.Users.find_one({"email": email}):
         # User already exists
@@ -119,18 +96,12 @@ def register():
             "email": email,
             "name": name,
             "password": password,
-            "special key": special_key  # This will be None if no key provided
+            "special key": ""
         }
         mongo.db.Users.insert_one(user_data)
         # Set the global CurrentUser based on the role derived from special_key
         global CurrentUser
-        if special_key == "admin":
-            CurrentUser = Admin(name, email, special_key)
-        elif special_key == "host":
-            CurrentUser = Host(name, email, special_key, [])
-        else:
-            # If no special key is provided, default to Attendee
-            CurrentUser = Attendee(name, email)
+        CurrentUser = Attendee(name, email)
 
         # Redirect to profile page with success message
         return redirect(url_for('customerprofile', regSuccess=True))
@@ -241,6 +212,21 @@ def host():
 @app.context_processor
 def inject_user():
     return dict(CurrentUser=CurrentUser)
+
+@app.route('/approve_event', methods=['POST'])
+def approve_event():
+    if CurrentUser and CurrentUser.speicalkey == "admin":
+        event_id = request.form.get('event_id')
+        mongo.db.Event.update_one(
+            {'_id': ObjectId(event_id)},
+            {'$set': {'verified': True}}
+        )
+        # Redirect to some page with a message that the event was approved
+        return redirect(url_for('admin_dashboard', message="Event approved."))
+    else:
+        # Redirect to login page or display an error if the user is not an admin
+        return redirect(url_for('loginRegister', error="You do not have permission to approve events."))
+
 
 if __name__ == '__main__':
     app.run(debug=True, host='0.0.0.0', port=5001)
