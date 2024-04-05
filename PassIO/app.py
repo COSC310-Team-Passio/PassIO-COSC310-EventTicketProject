@@ -154,6 +154,8 @@ def register():
 
 @app.route('/checkout')
 def checkout():
+    numTickets = request.args.get('numTickets')
+    numTickets = min(max(numTickets, 1), 5) # Acts as Math.clamp would in other languages
     event_id = request.args.get('event_id')
     event_id = ObjectId(event_id)
     ticketQuery = {"event_id": event_id, "user_id": ""}
