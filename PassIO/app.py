@@ -108,33 +108,32 @@ def register():
     email = request.form.get("remail")
     name = request.form.get("name")
     password = request.form.get("rpassword")
-    haKey = request.form.get("rhostadminkey")
-    regSuccess = None
-    global CurrentUser
-    CurrentUser = None
+    special_key = request.form.get("rhostadminkey")  # Could be admin or host key, or None
 
     if mongo.db.Users.find_one({"email": email}):
-        regSuccess = False
-        print("user already exists, invalid email")
+        # User already exists
+        return render_template('loginandregister.html', regIssue="User already exists with this email.")
     else:
-        if mongo.db.TestAdminKey.find_one({"admin key:": haKey}):
-            print("handle giving user admin privileges")
-            mongo.db.Users.insert_one({"email": email, "name": name, "password": password, "special key": haKey})
-            regSuccess = True
-            CurrentUser = Admin(name, email, haKey)
-        elif mongo.db.TestAdminKey.find_one({"host key:": haKey}):
-            print("handle giving appropriate host privileges and add")
-            mongo.db.Users.insert_one({"email": email, "name": name, "password": password, "special key": haKey})
-            regSuccess = True
-            CurrentUser = Host(name, email, haKey, ["dummy", "data", "for now"])
+        # Insert new user
+        user_data = {
+            "email": email,
+            "name": name,
+            "password": password,
+            "special key": special_key  # This will be None if no key provided
+        }
+        mongo.db.Users.insert_one(user_data)
+        # Set the global CurrentUser based on the role derived from special_key
+        global CurrentUser
+        if special_key == "admin":
+            CurrentUser = Admin(name, email, special_key)
+        elif special_key == "host":
+            CurrentUser = Host(name, email, special_key, [])
         else:
-            haKey = ""
-            mongo.db.Users.insert_one({"email": email, "name": name, "password": password, "special key": haKey})
-            regSuccess = True
+            # If no special key is provided, default to Attendee
             CurrentUser = Attendee(name, email)
-            
-    # Probably will go back to the home page and give a little "successfully registered/logged in instead"
-    return render_template('customerprofile.html', regSuccess=regSuccess)
+
+        # Redirect to profile page with success message
+        return redirect(url_for('customerprofile', regSuccess=True))
 
 
 @app.route('/checkout')
