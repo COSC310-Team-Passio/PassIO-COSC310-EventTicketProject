@@ -12,9 +12,9 @@
                 <li class="nav-item"> <a class="nav-link" href="/events_entry">Event Entry</a> </li>
             </ul>
             <ul class="navbar-nav">
-                {% if user %}
+                {% if CurrentUser %}
                 <!-- If user is logged in, show 'Account' -->
-                <li class="nav-item"> <a class="nav-link" href="/customerProfile">Account</a> </li>
+                <li class="nav-item"> <a class="nav-link" href="/customerprofile">Account</a> </li>
                 {% else %}
                 <!-- If no user is logged in, show 'Log in' -->
                 <li class="nav-item"> <a class="nav-link" href="/loginandregister">Log in</a> </li>
