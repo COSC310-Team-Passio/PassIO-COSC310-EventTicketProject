@@ -88,13 +88,14 @@ def login():
     condition3 = mongo.db.Users.find_one({"email": email, "password": password, "special key": haKey})
     
     global CurrentUser
+    CurrentUser = None
     uName = condition3["name"]
+    logIssue = ""
     
     if condition3:
         # Change these from the TestAdminKey to the actual collection that they are stored
         if mongo.db.TestAdminKey.find_one({"host key": haKey}):
             print("user is a host")
-            
             CurrentUser = Host(uName, email, haKey, ["dummy", "data", "for now"])
         elif mongo.db.TestAdminKey.find_one({"admin key": haKey}):
             print("user is an admin")
@@ -104,13 +105,13 @@ def login():
             print("user is an attendee")
             # Initialize global CurrentUser here
             CurrentUser = Attendee(uName, email)
-            
         logSuccess = True
-        logIssue = ""
-        
+        # Redirect to home page or dashboard after successful login
+        return redirect(url_for('customerprofile'))
+
     elif condition2:
         logSuccess = False
-        logIssue = "Incorrect host/admin key. Leave blank if you don't have one"
+        logIssue = "Incorrect host/admin key. Leave blank if you don't have one."
     elif condition1:
         logSuccess = False
         logIssue = "Incorrect password"
@@ -120,7 +121,7 @@ def login():
     
     # Probably will go back to the home page and give a little "successfully registered/logged in instead"
     # Failed login would not change the page
-    return render_template('loginandregister.html', loginStatus=uName, loginIssue=logIssue)
+    return render_template(url_for('loginandregister'), loginStatus=uName, loginIssue=logIssue)
 
 
 @app.route('/register', methods=["POST"])
@@ -197,18 +198,20 @@ def search():
     return render_template('search.html')
 
 
-@app.route('/customerProfile')
+@app.route('/customerprofile')
 def customerprofile():
     if CurrentUser is not None:
         # Assuming CurrentUser.email is the email of the logged-in user
         user_info = mongo.db.Users.find_one({"email": CurrentUser.email})
         if user_info:
             # Pass the user_info to the template
-            return render_template('customerProfile.html', user=user_info)
+            return render_template('customerprofile.html', user=user_info)
         else:
+            flash("User information not found.", "error")
             # User info not found, handle accordingly (e.g., redirect or show an error message)
-            return render_template('customerProfile.html', error="User information not found.")
+            return render_template(url_for('loginandregister'), error="User information not found.")
     else:
+        flash("You must be logged in to view this page.", "info")
         # No user is logged in, redirect to login page
         return redirect(url_for('loginRegister'))
 
@@ -265,6 +268,10 @@ def host():
     for user in users: 
         app.logger.debug(user)
     return render_template('host.html')
+
+@app.context_processor
+def inject_user():
+    return dict(CurrentUser=CurrentUser)
 
 if __name__ == '__main__':
     app.run(debug=True)
