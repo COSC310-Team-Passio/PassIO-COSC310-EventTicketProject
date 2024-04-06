@@ -1,0 +1,59 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <!-- PAGE settings -->
+  <link rel="icon" href="../static/assets/conference/favicon.png">
+  <title>PassIO</title>
+  <meta name="description" content="Events available to purchase tickets for on PassIO">
+  <meta name="keywords" content="Events, purchase, ticket, PassIO">
+  <!-- CSS dependencies -->
+  <link rel="stylesheet" href="../static/neon.css">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css" type="text/css">
+  <!-- Script: Make my navbar transparent when the document is scrolled to top -->
+  <script src="../static/js/navbar-ontop.js"></script>
+  <!-- Script: Animated entrance -->
+  <script src="../static/js/animate-in.js"></script>
+</head>
+
+<body class="text-center">
+  {% include 'navbar.html' %}
+  <div class="container">
+    <h1 class="display-4 mt-3">Edit Event</h1>
+    <form action="../editevent" method="post">
+      <div class="mb-3">
+        <label for="eventName">Name</label>
+        <input type="text" class="form-control" id="eventName" name="name" value="{{ event.name }}" required>
+      </div>
+      <div class="mb-3">
+        <label for="eventLocation">Location</label>
+        <input type="text" class="form-control" id="eventLocation" name="location" value="{{ event.location }}" required>
+      </div>
+      <div class="mb-3">
+        <label for="eventArtist">Artist</label>
+        <input type="text" class="form-control" id="eventArtist" name="artist" value="{{ event.artist }}" required>
+      </div>
+      <div class="mb-3">
+        <label for="eventGenre">Genre</label>
+        <input type="text" class="form-control" id="eventGenre" name="genre" value="{{ event.genre }}" required>
+      </div>
+      <div class="mb-3">
+        <label for="eventDescription">Description</label>
+        <textarea class="form-control" id="eventDescription" name="description" required>{{ event.description }}</textarea>
+      </div>
+      <!-- Add more fields as necessary -->
+      <button type="submit" class="btn btn-primary">Update Event</button>
+    </form>
+  </div>
+  {% include 'footer.html' %}
+  <!-- JavaScript dependencies -->
+  <script src="https://code.jquery.com/jquery-3.3.1.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.3/umd/popper.min.js" integrity="sha384-ZMP7rVo3mIykV+2+9J3UJ46jBk0WLaUAdn689aCwoqbBJiSnjAK/l8WvCWPIPm49" crossorigin="anonymous"></script>
+  <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.1.3/js/bootstrap.min.js" integrity="sha384-ChfqqxuZUCnJSK3+MXmPNIyE6ZbWh2IMqE241rYiqJxyMiZ6OW/JmZQ5stwEULTy" crossorigin="anonymous"></script>
+  <!-- Script: Smooth scrolling between anchors in a same page -->
+  <script src="../static/js/smooth-scroll.js"></script>
+</body>
+
+</html>

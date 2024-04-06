@@ -26,29 +26,29 @@
   <div class="container">
     <div class="row">
       <div class="col-12 mt-3">
-        <h1 class="display-4">Create Event</h1>
+        <h1 class="display-4">Event Entry</h1>
           <form action="/events_submit" method="post" class="needs-validation" novalidate="">
             <div class="mb-3">
-              <label for="e_name">Event name:</label>
+              <label for="e_name">Name</label>
               <input type="text" class="form-control" id="e_name" name="e_name" required="">
             </div>
             <div class="mb-3">
-              <label for="e_location">Event Location:</label>
+              <label for="e_location">Location</label>
               <input type="text" class="form-control" id="e_location" name="e_location" required="">
             </div>
             <div class="mb-3">
-              <label for="e_genre">Event Genre:</label>
-              <input type="text" class="form-control" id="e_genre" name="e_genre" required="">
-            </div>
-            <div class="mb-3">
-              <label for="e_artist">Event Artist:</label>
+              <label for="e_artist">Artist</label>
               <input type="text" class="form-control" id="e_artist" name="e_artist" required="">
             </div>
             <div class="mb-3">
-              <label for="e_description">Event Description:</label>
+              <label for="e_genre">Genre</label>
+              <input type="text" class="form-control" id="e_genre" name="e_genre" required="">
+            </div>
+            <div class="mb-3">
+              <label for="e_description">Description</label>
               <textarea class="form-control" id="e_description" name="e_description" required=""></textarea>
             </div>
-            <button type="submit" class="btn btn-primary btn-lg btn-block">Submit</button>
+            <button type="submit" class="btn btn-primary">Submit</button>
           </form>
       </div>
     </div>

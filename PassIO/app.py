@@ -54,6 +54,14 @@ def hostentry():
 @app.route('/loginandregister')
 def loginRegister():
     return render_template('loginandregister.html')
+@app.route('/eventapproval')
+def eventapproval():
+    unapproved_events = mongo.db.Event.find({"verified": "false"})
+    return render_template('eventapproval.html',user=CurrentUser, unapproved_events=unapproved_events)
+@app.route('/editevent')
+def editevent():
+    event = mongo.db.Event.find({"verified": "verified"})
+    return render_template('editevent.html',user=CurrentUser, event=event)
 
 
 @app.route('/login', methods=["POST"])
@@ -220,7 +228,7 @@ def approve_event():
         event_id = request.form.get('event_id')
         mongo.db.Event.update_one({'_id': ObjectId(event_id)}, {'$set': {'verified': 'verified'}})
         flash('Event approved successfully.', 'success')
-        return redirect(url_for('customerprofile'))
+        return redirect(url_for('eventapproval'))
     else:
         flash('You do not have permission to perform this action.', 'error')
         return redirect(url_for('customerprofile'))
