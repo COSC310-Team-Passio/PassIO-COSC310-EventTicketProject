@@ -171,9 +171,20 @@ def checkout():
             break
     return render_template('checkout.html', tickets=tickets, total=total, event_id=event_id, numTickets=numTickets)
 
-@app.route('/purchase')
+@app.route('/purchase', methods=["POST"])
 def purchase():
-    print("")
+    fName = request.args.get(""); lName = request.args.get("")
+    address1 = request.args.get(""); address2 = request.args.get("") 
+    province = request.args.get(""); postalCode = request.args.get("")
+    
+    ccName = request.args.get(""); ccNum = request.args.get("")
+    ccExpiration = request.args.get(""); ccCVV = request.args.get("")
+    # Process valid card details but like we're really just checking the card number
+    #TODO
+    #if ccNum is valid
+    #   return(purchase_success.html)
+    #else
+    #   return(purchase_failure.html)
 
 @app.route('/admin')
 def admin():
