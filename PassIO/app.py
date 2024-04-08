@@ -174,7 +174,7 @@ def checkout():
             total += t['price']
         except IndexError:
             break
-    session['tickets'] = tickets
+    session['t'] = tickets
     return render_template('checkout.html', tickets=tickets, total=total, event_id=event_id, numTickets=numTickets)
 
 @app.route('/purchase', methods=["POST"])
@@ -187,7 +187,10 @@ def purchase():
     ccName = request.args.get(""); ccNum = request.args.get("cc-number")
     ccExpiration = request.args.get(""); ccCVV = request.args.get("")
     
-    tickets = session.pop('tickets')    
+    tickets = session.pop('t', None)
+    if tickets is None:
+        print("u suck")
+        # Go back to events? idk    
     # Process valid card details but like we're really just checking the card number
     #TODO 
     #if ccNum is valid # The credit card checking algorithm probably needs its own function, and I don't want to go find out what it is right now and it also doesn't matter as much as the rest of this loop
