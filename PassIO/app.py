@@ -32,7 +32,8 @@ def events_submit():
     genre = request.form.get('e_genre')
     tickets = mongo.db.Event.insert_one({'name': name, 'location': location, 'description': description, 
                                          'artist': artist, 'genre': genre, 
-                                         'verified': "false"})
+                                         'verified': "false", 'cancelled': False, 
+                                         'host': mongo.db.Users.find_one({"email": CurrentUser.email})})
     #generateTickets(tickets['event_id'], 2, 29.99)  -- use this line after the event has been approved
     return render_template('evententry.html')
 
@@ -62,6 +63,10 @@ def eventapproval():
 def editevent():
     event = mongo.db.Event.find({"verified": "verified"})
     return render_template('editevent.html',user=CurrentUser, event=event)
+@app.route('/hostEvents')
+def hostEvents():
+    host_events = mongo.db.Event.find({'host': mongo.db.Users.find_one({"email": CurrentUser.email})})
+    return render_template('hostEvents.html', user=CurrentUser, host_events=host_events)
 
 
 @app.route('/login', methods=["POST"])
@@ -229,6 +234,17 @@ def approve_event():
         mongo.db.Event.update_one({'_id': ObjectId(event_id)}, {'$set': {'verified': 'verified'}})
         flash('Event approved successfully.', 'success')
         return redirect(url_for('eventapproval'))
+    else:
+        flash('You do not have permission to perform this action.', 'error')
+        return redirect(url_for('customerprofile'))
+
+@app.route('/cancel_event', methods=['POST'])
+def cancel_event():
+    if CurrentUser is not None and CurrentUser.special_key == "host":
+        event_id = request.form.get('event_id')
+        mongo.db.Event.update_one({'_id': ObjectId(event_id)}, {'$set': {'cancelled': True}})
+        flash('Event cancelled successfully.', 'success')
+        return redirect(url_for('hostEvents'))
     else:
         flash('You do not have permission to perform this action.', 'error')
         return redirect(url_for('customerprofile'))
