@@ -170,7 +170,7 @@ def checkout():
     for i in range(0, numTickets):
         try:
             t = ticketQuery[i]
-            tickets.append({"_id":t['_id'], "price":t['price'], "seat_number":t['seat_number'], "event_id":t['event_id'], "user_id":t['user_id']})
+            tickets.append({"_id":str(t['_id']), "price":t['price'], "seat_number":t['seat_number'], "event_id":t['event_id'], "user_id":t['user_id']})
             total += t['price']
         except IndexError:
             break
@@ -196,7 +196,7 @@ def purchase():
     #if ccNum is valid # The credit card checking algorithm probably needs its own function, and I don't want to go find out what it is right now and it also doesn't matter as much as the rest of this loop
     if True:
         for t in tickets:# This line needs testing but it should in theory work
-            mongo.db.Ticket.find_one_and_update({'_id':t['_id']}, {"_id":t['_id'], "price":t['price'], "seat_number":t['seat_number'], "event_id":t['event_id'], "user_id":mongo.db.User.find_one({"email":CurrentUser.email}['_id'])})
+            mongo.db.Ticket.find_one_and_update({'_id':ObjectId(t['_id'])}, {"_id":ObjectId(t['_id']), "price":t['price'], "seat_number":t['seat_number'], "event_id":t['event_id'], "user_id":mongo.db.User.find_one({"email":CurrentUser.email}['_id'])})
             return('purchase_success.html')
     else:
         return(purchase_failure.html)
