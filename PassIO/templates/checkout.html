@@ -44,7 +44,8 @@
           </div>
           <span class="text-muted">${{ticket.price}}</span>
           {% endfor %}
-          <a href="/checkout?event_id={{event_id}}&amp;numTickets={{numTickets-1}}"> - 1<a>
+          <br>
+          <a href="/checkout?event_id={{event_id}}&amp;numTickets={{numTickets - 1}}"> -1 Ticket<a>&nbsp;&nbsp;<a href="/checkout?event_id={{event_id}}&amp;numTickets={{numTickets + 1}}"> +1 Ticket<a>
             <!--<li class="list-group-item d-flex justify-content-between bg-light">
               <div class="text-success">
                 <h6 class="my-0"><b>Promo code</b></h6> <small>EXAMPLECODE</small>

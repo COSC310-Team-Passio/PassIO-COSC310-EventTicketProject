@@ -169,7 +169,7 @@ def checkout():
             total += t['price']
         except IndexError:
             break
-    return render_template('checkout.html', tickets=tickets, total=total, numTickets=numTickets, event_id=event_id)
+    return render_template('checkout.html', tickets=tickets, total=total, event_id=event_id, numTickets=numTickets)
 
 @app.route('/purchase')
 def purchase():
