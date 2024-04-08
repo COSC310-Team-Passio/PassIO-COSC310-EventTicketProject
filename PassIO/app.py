@@ -162,13 +162,18 @@ def checkout():
     ticketQuery = mongo.db.Ticket.find(ticketQuery)
     tickets = []
     total = 0
-    for t in ticketQuery:
-         tickets.append({"price":t['price'], "seat_number":t['seat_number'], "event_id":t['event_id'], "user_id":t['user_id']})
-         total += t['price']
-    return render_template('checkout.html', tickets=tickets, total=total)
+    for i in range(0, numTickets):
+        try:
+            t = ticketQuery[i]
+            tickets.append({"price":t['price'], "seat_number":t['seat_number'], "event_id":t['event_id'], "user_id":t['user_id']})
+            total += t['price']
+        except IndexError:
+            break
+    return render_template('checkout.html', tickets=tickets, total=total, numTickets=numTickets, event_id=event_id)
 
-@app.route('/')
-
+@app.route('/purchase')
+def purchase():
+    print("")
 
 @app.route('/admin')
 def admin():

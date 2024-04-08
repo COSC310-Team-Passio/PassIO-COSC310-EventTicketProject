@@ -36,7 +36,7 @@
     <div class="container">
       <div class="row">
         <div class="col-md-4 order-md-2">
-          <h4 class="d-flex justify-content-between mb-3"> <span class="text-muted"><b>Your cart</b></span> <span class="badge badge-secondary badge-pill">{{tickets.length}}</span> </h4>
+          <h4 class="d-flex justify-content-between mb-3"> <span class="text-muted"><b>Your cart</b></span> <span class="badge badge-secondary badge-pill">{{tickets|length}}</span> </h4>
           {% for ticket in tickets %}
           <div class="ticket">
             <h6 class="my-0"><b>Seat Number: {{ticket.seat_number}}</b></h6> 
@@ -44,6 +44,7 @@
           </div>
           <span class="text-muted">${{ticket.price}}</span>
           {% endfor %}
+          <a href="/checkout?event_id={{event_id}}&amp;numTickets={{numTickets-1}}"> - 1<a>
             <!--<li class="list-group-item d-flex justify-content-between bg-light">
               <div class="text-success">
                 <h6 class="my-0"><b>Promo code</b></h6> <small>EXAMPLECODE</small>
