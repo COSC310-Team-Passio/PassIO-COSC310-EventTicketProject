@@ -170,7 +170,7 @@ def checkout():
     for i in range(0, numTickets):
         try:
             t = ticketQuery[i]
-            tickets.append({"_id":str(t['_id']), "price":t['price'], "seat_number":t['seat_number'], "event_id":t['event_id'], "user_id":t['user_id']})
+            tickets.append({"_id":str(t['_id']), "price":t['price'], "seat_number":t['seat_number'], "event_id":str(t['event_id']), "user_id":None})
             total += t['price']
         except IndexError:
             break
@@ -194,10 +194,16 @@ def purchase():
     # Process valid card details but like we're really just checking the card number
     #TODO 
     #if ccNum is valid # The credit card checking algorithm probably needs its own function, and I don't want to go find out what it is right now and it also doesn't matter as much as the rest of this loop
-    if True:
+    if True: # the if ccNum is valid check would replace this if statement
+        if CurrentUser is None:
+            return redirect(url_for('events'))
+        targetUserId = mongo.db.Users.find_one({"email":CurrentUser.email})['_id']
         for t in tickets:# This line needs testing but it should in theory work
-            mongo.db.Ticket.find_one_and_update({'_id':ObjectId(t['_id'])}, {"_id":ObjectId(t['_id']), "price":t['price'], "seat_number":t['seat_number'], "event_id":t['event_id'], "user_id":mongo.db.User.find_one({"email":CurrentUser.email}['_id'])})
-            return('purchase_success.html')
+            mongo.db.Ticket.find_one_and_replace({'_id':ObjectId(t['_id'])}, 
+                                                {"_id":ObjectId(t['_id']), "price":t['price'],
+                                                 "seat_number":t['seat_number'], "event_id":ObjectId(t['event_id']), 
+                                                 "user_id":targetUserId})
+        return('purchase_success.html') #maybe we just go back to the main page with a purchase complete message instead
     else:
         return(purchase_failure.html)
 
