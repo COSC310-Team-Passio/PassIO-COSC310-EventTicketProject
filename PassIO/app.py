@@ -94,7 +94,6 @@ def login():
         # Change these from the TestAdminKey to the actual collection that they are stored
         if mongo.db.TestAdminKey.find_one({"host key": haKey}):
             print("user is a host")
-            
             CurrentUser = Host(uName, email, haKey, ["dummy", "data", "for now"])
         elif mongo.db.TestAdminKey.find_one({"admin key": haKey}):
             print("user is an admin")
@@ -120,7 +119,10 @@ def login():
     
     # Probably will go back to the home page and give a little "successfully registered/logged in instead"
     # Failed login would not change the page
-    return render_template('loginandregister.html', loginStatus=uName, loginIssue=logIssue)
+    if logSuccess:
+        return redirect(url_for('events'))
+    else:
+        return render_template('loginandregister.html', loginIssue=logIssue)
 
 
 @app.route('/register', methods=["POST"])
@@ -171,6 +173,7 @@ def checkout():
             total += t['price']
         except IndexError:
             break
+    session['tickets'] = tickets
     return render_template('checkout.html', tickets=tickets, total=total, event_id=event_id, numTickets=numTickets)
 
 @app.route('/purchase', methods=["POST"])
@@ -183,16 +186,16 @@ def purchase():
     ccName = request.args.get(""); ccNum = request.args.get("cc-number")
     ccExpiration = request.args.get(""); ccCVV = request.args.get("")
     
-    tickets = request.args.get("tickets")
+    tickets = session.pop('tickets')
     # Process valid card details but like we're really just checking the card number
     #TODO 
     #if ccNum is valid # The credit card checking algorithm probably needs its own function, and I don't want to go find out what it is right now and it also doesn't matter as much as the rest of this loop
-    #   for t in tickets:
-        # This line needs testing but it should in theory work
-    #   mongo.db.Ticket.find_one_and_update({'_id':t['_id']}, {"_id":t['_id'], "price":t['price'], "seat_number":t['seat_number'], "event_id":t['event_id'], "user_id":mongo.db.User.find_one({"email":CurrentUser.email}['_id'])})
-    #   return(purchase_success.html)
-    #else
-    #   return(purchase_failure.html)
+    if True:
+        for t in tickets:# This line needs testing but it should in theory work
+            mongo.db.Ticket.find_one_and_update({'_id':t['_id']}, {"_id":t['_id'], "price":t['price'], "seat_number":t['seat_number'], "event_id":t['event_id'], "user_id":mongo.db.User.find_one({"email":CurrentUser.email}['_id'])})
+            return('purchase_success.html')
+    else:
+        return(purchase_failure.html)
 
 @app.route('/admin')
 def admin():
