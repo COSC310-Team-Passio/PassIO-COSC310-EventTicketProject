@@ -189,21 +189,20 @@ def purchase():
     
     tickets = session.pop('t', None)
     if tickets is None:
-        print("u suck")
-        # Go back to events? idk    
+        print("no available tickets")
+        return redirect(url_for('events'))
+        # Go back to events? idk, the only time this would happen is if there were no valid tickets for the checkout function to list
     # Process valid card details but like we're really just checking the card number
     #TODO 
     #if ccNum is valid # The credit card checking algorithm probably needs its own function, and I don't want to go find out what it is right now and it also doesn't matter as much as the rest of this loop
     if True: # the if ccNum is valid check would replace this if statement
-        if CurrentUser is None:
-            return redirect(url_for('events'))
         targetUserId = mongo.db.Users.find_one({"email":CurrentUser.email})['_id']
-        for t in tickets:# This line needs testing but it should in theory work
+        for t in tickets:
             mongo.db.Ticket.find_one_and_replace({'_id':ObjectId(t['_id'])}, 
                                                 {"_id":ObjectId(t['_id']), "price":t['price'],
                                                  "seat_number":t['seat_number'], "event_id":ObjectId(t['event_id']), 
                                                  "user_id":targetUserId})
-        return('purchase_success.html') #maybe we just go back to the main page with a purchase complete message instead
+        return('purchase_success.html') # maybe we just go back to the main page with a purchase complete message instead
     else:
         return(purchase_failure.html)
 
