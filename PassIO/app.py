@@ -154,6 +154,8 @@ def register():
 
 @app.route('/checkout')
 def checkout():
+    if CurrentUser == None:
+        return render_template('loginandregister.html')
     numTickets = request.args.get('numTickets')
     numTickets = min(max(int(numTickets), 1), 5) # Acts as Math.clamp would in other languages
     event_id = request.args.get('event_id')
@@ -165,7 +167,7 @@ def checkout():
     for i in range(0, numTickets):
         try:
             t = ticketQuery[i]
-            tickets.append({"price":t['price'], "seat_number":t['seat_number'], "event_id":t['event_id'], "user_id":t['user_id']})
+            tickets.append({"_id":t['_id'], "price":t['price'], "seat_number":t['seat_number'], "event_id":t['event_id'], "user_id":t['user_id']})
             total += t['price']
         except IndexError:
             break
@@ -173,15 +175,21 @@ def checkout():
 
 @app.route('/purchase', methods=["POST"])
 def purchase():
+    #TODO put the form input names in, or don't maybe, we really only need the one
     fName = request.args.get(""); lName = request.args.get("")
     address1 = request.args.get(""); address2 = request.args.get("") 
     province = request.args.get(""); postalCode = request.args.get("")
     
-    ccName = request.args.get(""); ccNum = request.args.get("")
+    ccName = request.args.get(""); ccNum = request.args.get("cc-number")
     ccExpiration = request.args.get(""); ccCVV = request.args.get("")
+    
+    tickets = request.args.get("tickets")
     # Process valid card details but like we're really just checking the card number
-    #TODO
-    #if ccNum is valid
+    #TODO 
+    #if ccNum is valid # The credit card checking algorithm probably needs its own function, and I don't want to go find out what it is right now and it also doesn't matter as much as the rest of this loop
+    #   for t in tickets:
+        # This line needs testing but it should in theory work
+    #   mongo.db.Ticket.find_one_and_update({'_id':t['_id']}, {"_id":t['_id'], "price":t['price'], "seat_number":t['seat_number'], "event_id":t['event_id'], "user_id":mongo.db.User.find_one({"email":CurrentUser.email}['_id'])})
     #   return(purchase_success.html)
     #else
     #   return(purchase_failure.html)
