@@ -87,8 +87,15 @@ def login():
         # Redirect to a dashboard or profile page
         return redirect(url_for('customerprofile'))
     else:
-        # Handle login failure
-        return render_template('loginandregister.html', error="Invalid credentials")
+        logSuccess = False
+        logIssue = "No user found under: "+email
+    
+    # Probably will go back to the home page and give a little "successfully registered/logged in instead"
+    # Failed login would not change the page
+    if logSuccess:
+        return redirect(url_for('events'))
+    else:
+        return render_template('loginandregister.html', loginIssue=logIssue)
 
 
 @app.route('/register', methods=["POST"])
@@ -119,19 +126,54 @@ def register():
 
 @app.route('/checkout')
 def checkout():
+    if CurrentUser == None:
+        return render_template('loginandregister.html')
+    numTickets = request.args.get('numTickets')
+    numTickets = min(max(int(numTickets), 1), 5) # Acts as Math.clamp would in other languages
     event_id = request.args.get('event_id')
     event_id = ObjectId(event_id)
     ticketQuery = {"event_id": event_id, "user_id": ""}
     ticketQuery = mongo.db.Ticket.find(ticketQuery)
     tickets = []
     total = 0
-    for t in ticketQuery:
-         tickets.append({"price":t['price'], "seat_number":t['seat_number'], "event_id":t['event_id'], "user_id":t['user_id']})
-         total += t['price']
-    return render_template('checkout.html', tickets=tickets, total=total)
+    for i in range(0, numTickets):
+        try:
+            t = ticketQuery[i]
+            tickets.append({"_id":str(t['_id']), "price":t['price'], "seat_number":t['seat_number'], "event_id":str(t['event_id']), "user_id":None})
+            total += t['price']
+        except IndexError:
+            break
+    session['t'] = tickets
+    return render_template('checkout.html', tickets=tickets, total=total, event_id=event_id, numTickets=numTickets)
 
-@app.route('/')
-
+@app.route('/purchase', methods=["POST"])
+def purchase():
+    #TODO put the form input names in, or don't maybe, we really only need the one
+    fName = request.args.get(""); lName = request.args.get("")
+    address1 = request.args.get(""); address2 = request.args.get("") 
+    province = request.args.get(""); postalCode = request.args.get("")
+    
+    ccName = request.args.get(""); ccNum = request.args.get("cc-number")
+    ccExpiration = request.args.get(""); ccCVV = request.args.get("")
+    
+    tickets = session.pop('t', None)
+    if tickets is None:
+        print("no available tickets")
+        return redirect(url_for('events'))
+        # Go back to events? idk, the only time this would happen is if there were no valid tickets for the checkout function to list
+    # Process valid card details but like we're really just checking the card number
+    #TODO 
+    #if ccNum is valid # The credit card checking algorithm probably needs its own function, and I don't want to go find out what it is right now and it also doesn't matter as much as the rest of this loop
+    if True: # the if ccNum is valid check would replace this if statement
+        targetUserId = mongo.db.Users.find_one({"email":CurrentUser.email})['_id']
+        for t in tickets:
+            mongo.db.Ticket.find_one_and_replace({'_id':ObjectId(t['_id'])}, 
+                                                {"_id":ObjectId(t['_id']), "price":t['price'],
+                                                 "seat_number":t['seat_number'], "event_id":ObjectId(t['event_id']), 
+                                                 "user_id":targetUserId})
+        return('purchase_success.html') # maybe we just go back to the main page with a purchase complete message instead
+    else:
+        return(purchase_failure.html)
 
 @app.route('/admin')
 def admin():
