@@ -7,7 +7,7 @@ from user import *
 #from ticket import *
 
 app = Flask(__name__)
-app.secret_key = "testSecretKeySoIDon'tHaveToLooseMyMindTryingToRetainDataTypingViaHiddenFormFields"
+app.secret_key = '938472637656'
 app.config["MONGO_URI"] = ("mongodb+srv://passio:passio@passioatlas.foiwof6.mongodb.net/passio_db?retryWrites=true&w"
                            "=majority")
 mongo = PyMongo(app)
@@ -16,28 +16,10 @@ cache = redis.Redis(host='redis', port=6379)
 
 CurrentUser = None
 
-#users = mongo.db.Users.find({})
-#for user in users: 
-#   print(user)
-#@app.route('/index')
-#def index():
-#   return render_template('index.html')
-#@app.route('/styleguide')
-#def styleguide():
-#   return render_template('styleguide.html')
-
-#@app.route('/')
-#def home():
-    # mongo.db.host.insert_one({"name": "Venue for Ants", "address": "I know where you live"})
-#    return reroute()
-
-# @app.route('/index')
-# def index():
-#     return render_template('index.html')
 @app.route('/')
 @app.route('/events')
 def events():
-    all_events = mongo.db.Event.find()
+    all_events = mongo.db.Event.find({"verified": "verified"})
     return render_template('events.html', events=all_events) #pass all events into html to be used in for loop in html
 
 # USING TEST VARIABLES FOR TICKET CREATION WE SHOULD PROBABLY ADD OPTIONS FOR TICKET PRICE AND EVENT CAPACITY
@@ -48,11 +30,10 @@ def events_submit():
     description = request.form.get('e_description')
     artist = request.form.get('e_artist')
     genre = request.form.get('e_genre')
-    verified = request.form.get('e_verified')
     tickets = mongo.db.Event.insert_one({'name': name, 'location': location, 'description': description, 
                                          'artist': artist, 'genre': genre, 
-                                         'verified': verified})
-    generateTickets(tickets['event_id'], 2, 29.99)
+                                         'verified': "false"})
+    #generateTickets(tickets['event_id'], 2, 29.99)  -- use this line after the event has been approved
     return render_template('evententry.html')
 
 def generateTickets(eventID, capacity:int, price:float):
@@ -73,49 +54,38 @@ def hostentry():
 @app.route('/loginandregister')
 def loginRegister():
     return render_template('loginandregister.html')
+@app.route('/eventapproval')
+def eventapproval():
+    unapproved_events = mongo.db.Event.find({"verified": "false"})
+    return render_template('eventapproval.html',user=CurrentUser, unapproved_events=unapproved_events)
+@app.route('/editevent')
+def editevent():
+    event = mongo.db.Event.find({"verified": "verified"})
+    return render_template('editevent.html',user=CurrentUser, event=event)
 
 
 @app.route('/login', methods=["POST"])
 def login():
     email = request.form.get('lemail')
     password = request.form.get('lpassword')
-    haKey = request.form.get('lhostadminkey')
-    
-    logSuccess = None
-    logIssue = None
-    
-    condition1 = mongo.db.Users.find_one({"email": email})
-    condition2 = mongo.db.Users.find_one({"email": email, "password": password})
-    condition3 = mongo.db.Users.find_one({"email": email, "password": password, "special key": haKey})
-    
-    global CurrentUser
-    CurrentUser = None
-    uName = condition3["name"]
-    logIssue = ""
-    
-    if condition3:
-        # Change these from the TestAdminKey to the actual collection that they are stored
-        if mongo.db.TestAdminKey.find_one({"host key": haKey}):
-            print("user is a host")
-            CurrentUser = Host(uName, email, haKey, ["dummy", "data", "for now"])
-        elif mongo.db.TestAdminKey.find_one({"admin key": haKey}):
-            print("user is an admin")
-            # Initialize global CurrentUser here
-            CurrentUser = Admin(uName, email, haKey)
-        else:
-            print("user is an attendee")
-            # Initialize global CurrentUser here
-            CurrentUser = Attendee(uName, email)
-        logSuccess = True
-        # Redirect to home page or dashboard after successful login
-        return redirect(url_for('customerprofile'))
 
-    elif condition2:
-        logSuccess = False
-        logIssue = "Incorrect host/admin key. Leave blank if you don't have one."
-    elif condition1:
-        logSuccess = False
-        logIssue = "Incorrect password"
+    user = mongo.db.Users.find_one({"email": email, "password": password})
+    if user:
+        special_key = user.get("special key", "")
+        global CurrentUser
+        if special_key == "admin":
+            CurrentUser = Admin(user["name"], email, special_key)
+            unapproved_events = mongo.db.Event.find({"verified": "false"})
+            CurrentUser.special_key = special_key
+            return render_template('customerprofile.html', user=CurrentUser, unapproved_events=unapproved_events)
+        elif special_key == "host":
+            CurrentUser = Host(user["name"], email, special_key, [])
+            CurrentUser.special_key = special_key
+        else:
+            CurrentUser = Attendee(user["name"], email)
+
+        # Redirect to a dashboard or profile page
+        return redirect(url_for('customerprofile'))
     else:
         logSuccess = False
         logIssue = "No user found under: "+email
@@ -133,33 +103,25 @@ def register():
     email = request.form.get("remail")
     name = request.form.get("name")
     password = request.form.get("rpassword")
-    haKey = request.form.get("rhostadminkey")
-    regSuccess = None
-    global CurrentUser
-    CurrentUser = None
 
     if mongo.db.Users.find_one({"email": email}):
-        regSuccess = False
-        print("user already exists, invalid email")
+        # User already exists
+        return render_template('loginandregister.html', regIssue="User already exists with this email.")
     else:
-        if mongo.db.TestAdminKey.find_one({"admin key:": haKey}):
-            print("handle giving user admin privileges")
-            mongo.db.Users.insert_one({"email": email, "name": name, "password": password, "special key": haKey})
-            regSuccess = True
-            CurrentUser = Admin(name, email, haKey)
-        elif mongo.db.TestAdminKey.find_one({"host key:": haKey}):
-            print("handle giving appropriate host privileges and add")
-            mongo.db.Users.insert_one({"email": email, "name": name, "password": password, "special key": haKey})
-            regSuccess = True
-            CurrentUser = Host(name, email, haKey, ["dummy", "data", "for now"])
-        else:
-            haKey = ""
-            mongo.db.Users.insert_one({"email": email, "name": name, "password": password, "special key": haKey})
-            regSuccess = True
-            CurrentUser = Attendee(name, email)
-            
-    # Probably will go back to the home page and give a little "successfully registered/logged in instead"
-    return render_template('customerprofile.html', regSuccess=regSuccess)
+        # Insert new user
+        user_data = {
+            "email": email,
+            "name": name,
+            "password": password,
+            "special key": ""
+        }
+        mongo.db.Users.insert_one(user_data)
+        # Set the global CurrentUser based on the role derived from special_key
+        global CurrentUser
+        CurrentUser = Attendee(name, email)
+
+        # Redirect to profile page with success message
+        return redirect(url_for('customerprofile', regSuccess=True))
 
 
 @app.route('/checkout')
@@ -245,18 +207,17 @@ def search():
 @app.route('/customerprofile')
 def customerprofile():
     if CurrentUser is not None:
-        # Assuming CurrentUser.email is the email of the logged-in user
         user_info = mongo.db.Users.find_one({"email": CurrentUser.email})
-        if user_info:
-            # Pass the user_info to the template
+        if user_info.get("special key") == "admin":
+            unapproved_events = mongo.db.Event.find({"verified": "false"})
+            return render_template('customerprofile.html', user=CurrentUser, unapproved_events=unapproved_events)
+        elif user_info:
             return render_template('customerprofile.html', user=user_info)
         else:
             flash("User information not found.", "error")
-            # User info not found, handle accordingly (e.g., redirect or show an error message)
             return render_template(url_for('loginandregister'), error="User information not found.")
     else:
         flash("You must be logged in to view this page.", "info")
-        # No user is logged in, redirect to login page
         return redirect(url_for('loginRegister'))
 
 
@@ -302,6 +263,18 @@ def host():
 @app.context_processor
 def inject_user():
     return dict(CurrentUser=CurrentUser)
+
+@app.route('/approve_event', methods=['POST'])
+def approve_event():
+    if CurrentUser is not None and CurrentUser.special_key == "admin":
+        event_id = request.form.get('event_id')
+        mongo.db.Event.update_one({'_id': ObjectId(event_id)}, {'$set': {'verified': 'verified'}})
+        flash('Event approved successfully.', 'success')
+        return redirect(url_for('eventapproval'))
+    else:
+        flash('You do not have permission to perform this action.', 'error')
+        return redirect(url_for('customerprofile'))
+
 
 if __name__ == '__main__':
     app.run(debug=True, host='0.0.0.0', port=5001)
