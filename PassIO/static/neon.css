@@ -6482,3 +6482,46 @@ mark.secondary {
   .animate-in-right.out-of-viewport {
     opacity: 0;
     left: 5%; }
+
+/* Dropdown Styles */
+.dropdown-content {
+  display: none;
+  position: absolute;
+  background-color: grey; /* White background */
+  box-shadow: 0px 5px 10px rgba(0, 0, 0, 0.1); 
+  border-radius: 5px;
+  z-index: 1;
+  left: 50%;
+  transform: translateX(-50%);
+  list-style-type: none;
+  margin: 0;
+  padding: 0;
+}
+
+.dropdown-content a {
+  color: black;
+  padding: 10px 15px;
+  text-align: center;
+}
+
+.dropdown-content li {
+  margin: 5px 0 5px 0;
+  white-space: nowrap; 
+}
+
+.dropdown:hover .dropdown-content {
+  display: block;
+}
+
+.dropdown-content a:hover{
+  color: gold;
+}
+
+#navbar-sign-out {
+  color: #8B0000;
+}
+
+#navbar-sign-out:hover {
+  color: #DC143C;
+}
+
