@@ -17,6 +17,10 @@ cache = redis.Redis(host='redis', port=6379)
 CurrentUser = None
 
 @app.route('/')
+def home():
+    all_events = mongo.db.Event.find({"verified": "verified"})
+    return render_template('index.html', events=all_events)
+    
 @app.route('/events')
 def events():
     all_events = mongo.db.Event.find({"verified": "verified"})
@@ -66,6 +70,7 @@ def editevent():
 @app.route('/hostEvents')
 def hostEvents():
     host_events = mongo.db.Event.find({'host': mongo.db.Users.find_one({"email": CurrentUser.email})})
+    host_events = list(host_events)
     return render_template('hostEvents.html', user=CurrentUser, host_events=host_events)
 
 
@@ -148,7 +153,9 @@ def search():
     if request.method == 'POST':
         # Get the search term from search bar
         search_term = request.form['search_term'].strip() # Trim whitespaces
-
+        # Get the search date from date section
+        date_str = request.form['search_date']
+    
         # Build the query based on search term
         query = {
             "$or": [
@@ -156,15 +163,29 @@ def search():
                 { "location": { "$regex": f".*{search_term}.*", "$options": "i" } },
                 { "description": { "$regex": f".*{search_term}.*", "$options": "i" } },
                 { "artist": { "$regex": f".*{search_term}.*", "$options": "i" } },
-                { "genre": { "$regex": f".*{search_term}.*", "$options": "i" } } 
+                { "genre": { "$regex": f".*{search_term}.*", "$options": "i" } }
             ]
         }
+        
+        # If user selects a date
+        if date_str:
+            # Convert the date string (YYYY-MM-DD) to a datetime object
+            from datetime import datetime, timedelta
+            search_date = datetime.strptime(date_str, '%Y-%m-%d')
+        
+            query = {
+                "$and": [
+                    query,  
+                    { "date": {'$gte': search_date, '$lt': search_date + timedelta(days=1)}}
+                ]
+            }
+
         # Fetch results from db
         results = mongo.db.Event.find(query)
         
-        return render_template('events.html', events=results)
+        return render_template('index.html', events=results)
         
-    return render_template('search.html')
+    return render_template('index.html')
 
 
 @app.route('/customerprofile')

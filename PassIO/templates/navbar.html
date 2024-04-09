@@ -14,7 +14,6 @@
                 {% endif %}
                 {% if CurrentUser.special_key == 'host' %}
                 <li class="nav-item"> <a class="nav-link" href="/editevent">Edit Event</a> </li>
-                <li class="nav-item"> <a class="nav-link" href="/hostEvents">My Events</a> </li>
                 {% endif %}
                 {% if CurrentUser.special_key == 'admin' %}
                 <li class="nav-item"> <a class="nav-link" href="/eventapproval">Event Approval</a> </li>
@@ -24,22 +23,25 @@
                 {% if CurrentUser %}
                 <!-- If user is logged in, show 'Account' -->
                 <li class="nav-item dropdown">
-                    <a class="nav-link" href="/customerprofile">Account</a>
-                    <ul class="dropdown-content">
-                    {% if CurrentUser.special_key == 'host' %}
-                    <li><a href="#">Event History</a></li>
-                    <li><a href="#">Profile</a></li>
-                    {% elif not CurrentUser.special_key %}
-                    <li><a href="#">Purchase History</a></li>
-                    <li><a href="#">Profile</a></li>
-                    {% endif %}
-                    <li><a href="/logout" id="navbar-sign-out">Sign out</a></li>
-                </ul>
-            </li>
-            {% else %}
-            <!-- If no user is logged in, show 'Log in' -->
-            <li class="nav-item"> <a class="nav-link" href="/loginandregister">Log in</a> </li>
-            {% endif %}
+                    <a class="nav-link dropdown-toggle" href="#" id="navbarDropdownMenuLink" data-toggle="dropdown"
+                        aria-haspopup="true" aria-expanded="false">
+                        Account
+                    </a>
+                    <div class="dropdown-menu" aria-labelledby="navbarDropdownMenuLink">
+                        {% if CurrentUser.special_key == 'host' %}
+                        <a class="dropdown-item" href="/hostEvents">Event History</a>
+                        <a class="dropdown-item" href="/customerprofile">Profile</a>
+                        {% elif not CurrentUser.special_key %}
+                        <a class="dropdown-item" href="#">Purchase History</a>
+                        <a class="dropdown-item" href="/customerprofile">Profile</a>
+                        {% endif %}
+                        <a class="dropdown-item" href="/logout" id="navbar-sign-out">Sign out</a>
+                    </div>
+                </li>
+                {% else %}
+                <!-- If no user is logged in, show 'Log in' -->
+                <li class="nav-item"> <a class="nav-link" href="/loginandregister">Log in</a> </li>
+                {% endif %}
             </ul>
         </div>
     </div>
