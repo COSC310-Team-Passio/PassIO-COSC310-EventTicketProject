@@ -128,7 +128,7 @@ def register():
 def checkout():
     if CurrentUser == None:
         return render_template('loginandregister.html')
-    numTickets = request.args.get('numTickets')
+    numTickets = request.args.get('numTickets',0)
     numTickets = min(max(int(numTickets), 1), 5) # Acts as Math.clamp would in other languages
     event_id = request.args.get('event_id')
     event_id = ObjectId(event_id)
