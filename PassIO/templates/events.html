@@ -37,7 +37,7 @@
             <p><strong>Description:</strong> {{ event.description }}</p>
             <p><strong>Artist:</strong> {{ event.artist }}</p>
             <p><strong>Genre:</strong> {{ event.genre }}</p>
-            <a href="/checkout?event_id={{event._id}}">Purchase Tickets<a>
+            <a href="/checkout?event_id={{event._id}}&amp;numTickets=1">Purchase Tickets<a>
             <!-- Made this an <a> tag so that I can test with it, maybe we should implement this in the final instead of using a button
             <form action="/checkout?{{event._id}}">
               <p><button type="submit">Purchase Event</button></p>
