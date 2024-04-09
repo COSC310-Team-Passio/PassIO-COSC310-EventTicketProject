@@ -89,7 +89,9 @@ def login():
     condition3 = mongo.db.Users.find_one({"email": email, "password": password, "special key": haKey})
     
     global CurrentUser
+    CurrentUser = None
     uName = condition3["name"]
+    logIssue = ""
     
     if condition3:
         # Change these from the TestAdminKey to the actual collection that they are stored
@@ -104,13 +106,13 @@ def login():
             print("user is an attendee")
             # Initialize global CurrentUser here
             CurrentUser = Attendee(uName, email)
-            
         logSuccess = True
-        logIssue = ""
-        
+        # Redirect to home page or dashboard after successful login
+        return redirect(url_for('customerprofile'))
+
     elif condition2:
         logSuccess = False
-        logIssue = "Incorrect host/admin key. Leave blank if you don't have one"
+        logIssue = "Incorrect host/admin key. Leave blank if you don't have one."
     elif condition1:
         logSuccess = False
         logIssue = "Incorrect password"
@@ -133,7 +135,9 @@ def register():
     password = request.form.get("rpassword")
     haKey = request.form.get("rhostadminkey")
     regSuccess = None
-    
+    global CurrentUser
+    CurrentUser = None
+
     if mongo.db.Users.find_one({"email": email}):
         regSuccess = False
         print("user already exists, invalid email")
@@ -142,17 +146,20 @@ def register():
             print("handle giving user admin privileges")
             mongo.db.Users.insert_one({"email": email, "name": name, "password": password, "special key": haKey})
             regSuccess = True
+            CurrentUser = Admin(name, email, haKey)
         elif mongo.db.TestAdminKey.find_one({"host key:": haKey}):
             print("handle giving appropriate host privileges and add")
             mongo.db.Users.insert_one({"email": email, "name": name, "password": password, "special key": haKey})
             regSuccess = True
+            CurrentUser = Host(name, email, haKey, ["dummy", "data", "for now"])
         else:
             haKey = ""
             mongo.db.Users.insert_one({"email": email, "name": name, "password": password, "special key": haKey})
             regSuccess = True
+            CurrentUser = Attendee(name, email)
             
     # Probably will go back to the home page and give a little "successfully registered/logged in instead"
-    return render_template('loginandregister.html', regSuccess=regSuccess)
+    return render_template('customerprofile.html', regSuccess=regSuccess)
 
 
 @app.route('/checkout')
@@ -235,60 +242,48 @@ def search():
     return render_template('search.html')
 
 
-@app.route('/customerProfile')
+@app.route('/customerprofile')
 def customerprofile():
     if CurrentUser is not None:
         # Assuming CurrentUser.email is the email of the logged-in user
         user_info = mongo.db.Users.find_one({"email": CurrentUser.email})
         if user_info:
             # Pass the user_info to the template
-            return render_template('customerProfile.html', user=user_info)
+            return render_template('customerprofile.html', user=user_info)
         else:
+            flash("User information not found.", "error")
             # User info not found, handle accordingly (e.g., redirect or show an error message)
-            return render_template('customerProfile.html', error="User information not found.")
+            return render_template(url_for('loginandregister'), error="User information not found.")
     else:
+        flash("You must be logged in to view this page.", "info")
         # No user is logged in, redirect to login page
         return redirect(url_for('loginRegister'))
 
 
 @app.route('/update_profile', methods=['POST'])
 def update_profile():
-    # Get info from form
-    name = request.form.get('firstName')
+    current_user_email = CurrentUser.email
+
+    name = request.form.get('name')
     email = request.form.get('email')
-    password = request.form.get('password')
+    username = request.form.get('username')
 
-    print('debug line below')
-    print(name, email, password)
+    update = {
+        '$set': {
+            'name': name,
+            'email': email,
+            'username': username
+        }
+    }
+    if email and email != current_user_email:
+        CurrentUser.email = email
 
-    name = 'jared'
-    email = 'jared@jared.com'
-    password = 'password'
+    CurrentUser.name = name
+    CurrentUser.username = username
+    mongo.db.Users.update_one({'email': current_user_email}, update)
 
-    # Send data to db
-    mongo.db.Users.insert_one({
-        'name': name,
-        'email': email,
-        'password': password
-    })
+    return redirect('/customerprofile')
 
-    # Get data from db
-    user = mongo.db.Users.find_one({
-        'name': name,
-        'email': email,
-        'password': password
-    })
-
-    app.logger.debug(f"Debug line - info sent to db: {name}, {email}, {password}")
-    app.logger.debug(f"Debug line - info returned from db: {user}")
-
-    print('user below')
-    print(user)
-
-    # Flash a message containing user info
-    # flash(f"Profile Updated: {name}, {email}", 'info')
-
-    return redirect('/index')
 @app.route('/logout', methods=['GET', 'POST'])
 def logout():
     # Your logic to handle logout, e.g., clearing the CurrentUser or session
@@ -304,5 +299,9 @@ def host():
         app.logger.debug(user)
     return render_template('host.html')
 
+@app.context_processor
+def inject_user():
+    return dict(CurrentUser=CurrentUser)
+
 if __name__ == '__main__':
-    app.run(debug=True)
+    app.run(debug=True, host='0.0.0.0', port=5001)

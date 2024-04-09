@@ -1,26 +1,19 @@
 <!DOCTYPE html>
-<html>
-
+<html lang="en">
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
-  <!-- PAGE settings -->
-  <link rel="icon" href="https://templates.pingendo.com/assets/Pingendo_favicon.ico">
-  <title>Log In &amp; Registration</title>
-  <meta name="description" content="Hmmmmmmmmm">
-  <meta name="keywords" content="log in">
-  <!-- CSS dependencies -->
+  <link rel="icon" href="../static/assets/conference/favicon.png">
+  <title>Log In & Registration</title>
   <link rel="stylesheet" href="../static/neon.css">
-  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css" type="text/css">
-  <!-- Script: Make my navbar transparent when the document is scrolled to top -->
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
   <script src="../static/js/navbar-ontop.js"></script>
-  <!-- Script: Animated entrance -->
   <script src="../static/js/animate-in.js"></script>
 </head>
-  {% include 'navbar.html' %}
 <body class="text-center">
+  {% include 'navbar.html' %}
   <!-- Log in -->
-  <!--<div class="py-5" id="Log In">
+  <div class="py-5" id="Log In">
     <div class="container">
       <div class="row">
         <div class="col-12">
@@ -39,39 +32,40 @@
               <br>
               {{loginIssue}}
               <br>
-        <!--</div>
           </div>
         </div>
       </div>
-    </div>
-  </div>-->
-  <!-- Register -->
-  <!--<div class="py-5" id="Registration">
-    <div class="container">
-      <div class="row">
-        <div class="col-md-12">-->
-          <h1>No Account? Sign Up</h1>
+
+      <h1>No Account? Sign Up</h1>
+      <div class="row justify-content-center">
+        <div class="col-md-8">
           <form action="/register" method="post">
-            <label>Email address</label>
-            <input type="email" id="remail" name="remail" class="form-control" placeholder="Enter email" required="required">
-            <label>Name</label>
-            <input type="text" id="name" name="name" class="form-control" placeholder="Enter name" required="required">
-            <label>Password</label>
-            <input type="password" id="rpassword" name="rpassword"class="form-control" placeholder="Password" required="required">
-            <label>Admin / Host Key</label>
-            <input type="password" id="rhostadminkey" name="rhostadminkey" class="form-control" placeholder="Only for hosts and admins">
+            <div class="form-group">
+              <label>Email address</label>
+              <input type="email" id="remail" name="remail" class="form-control" placeholder="Enter email" required>
+            </div>
+            <div class="form-group">
+              <label>Name</label>
+              <input type="text" id="name" name="name" class="form-control" placeholder="Enter name" required>
+            </div>
+            <div class="form-group">
+              <label>Password</label>
+              <input type="password" id="rpassword" name="rpassword" class="form-control" placeholder="Password" required>
+            </div>
+            <div class="form-group">
+              <label>Admin / Host Key</label>
+              <input type="password" id="rhostadminkey" name="rhostadminkey" class="form-control" placeholder="Only for hosts and admins">
+            </div>
             <button type="submit" class="btn btn-primary">Submit</button>
           </form>
-        <!--</div>
+        </div>
       </div>
     </div>
-  </div>-->
-  <!-- JavaScript dependencies -->
+  </div>
+{% include 'footer.html' %}
   <script src="https://code.jquery.com/jquery-3.3.1.min.js"></script>
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.3/umd/popper.min.js" crossorigin="anonymous" integrity="sha384-ZMP7rVo3mIykV+2+9J3UJ46jBk0WLaUAdn689aCwoqbBJiSnjAK/l8WvCWPIPm49"></script>
-  <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.1.3/js/bootstrap.min.js" integrity="sha384-ChfqqxuZUCnJSK3+MXmPNIyE6ZbWh2IMqE241rYiqJxyMiZ6OW/JmZQ5stwEULTy" crossorigin="anonymous" style=""></script>
-  <!-- Script: Smooth scrolling between anchors in a same page -->
-  <script src="../static/js/smooth-scroll.js" style=""></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.3/umd/popper.min.js"></script>
+  <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.1.3/js/bootstrap.min.js"></script>
+  <script src="../static/js/smooth-scroll.js"></script>
 </body>
-
 </html>
