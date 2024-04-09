@@ -163,8 +163,16 @@ def search():
                 { "location": { "$regex": f".*{search_term}.*", "$options": "i" } },
                 { "description": { "$regex": f".*{search_term}.*", "$options": "i" } },
                 { "artist": { "$regex": f".*{search_term}.*", "$options": "i" } },
-                { "genre": { "$regex": f".*{search_term}.*", "$options": "i" } }
+                { "genre": { "$regex": f".*{search_term}.*", "$options": "i" } },
             ]
+        }
+        
+        # Mandate verified status
+        query = {
+                "$and": [
+                    query,  
+                    { "verified": "verified" }
+                ]
         }
         
         # If user selects a date
@@ -176,6 +184,7 @@ def search():
             query = {
                 "$and": [
                     query,  
+                    { "verified": "verified" },
                     { "date": {'$gte': search_date, '$lt': search_date + timedelta(days=1)}}
                 ]
             }
