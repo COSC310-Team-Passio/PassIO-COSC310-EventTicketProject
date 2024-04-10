@@ -48,6 +48,15 @@
               <label for="e_description">Description</label>
               <textarea class="form-control" id="e_description" name="e_description" required=""></textarea>
             </div>
+            <!-- New fields for event date and number of tickets -->
+            <div class="mb-3">
+              <label for="e_date">Event Date</label>
+              <input type="date" class="form-control" id="e_date" name="e_date" required="">
+            </div>
+            <div class="mb-3">
+              <label for="e_tickets">Number of Tickets</label>
+              <input type="number" class="form-control" id="e_tickets" name="e_tickets" min="1" required="">
+            </div>
             <button type="submit" class="btn btn-primary">Submit</button>
           </form>
       </div>
