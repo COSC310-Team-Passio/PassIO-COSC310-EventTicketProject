@@ -78,7 +78,10 @@ def update_event():
             'genre': request.form.get('genre'),
             'description': request.form.get('description'),
         }
-        mongo.db.Event.update_one({'_id': ObjectId(event_id)}, {'$set': updated_data})
+        mongo.db.Event.update_one(
+            {'_id': ObjectId(event_id)},
+            {'$set': {**updated_data, 'verified': 'false'}}
+        )
         flash('Event updated successfully.', 'success')
         return redirect(url_for('events'))
     flash('Failed to update event.', 'error')
