@@ -5,6 +5,7 @@ from flask_pymongo import PyMongo
 from bson.objectid import *
 from user import *
 #from ticket import *
+from datetime import datetime
 
 app = Flask(__name__)
 app.secret_key = '938472637656'
@@ -30,10 +31,20 @@ def events_submit():
     description = request.form.get('e_description')
     artist = request.form.get('e_artist')
     genre = request.form.get('e_genre')
-    tickets = mongo.db.Event.insert_one({'name': name, 'location': location, 'description': description, 
-                                         'artist': artist, 'genre': genre, 
-                                         'verified': "false"})
-    #generateTickets(tickets['event_id'], 2, 29.99)  -- use this line after the event has been approved
+    event_date_str = request.form.get('e_date')
+    event_date = datetime.strptime(event_date_str, '%Y-%m-%d') if event_date_str else None
+    num_tickets = int(request.form.get('e_tickets', 0))
+    mongo.db.Event.insert_one({
+        'name': name,
+        'location': location,
+        'description': description,
+        'artist': artist,
+        'genre': genre,
+        'event_date': event_date,  # Ensure your MongoDB is set to store dates correctly
+        'num_tickets': num_tickets,
+        'verified': 'false',
+        'cancelled': 'false'
+    })
     return render_template('evententry.html')
 
 def generateTickets(eventID, capacity:int, price:float):
@@ -152,23 +163,23 @@ def register():
 def checkout():
     if CurrentUser == None:
         return render_template('loginandregister.html')
-    numTickets = request.args.get('numTickets',0)
-    numTickets = min(max(int(numTickets), 1), 5) # Acts as Math.clamp would in other languages
+    num_tickets = request.args.get('num_tickets',0)
+    num_tickets = min(max(int(num_tickets), 1), 5) # Acts as Math.clamp would in other languages
     event_id = request.args.get('event_id')
     event_id = ObjectId(event_id)
-    ticketQuery = {"event_id": event_id, "user_id": ""}
-    ticketQuery = mongo.db.Ticket.find(ticketQuery)
+    ticket_query = {"event_id": event_id, "user_id": ""}
+    ticket_query = mongo.db.Ticket.find(ticket_query)
     tickets = []
     total = 0
-    for i in range(0, numTickets):
+    for i in range(0, num_tickets):
         try:
-            t = ticketQuery[i]
+            t = ticket_query[i]
             tickets.append({"_id":str(t['_id']), "price":t['price'], "seat_number":t['seat_number'], "event_id":str(t['event_id']), "user_id":None})
             total += t['price']
         except IndexError:
             break
     session['t'] = tickets
-    return render_template('checkout.html', tickets=tickets, total=total, event_id=event_id, numTickets=numTickets)
+    return render_template('checkout.html', tickets=tickets, total=total, event_id=event_id, numTickets=num_tickets)
 
 @app.route('/purchase', methods=["POST"])
 def purchase():
