@@ -60,8 +60,29 @@ def eventapproval():
     return render_template('eventapproval.html',user=CurrentUser, unapproved_events=unapproved_events)
 @app.route('/editevent')
 def editevent():
-    event = mongo.db.Event.find({"verified": "verified"})
-    return render_template('editevent.html',user=CurrentUser, event=event)
+    event_id = request.args.get('id')  # Get event ID from query parameter
+    if event_id:
+        event = mongo.db.Event.find_one({"_id": ObjectId(event_id)})
+        if event:
+            return render_template('editevent.html', event=event)
+    return redirect(url_for('events'))
+
+@app.route('/update_event', methods=['POST'])
+def update_event():
+    event_id = request.form.get('event_id')
+    if event_id:
+        updated_data = {
+            'name': request.form.get('name'),
+            'location': request.form.get('location'),
+            'artist': request.form.get('artist'),
+            'genre': request.form.get('genre'),
+            'description': request.form.get('description'),
+        }
+        mongo.db.Event.update_one({'_id': ObjectId(event_id)}, {'$set': updated_data})
+        flash('Event updated successfully.', 'success')
+        return redirect(url_for('events'))
+    flash('Failed to update event.', 'error')
+    return redirect(url_for('editevent', id=event_id))
 
 
 @app.route('/login', methods=["POST"])
