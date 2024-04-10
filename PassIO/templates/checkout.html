@@ -1,3 +1,4 @@
+
 <!DOCTYPE html>
 <html>
 
@@ -5,7 +6,7 @@
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <!-- PAGE settings -->
-  <link rel="icon" href="../static/assets/conference/favicon.png">
+  <link rel="icon" href="../static/assets/images/favicon.png">
   <title>Checkout</title>
   <meta name="description" content="Buy your tickets">
   <meta name="keywords" content="PassIO checkout purchase">
@@ -21,47 +22,34 @@
 
 <body class="text-center">
 {% include 'navbar.html' %}
-
-  <!--<div class="py-5">
-    <div class="container">
-      <div class="row">
-        <div class="text-center col-md-7 mx-auto"> <i class="fa d-block fa-bullseye fa-5x mb-4 text-info"></i>
-          <h2><b>Checkout form</b></h2>
-          <p class="lead">Below is an example form built entirely with Bootstrap's form controls. Each required form group has a validation state that can be triggered by attempting to submit the form without completing it.</p>
-        </div>
-      </div>
-    </div>
-  </div>-->
 <h1 class="display-4 mt-3">Checkout</h1>
-  <div class="d-flex align-items-center section-fade-in-out" style="background-image: url(../static/assets/conference/cover.jpg);">
+  <div class="d-flex align-items-center section-fade-in-out" style="background-image: url(../static/assets/images/cover.jpg);">
     <div class="container">
+      <!-- Flash messages -->
+    {% with messages = get_flashed_messages(with_categories=true) %}
+        {% if messages %}
+            {% for category, message in messages %}
+                <div class="alert alert-{{ category }}" role="alert">
+                    {{ message }}
+                </div>
+            {% endfor %}
+        {% endif %}
+    {% endwith %}
       <div class="row justify-content-center">
         <div class="col-md-4 order-md-2">
-          <h4 class="d-flex justify-content-between mb-3"> <span class="text-muted"><b>Your cart</b></span> <span class="badge badge-secondary badge-pill">{{tickets|length}}</span> </h4>
-          {% for ticket in tickets %}
-          <div class="ticket">
-            <h6 class="my-0"><b>Seat Number: {{ticket.seat_number}}</b></h6> 
-            <!--<small class="text-muted">Brief description</small>-->
-          </div>
-          <span class="text-muted">${{ticket.price}}</span>
-          {% endfor %}
-          <br>
-          <a href="/checkout?event_id={{event_id}}&amp;numTickets={{numTickets - 1}}"> -1 Ticket<a>&nbsp;&nbsp;<a href="/checkout?event_id={{event_id}}&amp;numTickets={{numTickets + 1}}"> +1 Ticket<a>
-            <!--<li class="list-group-item d-flex justify-content-between bg-light">
-              <div class="text-success">
-                <h6 class="my-0"><b>Promo code</b></h6> <small>EXAMPLECODE</small>
-              </div> <span class="text-success">-$5</span>
-            </li>-->
-            <br>
-            <span>Total (CAD)</span> <b>${{total}}</b> 
-          <!--<form class="card p-2 my-4">
-            <div class="input-group">
-              <input type="text" class="form-control" placeholder="Promo code">
-              <div class="input-group-append">
-                <button type="submit" class="btn btn-secondary">Redeem</button>
-              </div>
+            <h4 class="d-flex justify-content-between mb-3">
+                <span class="text-muted"><b>Your cart</b></span>
+                <span class="badge badge-secondary badge-pill">{{ events_in_cart|length }}</span>
+            </h4>
+            {% for item in events_in_cart %}
+            <div class="ticket">
+                <h6 class="my-0"><b>Event: {{ item.name }}</b></h6>
+                <small>Number of Tickets: {{ item.num_tickets }}</small>
             </div>
-          </form>-->
+            <span class="text-muted">$ {{ item.total_price }}</span>
+            {% endfor %}
+            <br>
+            <span>Total (CAD)</span> <b>$ {{ total }}</b>
         </div>
         <div class="col-md-8 order-md-1">
           <h4 class="mb-3"><b>Billing address</b></h4>
@@ -85,9 +73,9 @@
             <div class="row">
               <div class="col-md-5 mb-3">
               </div>
-              <div class="col-md-4 mb-3"> <label for="province">Province</label> 
+              <div class="col-md-4 mb-3"> <label for="province">Province</label>
                 <select class="custom-select d-block w-100" id="province" required="">
-                  <option value="Alberta">Alberta</option>  
+                  <option value="Alberta">Alberta</option>
                   <option value="British Colombia">British Colombia</option>
                   <option value="Manitoba">Manitoba</option>
                   <option value="New Brunswick">New Brunswick</option>
@@ -131,29 +119,8 @@
               </div>
             </div>
             <hr class="mb-4">
-            <!--<input type="hidden" name="tickets" value={{tickets}}>-->
-            <button class="btn btn-primary btn-lg btn-block" type="submit">Continue to checkout</button>
+            <button class="btn btn-primary btn-lg btn-block" type="submit">Purchase</button>
           </form>
-        </div>
-      </div>
-    </div>
-  </div>
-  <div class="py-5 text-muted text-center">
-    <div class="container">
-      <div class="row">
-        <div class="col-md-12 my-4">
-          <p class="mb-1">PassIO Event Ticketing Solution</p>
-          <!--<ul class="list-inline">
-            <li class="list-inline-item">
-              <a href="#">Privacy</a>
-            </li>
-            <li class="list-inline-item">
-              <a href="#">Terms</a>
-            </li>
-            <li class="list-inline-item">
-              <a href="#">Support</a>
-            </li>
-          </ul>-->
         </div>
       </div>
     </div>
