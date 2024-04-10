@@ -5,7 +5,7 @@
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <!-- PAGE settings -->
-  <link rel="icon" href="../static/assets/conference/favicon.png">
+  <link rel="icon" href="../static/assets/images/favicon.png">
   <title>PassIO</title>
   <meta name="description" content="Events available to purchase tickets for on PassIO">
   <meta name="keywords" content="Events, purchase, ticket, PassIO">
@@ -22,7 +22,7 @@
   <!-- Navbar -->
   {% include 'navbar.html' %}
   <!-- Cover -->
-  <div class="d-flex align-items-center section-fade-in-out" style="background-image: url(../static/assets/conference/cover.jpg);">
+  <div class="d-flex align-items-center section-fade-in-out" style="background-image: url(../static/assets/images/cover.jpg);">
     <div class="container">
       <div class="row">
         <div class="col-12 mt-3">
@@ -43,12 +43,6 @@
               <a href="{{ url_for('editevent', id=event._id) }}" class="btn btn-primary">Edit</a>
               </div>
             {% endif %}
-
-            <!-- Made this an <a> tag so that I can test with it, maybe we should implement this in the final instead of using a button
-            <form action="/checkout?{{event._id}}">
-              <p><button type="submit">Purchase Event</button></p>
-            </form>
-            -->
         </div>
        </div>
       <hr>
@@ -57,43 +51,6 @@
       </div>
     </div>
   </div>
-  <!-- <div class="py-2">
-  <div class="container">
-    <div class="row">
-      <div class="col-md-12">
-        <div id="eventsCarousel" class="carousel slide" data-ride="carousel">
-          <ol class="carousel-indicators">
-            {% for event in events %}
-            <li data-target="#eventsCarousel" data-slide-to="{{ loop.index0 }}" {% if loop.first %}class="active"{% endif %}></li>
-            {% endfor %}
-          </ol>
-
-          <div class="carousel-inner">
-            {% for event in events %}
-            <div class="carousel-item {% if loop.first %}active{% endif %}">
-              <img src="{{ url_for('static', filename='assets/conference/action.jpg') }}" class="d-block w-100" alt="{{ event.name }}">
-              <div class="carousel-caption d-none d-md-block">
-                <h5>{{ event.name }}</h5>
-                <p>{{ event.description }}</p>
-                <a href="/checkout?event_id={{ event._id }}" class="btn btn-primary">Purchase Tickets</a>
-              </div>
-            </div>
-            {% endfor %}
-          </div>
-
-          <a class="carousel-control-prev" href="#eventsCarousel" role="button" data-slide="prev">
-            <span class="carousel-control-prev-icon" aria-hidden="true"></span>
-            <span class="sr-only">Previous</span>
-          </a>
-          <a class="carousel-control-next" href="#eventsCarousel" role="button" data-slide="next">
-            <span class="carousel-control-next-icon" aria-hidden="true"></span>
-            <span class="sr-only">Next</span>
-          </a>
-        </div>
-      </div>
-    </div>
-  </div>
-</div> -->
 
 
   {% include 'footer.html' %}
