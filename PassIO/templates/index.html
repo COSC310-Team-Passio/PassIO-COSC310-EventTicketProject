@@ -5,7 +5,7 @@
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <!-- PAGE settings -->
-  <link rel="icon" href="../static/assets/conference/favicon.png">
+  <link rel="icon" href="../static/assets/images/favicon.png">
   <title>PassIO</title>
   <meta name="keywords" content="Pingendo conference event neon free template bootstrap 4">
   <!-- CSS dependencies -->
@@ -46,6 +46,7 @@
               class="center-block my-3 shadowed" width="300" height="300"> 
             <h3 class="mb-0"><b>{{ event.name }}</b></h3>
             <p class="text-muted">{{ event.artist }}</p>
+            <a href="/add_to_cart?event_id={{ event._id }}&num_tickets=1" class="btn btn-primary">Add Ticket to Cart</a>
           </a>
         </div>
         {% endfor %}

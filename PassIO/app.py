@@ -1,10 +1,8 @@
-import time
 import redis
 from flask import *
 from flask_pymongo import PyMongo
 from bson.objectid import *
 from user import *
-#from ticket import *
 from datetime import datetime
 
 app = Flask(__name__)
@@ -21,11 +19,6 @@ CurrentUser = None
 def home():
     all_events = mongo.db.Event.find({"verified": "verified"})
     return render_template('index.html', events=all_events)
-    
-@app.route('/events')
-def events():
-    all_events = mongo.db.Event.find({"verified": "verified"})
-    return render_template('events.html', events=all_events) #pass all events into html to be used in for loop in html
 
 # USING TEST VARIABLES FOR TICKET CREATION WE SHOULD PROBABLY ADD OPTIONS FOR TICKET PRICE AND EVENT CAPACITY
 @app.route('/events_submit', methods = ["POST"]) #This is throwing an error currently
@@ -38,6 +31,7 @@ def events_submit():
     event_date_str = request.form.get('e_date')
     event_date = datetime.strptime(event_date_str, '%Y-%m-%d') if event_date_str else None
     num_tickets = int(request.form.get('e_tickets', 0))
+    ticket_price = int(request.form.get('e_price'))
     mongo.db.Event.insert_one({
         'name': name,
         'location': location,
@@ -46,6 +40,7 @@ def events_submit():
         'genre': genre,
         'event_date': event_date,  # Ensure your MongoDB is set to store dates correctly
         'num_tickets': num_tickets,
+        'ticket_price': ticket_price,
         'verified': 'false',
         'cancelled': 'false'
     })
@@ -133,7 +128,7 @@ def login():
             CurrentUser = Attendee(user["name"], email)
 
         # Redirect to a dashboard or profile page
-        return redirect(url_for('customerprofile'))
+        return render_template('index.html')
     else:
         logSuccess = False
         logIssue = "No user found under: "+email
@@ -174,54 +169,53 @@ def register():
 
 @app.route('/checkout')
 def checkout():
-    if CurrentUser == None:
+    if CurrentUser is None:
         return render_template('loginandregister.html')
-    num_tickets = request.args.get('num_tickets',0)
-    num_tickets = min(max(int(num_tickets), 1), 5) # Acts as Math.clamp would in other languages
-    event_id = request.args.get('event_id')
-    event_id = ObjectId(event_id)
-    ticket_query = {"event_id": event_id, "user_id": ""}
-    ticket_query = mongo.db.Ticket.find(ticket_query)
-    tickets = []
+
+    cart_items = session.get('cart', [])
+    events_in_cart = []
     total = 0
-    for i in range(0, num_tickets):
-        try:
-            t = ticket_query[i]
-            tickets.append({"_id":str(t['_id']), "price":t['price'], "seat_number":t['seat_number'], "event_id":str(t['event_id']), "user_id":None})
-            total += t['price']
-        except IndexError:
-            break
-    session['t'] = tickets
-    return render_template('checkout.html', tickets=tickets, total=total, event_id=event_id, numTickets=num_tickets)
+
+    for item in cart_items:
+        event = mongo.db.Event.find_one({"_id": ObjectId(item['event_id'])})
+        if event:
+            event_detail = {
+                "name": event['name'],
+                "num_tickets": item['num_tickets'],
+                "price": event['price'],
+                "total_price": item['num_tickets'] * event['price']
+            }
+            events_in_cart.append(event_detail)
+            total += event_detail["total_price"]
+
+    return render_template('checkout.html', events_in_cart=events_in_cart, total=total)
+
+
+from flask import flash, redirect, url_for, session, request
+
 
 @app.route('/purchase', methods=["POST"])
 def purchase():
-    #TODO put the form input names in, or don't maybe, we really only need the one
-    fName = request.args.get(""); lName = request.args.get("")
-    address1 = request.args.get(""); address2 = request.args.get("") 
-    province = request.args.get(""); postalCode = request.args.get("")
-    
-    ccName = request.args.get(""); ccNum = request.args.get("cc-number")
-    ccExpiration = request.args.get(""); ccCVV = request.args.get("")
-    
-    tickets = session.pop('t', None)
-    if tickets is None:
-        print("no available tickets")
-        return redirect(url_for('events'))
-        # Go back to events? idk, the only time this would happen is if there were no valid tickets for the checkout function to list
-    # Process valid card details but like we're really just checking the card number
-    #TODO 
-    #if ccNum is valid # The credit card checking algorithm probably needs its own function, and I don't want to go find out what it is right now and it also doesn't matter as much as the rest of this loop
-    if True: # the if ccNum is valid check would replace this if statement
-        targetUserId = mongo.db.Users.find_one({"email":CurrentUser.email})['_id']
-        for t in tickets:
-            mongo.db.Ticket.find_one_and_replace({'_id':ObjectId(t['_id'])}, 
-                                                {"_id":ObjectId(t['_id']), "price":t['price'],
-                                                 "seat_number":t['seat_number'], "event_id":ObjectId(t['event_id']), 
-                                                 "user_id":targetUserId})
-        return('purchase_success.html') # maybe we just go back to the main page with a purchase complete message instead
-    else:
-        return(purchase_failure.html)
+    # Assuming you're using form data, not query parameters, for a POST request
+    fName = request.form.get("firstName")
+    lName = request.form.get("lastName")
+    address1 = request.form.get("address")
+    address2 = request.form.get("address2")
+    province = request.form.get("province")
+    postalCode = request.form.get("zip")
+
+    ccName = request.form.get("cc-name")
+    ccNum = request.form.get("cc-number")
+    ccExpiration = request.form.get("cc-expiration")
+    ccCVV = request.form.get("cc-cvv")
+
+    # After processing, clear the session cart and show a success message
+    session.pop('cart', None)  # Clear any remaining cart session just to be safe
+    flash("Purchase successful! Thank you.", "success")
+
+    # Redirect to the checkout page or a dedicated confirmation page with a success message
+    return redirect(url_for('checkout'))
+
 
 @app.route('/admin')
 def admin():
@@ -358,6 +352,35 @@ def cancel_event():
     else:
         flash('You do not have permission to perform this action.', 'error')
         return redirect(url_for('customerprofile'))
+
+
+@app.route('/add_to_cart')
+def add_to_cart():
+    if 'cart' not in session:
+        session['cart'] = []
+
+    event_id = request.args.get('event_id')
+    num_tickets = int(request.args.get('num_tickets', 1))
+
+    # Simple validation to ensure the event exists
+    event = mongo.db.Event.find_one({"_id": ObjectId(event_id)})
+    if not event:
+        flash('Event not found', 'danger')
+        return redirect(url_for('events'))
+
+    # Add or update the event in the cart
+    cart = session.get('cart')
+    event_in_cart = next((item for item in cart if item['event_id'] == event_id), None)
+    if event_in_cart:
+        # Assuming you want to replace the number of tickets, not increment
+        event_in_cart['num_tickets'] = num_tickets
+    else:
+        cart.append({'event_id': event_id, 'num_tickets': num_tickets})
+
+    session['cart'] = cart  # Reassign to update the session
+
+    flash('Ticket added to cart!', 'success')
+    return redirect(url_for('checkout'))
 
 
 if __name__ == '__main__':
