@@ -22,31 +22,43 @@
   {% include 'navbar.html' %}
   <div class="container">
     <h1 class="display-4 mt-3">Edit Event</h1>
-    <form action="../update_event" method="post">
-      <input type="hidden" name="event_id" value="{{ event._id }}">
-      <div class="mb-3">
-        <label for="eventName">Name</label>
-        <input type="text" class="form-control" id="eventName" name="name" value="{{ event.name }}" required>
-      </div>
-      <div class="mb-3">
-        <label for="eventLocation">Location</label>
-        <input type="text" class="form-control" id="eventLocation" name="location" value="{{ event.location }}" required>
-      </div>
-      <div class="mb-3">
-        <label for="eventArtist">Artist</label>
-        <input type="text" class="form-control" id="eventArtist" name="artist" value="{{ event.artist }}" required>
-      </div>
-      <div class="mb-3">
-        <label for="eventGenre">Genre</label>
-        <input type="text" class="form-control" id="eventGenre" name="genre" value="{{ event.genre }}" required>
-      </div>
-      <div class="mb-3">
-        <label for="eventDescription">Description</label>
-        <textarea class="form-control" id="eventDescription" name="description" required>{{ event.description }}</textarea>
-      </div>
-      <!-- Add more fields as necessary -->
-      <button type="submit" class="btn btn-primary">Update Event</button>
-    </form>
+      <form action="/update_event" method="post" class="needs-validation" novalidate="">
+        <input type="hidden" name="event_id" value="{{ event._id }}">
+        <div class="mb-3">
+          <label for="eventName">Name</label>
+          <input type="text" class="form-control" id="eventName" name="name" value="{{ event.name }}" required>
+        </div>
+        <div class="mb-3">
+          <label for="eventLocation">Location</label>
+          <input type="text" class="form-control" id="eventLocation" name="location" value="{{ event.location }}" required>
+        </div>
+        <div class="mb-3">
+          <label for="eventArtist">Artist</label>
+          <input type="text" class="form-control" id="eventArtist" name="artist" value="{{ event.artist }}" required>
+        </div>
+        <div class="mb-3">
+          <label for="eventGenre">Genre</label>
+          <input type="text" class="form-control" id="eventGenre" name="genre" value="{{ event.genre }}" required>
+        </div>
+        <div class="mb-3">
+          <label for="eventDescription">Description</label>
+          <textarea class="form-control" id="eventDescription" name="description" required>{{ event.description }}</textarea>
+        </div>
+        <!-- New fields for event date and number of tickets -->
+        <div class="mb-3">
+          <label for="date">Event Date</label>
+          <input type="date" class="form-control" id="date" name="date" value="{{ event.date }}" required>
+        </div>
+        <div class="mb-3">
+          <label for="eventTickets">Number of Tickets</label>
+          <input type="number" class="form-control" id="eventTickets" name="num_tickets" value="{{ event.num_tickets }}" min="1" required>
+        </div>
+        <div class="mb-3">
+          <label for="price">Price of Tickets</label>
+          <input type="number" class="form-control" id="price" name="price" value="{{ event.price }}" min="1" required>
+        </div>
+        <button type="submit" class="btn btn-primary">Update Event</button>
+      </form>
   </div>
   {% include 'footer.html' %}
   <!-- JavaScript dependencies -->

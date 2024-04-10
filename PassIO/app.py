@@ -100,21 +100,33 @@ def hostEvents():
 def update_event():
     event_id = request.form.get('event_id')
     if event_id:
+        # Convert event_date from string to datetime object
+        event_date_str = request.form.get('date')
+        event_date = datetime.strptime(event_date_str, '%Y-%m-%d')
+
         updated_data = {
             'name': request.form.get('name'),
             'location': request.form.get('location'),
             'artist': request.form.get('artist'),
             'genre': request.form.get('genre'),
             'description': request.form.get('description'),
+            'date': event_date,
+            'num_tickets': int(request.form.get('num_tickets')),
+            'price': float(request.form.get('price')),
+            'verified': 'false'
         }
+
+        # Update the event in the database
         mongo.db.Event.update_one(
             {'_id': ObjectId(event_id)},
-            {'$set': {**updated_data, 'verified': 'false'}}
+            {'$set': updated_data}
         )
+
         flash('Event updated successfully.', 'success')
-        return redirect(url_for('events'))
-    flash('Failed to update event.', 'error')
-    return redirect(url_for('editevent', id=event_id))
+        return redirect(url_for('home'))
+    else:
+        flash('Failed to update event.', 'error')
+        return redirect(url_for('editevent', id=event_id))
 
 
 @app.route('/login', methods=["POST"])
@@ -138,7 +150,7 @@ def login():
             CurrentUser = Attendee(user["name"], email)
 
         # Redirect to a dashboard or profile page
-        return render_template('index.html')
+        return redirect(url_for('home'))
     else:
         logSuccess = False
         logIssue = "No user found under: " + email
@@ -146,7 +158,7 @@ def login():
     # Probably will go back to the home page and give a little "successfully registered/logged in instead"
     # Failed login would not change the page
     if logSuccess:
-        return redirect(url_for('events'))
+        return redirect(url_for('home'))
     else:
         return render_template('loginandregister.html', loginIssue=logIssue)
 
@@ -266,10 +278,8 @@ def checkout():
 @app.route('/purchase', methods=["POST"])
 def purchase():
     # After processing, clear the session cart and show a success message
-    session.pop('cart', None)  # Clear any remaining cart session just to be safe
+    session.pop('cart', None)
     flash("Purchase successful! Thank you.", "success")
-
-    # Redirect to the checkout page or a dedicated confirmation page with a success message
     return redirect(url_for('checkout'))
 
 
