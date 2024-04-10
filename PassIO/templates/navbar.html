@@ -1,6 +1,7 @@
 <nav class="navbar navbar-expand-md navbar-dark bg-dark">
     <div class="container">
-        <button class="navbar-toggler navbar-toggler-right border-0" type="button" data-toggle="collapse" data-target="#navbar12">
+        <button class="navbar-toggler navbar-toggler-right border-0" type="button" data-toggle="collapse"
+            data-target="#navbar12">
             <span class="navbar-toggler-icon"></span>
         </button>
         <div class="collapse navbar-collapse" id="navbar12">
@@ -18,7 +19,22 @@
             <ul class="navbar-nav">
                 {% if CurrentUser %}
                 <!-- If user is logged in, show 'Account' -->
-                <li class="nav-item"> <a class="nav-link" href="/customerprofile">Account</a> </li>
+                <li class="nav-item dropdown">
+                    <a class="nav-link dropdown-toggle" href="#" id="navbarDropdownMenuLink" data-toggle="dropdown"
+                        aria-haspopup="true" aria-expanded="false">
+                        Account
+                    </a>
+                    <div class="dropdown-menu" aria-labelledby="navbarDropdownMenuLink">
+                        {% if CurrentUser.special_key == 'host' %}
+                        <a class="dropdown-item" href="/hostEvents">Event History</a>
+                        <a class="dropdown-item" href="/customerprofile">Profile</a>
+                        {% elif not CurrentUser.special_key %}
+                        <a class="dropdown-item" href="#">Purchase History</a>
+                        <a class="dropdown-item" href="/customerprofile">Profile</a>
+                        {% endif %}
+                        <a class="dropdown-item" href="/logout" id="navbar-sign-out">Sign out</a>
+                    </div>
+                </li>
                 {% else %}
                 <!-- If no user is logged in, show 'Log in' -->
                 <li class="nav-item"> <a class="nav-link" href="/loginandregister">Log in</a> </li>

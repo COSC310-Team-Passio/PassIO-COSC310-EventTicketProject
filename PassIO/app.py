@@ -18,6 +18,10 @@ cache = redis.Redis(host='redis', port=6379)
 CurrentUser = None
 
 @app.route('/')
+def home():
+    all_events = mongo.db.Event.find({"verified": "verified"})
+    return render_template('index.html', events=all_events)
+    
 @app.route('/events')
 def events():
     all_events = mongo.db.Event.find({"verified": "verified"})
@@ -45,6 +49,7 @@ def events_submit():
         'verified': 'false',
         'cancelled': 'false'
     })
+
     return render_template('evententry.html')
 
 def generateTickets(eventID, capacity:int, price:float):
@@ -69,6 +74,7 @@ def loginRegister():
 def eventapproval():
     unapproved_events = mongo.db.Event.find({"verified": "false"})
     return render_template('eventapproval.html',user=CurrentUser, unapproved_events=unapproved_events)
+  
 @app.route('/editevent')
 def editevent():
     event_id = request.args.get('id')  # Get event ID from query parameter
@@ -77,6 +83,13 @@ def editevent():
         if event:
             return render_template('editevent.html', event=event)
     return redirect(url_for('events'))
+  
+@app.route('/hostEvents')
+def hostEvents():
+    host_events = mongo.db.Event.find({'host': mongo.db.Users.find_one({"email": CurrentUser.email})})
+    host_events = list(host_events)
+    return render_template('hostEvents.html', user=CurrentUser, host_events=host_events)
+
 
 @app.route('/update_event', methods=['POST'])
 def update_event():
@@ -220,7 +233,9 @@ def search():
     if request.method == 'POST':
         # Get the search term from search bar
         search_term = request.form['search_term'].strip() # Trim whitespaces
-
+        # Get the search date from date section
+        date_str = request.form['search_date']
+    
         # Build the query based on search term
         query = {
             "$or": [
@@ -228,15 +243,38 @@ def search():
                 { "location": { "$regex": f".*{search_term}.*", "$options": "i" } },
                 { "description": { "$regex": f".*{search_term}.*", "$options": "i" } },
                 { "artist": { "$regex": f".*{search_term}.*", "$options": "i" } },
-                { "genre": { "$regex": f".*{search_term}.*", "$options": "i" } } 
+                { "genre": { "$regex": f".*{search_term}.*", "$options": "i" } },
             ]
         }
+        
+        # Mandate verified status
+        query = {
+                "$and": [
+                    query,  
+                    { "verified": "verified" }
+                ]
+        }
+        
+        # If user selects a date
+        if date_str:
+            # Convert the date string (YYYY-MM-DD) to a datetime object
+            from datetime import datetime, timedelta
+            search_date = datetime.strptime(date_str, '%Y-%m-%d')
+        
+            query = {
+                "$and": [
+                    query,  
+                    { "verified": "verified" },
+                    { "date": {'$gte': search_date, '$lt': search_date + timedelta(days=1)}}
+                ]
+            }
+
         # Fetch results from db
         results = mongo.db.Event.find(query)
         
-        return render_template('events.html', events=results)
+        return render_template('index.html', events=results)
         
-    return render_template('search.html')
+    return render_template('index.html')
 
 
 @app.route('/customerprofile')
@@ -306,6 +344,17 @@ def approve_event():
         mongo.db.Event.update_one({'_id': ObjectId(event_id)}, {'$set': {'verified': 'verified'}})
         flash('Event approved successfully.', 'success')
         return redirect(url_for('eventapproval'))
+    else:
+        flash('You do not have permission to perform this action.', 'error')
+        return redirect(url_for('customerprofile'))
+
+@app.route('/cancel_event', methods=['POST'])
+def cancel_event():
+    if CurrentUser is not None and CurrentUser.special_key == "host":
+        event_id = request.form.get('event_id')
+        mongo.db.Event.update_one({'_id': ObjectId(event_id)}, {'$set': {'cancelled': True}})
+        flash('Event cancelled successfully.', 'success')
+        return redirect(url_for('hostEvents'))
     else:
         flash('You do not have permission to perform this action.', 'error')
         return redirect(url_for('customerprofile'))
