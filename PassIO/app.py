@@ -431,13 +431,13 @@ def add_to_cart():
         session['cart'] = []
 
     event_id = request.args.get('event_id')
-    num_tickets = int(request.args.get('num_tickets', 1))
+    num_tickets = int(request.args.get('num_tickets', 1)) # This isn't necessary I don't think if the default added to cart is always just one ticket per click. The whole reason I added the numTickets field was to change the number of tickets in the checkout menu post going to the page.
 
     # Simple validation to ensure the event exists
     event = mongo.db.Event.find_one({"_id": ObjectId(event_id)})
     if not event:
         flash('Event not found', 'danger')
-        return redirect(url_for('events'))
+        return redirect(url_for('')) #This was to a route that got commented out. I changed it back to the default route
 
     # Add or update the event in the cart
     cart = session.get('cart')
