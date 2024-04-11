@@ -265,23 +265,14 @@ def checkout():
         event = mongo.db.Event.find_one({"_id": ObjectId(item['event_id'])})
         if event:
             event_detail = {
-                "_id": event['_id'],
                 "name": event['name'],
                 "num_tickets": item['num_tickets'],
                 "price": event.get('price', 0),  # Use get with a default value in case 'price' is not defined
                 "total_price": item['num_tickets'] * event.get('price', 0)
             }
-            # already_in_cart = False
-            # for e in events_in_cart:
-            #     if e['_id'] == event_detail['_id']:
-            #         e['num_tickets'] += 1
-            #         e['total_price'] += e['price']
-            #         already_in_cart = True
-            # if not already_in_cart:
-            #     events_in_cart.append(event_detail)
-                    
+            events_in_cart.append(event_detail)
             total += event_detail["total_price"]
-            num_tickets += event_detail['num_tickets']  # Update the total number of tickets
+            num_tickets += item['num_tickets']  # Update the total number of tickets
 
     return render_template('checkout.html', events_in_cart=events_in_cart, total=total, num_tickets=num_tickets)
 
@@ -289,10 +280,7 @@ def checkout():
 @app.route('/purchase', methods=["POST"])
 def purchase():
     # After processing, clear the session cart and show a success message
-    cart = session.pop('cart', None)
-    for item in cart:
-        item['user_id'] = mongo.db.Users.find_one({'email': CurrentUser.email})['_id']
-        item['event_id'] = ObjectId(item['event_id'])
+    session.pop('cart', None)
     flash("Purchase successful! Thank you.", "success")
     return redirect(url_for('checkout'))
 
