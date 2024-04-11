@@ -32,7 +32,7 @@ def events_submit():
     event_date_str = request.form.get('e_date')
     event_date = datetime.strptime(event_date_str, '%Y-%m-%d') if event_date_str else None
     num_tickets = int(request.form.get('e_tickets', 0))
-    ticket_price = int(request.form.get('e_price'))
+    ticket_price = float(request.form.get('e_price'))
     eventObj = mongo.db.Event.insert_one({
         'name': name,
         'location': location,
@@ -45,16 +45,17 @@ def events_submit():
         'verified': 'false',
         'cancelled': 'false'
     })
-    generateTickets(eventObj['_id'], num_tickets, ticket_price) # Ok there is now a concrete set of tickets for the event on creation
+    #Moving this to purchase time
+    #generateTickets(eventObj.inserted_id, num_tickets) # Ok there is now a concrete set of tickets for the event on creation
     return render_template('evententry.html')
 
 
-def generateTickets(eventID, capacity: int):
+def generateTickets(eventId: ObjectId, userId: ObjectId, capacity: int):
     tickets = []
     if capacity < 1:
         capacity = 1
     for i in range(0, capacity):
-        tickets.append({"user_id": "", "event_id": eventID, "seat_number": i})
+        tickets.append({"user_id": userId, "event_id": eventId, "seat_number": i})
     mongo.db.Ticket.insert_many(tickets)
     return
 
@@ -270,17 +271,17 @@ def checkout():
                 "price": event.get('price', 0),  # Use get with a default value in case 'price' is not defined
                 "total_price": item['num_tickets'] * event.get('price', 0)
             }
-            already_in_cart = False
-            for e in events_in_cart:
-                if e['_id'] == event_detail['_id']:
-                    e['num_tickets'] += 1
-                    e['total_price'] += e['price']
-                    already_in_cart = True
-            if not already_in_cart:
-                events_in_cart.append(event_detail)
+            # already_in_cart = False
+            # for e in events_in_cart:
+            #     if e['_id'] == event_detail['_id']:
+            #         e['num_tickets'] += 1
+            #         e['total_price'] += e['price']
+            #         already_in_cart = True
+            # if not already_in_cart:
+            #     events_in_cart.append(event_detail)
                     
             total += event_detail["total_price"]
-            num_tickets += 1  # Update the total number of tickets
+            num_tickets += event_detail['num_tickets']  # Update the total number of tickets
 
     return render_template('checkout.html', events_in_cart=events_in_cart, total=total, num_tickets=num_tickets)
 
@@ -444,28 +445,23 @@ def add_to_cart():
         session['cart'] = []
 
     event_id = request.args.get('event_id')
-    num_tickets = int(request.args.get('num_tickets', 1)) # This isn't necessary I don't think if the default added to cart is always just one ticket per click. The whole reason I added the numTickets field was to change the number of tickets in the checkout menu post going to the page.
+    num_tickets = int(request.args.get('num_tickets', 1))
 
     # Simple validation to ensure the event exists
     event = mongo.db.Event.find_one({"_id": ObjectId(event_id)})
     if not event:
         flash('Event not found', 'danger')
-        return redirect(url_for('')) #This was to a route that got commented out. I changed it back to the default route
+        return redirect(url_for('events'))
 
     # Add or update the event in the cart
     cart = session.get('cart')
-    #event_in_cart = next((item for item in cart if item['event_id'] == event_id), None) # This is getting replaced by a ticket from the DB
-    ticket_in_cart = mongo.db.Ticket.find_one({"event_id":event_id, "user_id":""})
-    if ticket_in_cart: # If there is an unpurchased ticket
-        cart.append({"seat_number":ticket_in_cart['seat_number', "event_id":str(ticket_in_cart['event_id']), "user_id":""]}) # Add the ticket to the cart
-    else:
-        flash('Event Sold Out', 'error')
+    event_in_cart = next((item for item in cart if item['event_id'] == event_id), None) # This is getting replaced by a ticket from the DB
     # Finds an unpurchased ticket to add to the cart instead of
-    # if event_in_cart:
-    #     # Assuming you want to replace the number of tickets, not increment
-    #     event_in_cart['num_tickets'] = num_tickets # Never actually changes anything because num_tickets is always 1
-    # else:
-    #     cart.append({"ticket":event_in_cart, 'num_tickets': num_tickets})
+    if event_in_cart:
+        # Assuming you want to replace the number of tickets, not increment
+        event_in_cart['num_tickets'] = num_tickets # Never actually changes anything because num_tickets is always 1
+    else:
+        cart.append({"ticket":event_in_cart, 'num_tickets': num_tickets})
 
     session['cart'] = cart  # Reassign to update the session
 
