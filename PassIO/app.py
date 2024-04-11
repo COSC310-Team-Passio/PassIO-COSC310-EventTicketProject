@@ -443,13 +443,19 @@ def add_to_cart():
 
     # Add or update the event in the cart
     cart = session.get('cart')
-    event_in_cart = next((item for item in cart if item['event_id'] == event_id), None) # This is getting replaced by a ticket from the DB
+    
+    try:
+        # Kept giving a key error so I surrounded with try / catch
+        event_in_cart = next((item for item in cart if item['event_id'] == event_id), None) # This is getting replaced by a ticket from the DB
+    except KeyError:
+        event_in_cart = None
     # Finds an unpurchased ticket to add to the cart instead of
     if event_in_cart:
         # Assuming you want to replace the number of tickets, not increment
         event_in_cart['num_tickets'] = num_tickets # Never actually changes anything because num_tickets is always 1
     else:
         cart.append({"ticket":event_in_cart, 'num_tickets': num_tickets})
+    
 
     session['cart'] = cart  # Reassign to update the session
 
