@@ -257,8 +257,8 @@ def checkout():
         return render_template('loginandregister.html')
 
     cart_items = session.get('cart', [])
-    events_in_cart = [] 
-    total = 0 # Initialize total cost
+    events_in_cart = []
+    total = 0
     num_tickets = 0  # Initialize num_tickets
 
     for item in cart_items:
@@ -280,10 +280,11 @@ def checkout():
 @app.route('/purchase', methods=["POST"])
 def purchase():
     # After processing, clear the session cart and show a success message
-    session.pop('cart', None)
+    session.pop('cart', None)  # Clear any remaining cart session just to be safe
     flash("Purchase successful! Thank you.", "success")
-    return redirect(url_for('checkout'))
 
+    # Redirect to the checkout page or a dedicated confirmation page with a success message
+    return redirect(url_for('checkout'))
 
 @app.route('/admin')
 def admin():
@@ -443,25 +444,17 @@ def add_to_cart():
 
     # Add or update the event in the cart
     cart = session.get('cart')
-    
-    try:
-        # Kept giving a key error so I surrounded with try / catch
-        event_in_cart = next((item for item in cart if item['event_id'] == event_id), None) # This is getting replaced by a ticket from the DB
-    except KeyError:
-        event_in_cart = None
-    # Finds an unpurchased ticket to add to the cart instead of
+    event_in_cart = next((item for item in cart if item['event_id'] == event_id), None)
     if event_in_cart:
         # Assuming you want to replace the number of tickets, not increment
-        event_in_cart['num_tickets'] = num_tickets # Never actually changes anything because num_tickets is always 1
+        event_in_cart['num_tickets'] = num_tickets
     else:
-        cart.append({"ticket":event_in_cart, 'num_tickets': num_tickets})
-    
+        cart.append({'event_id': event_id, 'num_tickets': num_tickets})
 
     session['cart'] = cart  # Reassign to update the session
 
     flash('Ticket added to cart!', 'success')
     return redirect(url_for('checkout'))
-
 
 if __name__ == '__main__':
     app.run(debug=True, host='0.0.0.0', port=5001)
