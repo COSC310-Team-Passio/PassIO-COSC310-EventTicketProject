@@ -46,15 +46,18 @@ def events_submit():
         'cancelled': 'false'
     })
     #Moving this to purchase time
-    #generateTickets(eventObj.inserted_id, num_tickets) # Ok there is now a concrete set of tickets for the event on creation
     return render_template('evententry.html')
 
 
-def generateTickets(eventId: ObjectId, userId: ObjectId, capacity: int):
+def generateTickets(eventId: ObjectId, userId: ObjectId, numTickets: int):
     tickets = []
-    if capacity < 1:
-        capacity = 1
-    for i in range(0, capacity):
+    maxTickets = mongo.db.Event.find_one({"_id":eventId})['num_tickets']
+    currentTickets = mongo.db.Ticket.count_documents({"event_id":eventId})
+    numTickets = min(maxTickets, max(1, numTickets))
+    if currentTickets >= maxTickets:
+        flash("Event is sold out", 'error')
+        return
+    for i in range(currentTickets, numTickets):
         tickets.append({"user_id": userId, "event_id": eventId, "seat_number": i})
     mongo.db.Ticket.insert_many(tickets)
     return
@@ -280,7 +283,9 @@ def checkout():
 @app.route('/purchase', methods=["POST"])
 def purchase():
     # After processing, clear the session cart and show a success message
-    session.pop('cart', None)  # Clear any remaining cart session just to be safe
+    cart = session.pop('cart', None)  # Clear any remaining cart session just to be safe
+    for item in cart:
+        generateTickets(item['event_id'], mongo.db.Users.find_one({"email":CurrentUser.email})['_id'], 1)
     flash("Purchase successful! Thank you.", "success")
 
     # Redirect to the checkout page or a dedicated confirmation page with a success message
@@ -450,7 +455,6 @@ def add_to_cart():
         event_in_cart['num_tickets'] = num_tickets
     else:
         cart.append({'event_id': event_id, 'num_tickets': num_tickets})
-
     session['cart'] = cart  # Reassign to update the session
 
     flash('Ticket added to cart!', 'success')
