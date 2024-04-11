@@ -22,7 +22,6 @@ def home():
     return render_template('index.html', events=all_events)
 
 
-# USING TEST VARIABLES FOR TICKET CREATION WE SHOULD PROBABLY ADD OPTIONS FOR TICKET PRICE AND EVENT CAPACITY
 @app.route('/events_submit', methods=["POST"])  # This is throwing an error currently
 def events_submit():
     name = request.form.get('e_name')
@@ -34,7 +33,7 @@ def events_submit():
     event_date = datetime.strptime(event_date_str, '%Y-%m-%d') if event_date_str else None
     num_tickets = int(request.form.get('e_tickets', 0))
     ticket_price = int(request.form.get('e_price'))
-    mongo.db.Event.insert_one({
+    eventObj = mongo.db.Event.insert_one({
         'name': name,
         'location': location,
         'description': description,
@@ -46,14 +45,16 @@ def events_submit():
         'verified': 'false',
         'cancelled': 'false'
     })
-
+    generateTickets(eventObj['_id'], num_tickets, ticket_price) # Ok there is now a concrete set of tickets for the event on creation
     return render_template('evententry.html')
 
 
-def generateTickets(eventID, capacity: int, price: float):
+def generateTickets(eventID, capacity: int):
     tickets = []
+    if capacity < 1:
+        capacity = 1
     for i in range(0, capacity):
-        tickets.append({"price": price, "user_id": "", "event_id": eventID, "seat_number": i})
+        tickets.append({"user_id": "", "event_id": eventID, "seat_number": i})
     mongo.db.Ticket.insert_many(tickets)
     return
 
@@ -255,8 +256,8 @@ def checkout():
         return render_template('loginandregister.html')
 
     cart_items = session.get('cart', [])
-    events_in_cart = []
-    total = 0
+    events_in_cart = [] 
+    total = 0 # Initialize total cost
     num_tickets = 0  # Initialize num_tickets
 
     for item in cart_items:
@@ -441,12 +442,18 @@ def add_to_cart():
 
     # Add or update the event in the cart
     cart = session.get('cart')
-    event_in_cart = next((item for item in cart if item['event_id'] == event_id), None)
-    if event_in_cart:
-        # Assuming you want to replace the number of tickets, not increment
-        event_in_cart['num_tickets'] = num_tickets
+    #event_in_cart = next((item for item in cart if item['event_id'] == event_id), None) # This is getting replaced by a ticket from the DB
+    ticket_in_cart = mongo.db.Ticket.find_one({"event_id":event_id, "user_id":""})
+    if ticket_in_cart: # If there is an unpurchased ticket
+        cart.append({"seat_number":ticket_in_cart['seat_number', "event_id":str(ticket_in_cart['event_id']), "user_id":""]}) # Add the ticket to the cart
     else:
-        cart.append({'event_id': event_id, 'num_tickets': num_tickets})
+        flash('Event Sold Out', 'error')
+    # Finds an unpurchased ticket to add to the cart instead of
+    # if event_in_cart:
+    #     # Assuming you want to replace the number of tickets, not increment
+    #     event_in_cart['num_tickets'] = num_tickets # Never actually changes anything because num_tickets is always 1
+    # else:
+    #     cart.append({"ticket":event_in_cart, 'num_tickets': num_tickets})
 
     session['cart'] = cart  # Reassign to update the session
 
