@@ -5,7 +5,7 @@
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <!-- PAGE settings -->
-  <link rel="icon" href="../static/assets/conference/favicon.png">
+  <link rel="icon" href="../static/assets/images/favicon.png">
   <title>Event Entry</title>
   <meta name="description" content="Enter new event in PassIO">
   <meta name="keywords" content="Event entry PassIO">
@@ -22,7 +22,7 @@
   <!-- Navbar -->
 {% include 'navbar.html' %}
   <!-- Cover -->
-<div class="d-flex align-items-center section-fade-in-out" style="background-image: url(../static/assets/conference/cover.jpg);">
+<div class="d-flex align-items-center section-fade-in-out" style="background-image: url(../static/assets/images/cover.jpg);">
   <div class="container">
     <div class="row">
       <div class="col-12 mt-3">
@@ -56,6 +56,10 @@
             <div class="mb-3">
               <label for="e_tickets">Number of Tickets</label>
               <input type="number" class="form-control" id="e_tickets" name="e_tickets" min="1" required="">
+            </div>
+            <div class="mb-3">
+              <label for="e_price">Price of Tickets</label>
+              <input type="number" class="form-control" id="e_price" name="e_price" min="1" required="">
             </div>
             <button type="submit" class="btn btn-primary">Submit</button>
           </form>
