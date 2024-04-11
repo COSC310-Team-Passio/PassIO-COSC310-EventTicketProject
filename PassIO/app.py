@@ -51,7 +51,10 @@ def events_submit():
 
 def generateTickets(eventId: ObjectId, userId: ObjectId, numTickets: int):
     tickets = []
-    maxTickets = mongo.db.Event.find_one({"_id":eventId})['num_tickets']
+    try:
+        maxTickets = mongo.db.Event.find_one({"_id":eventId})['num_tickets']
+    except: # Some of the events in the db don't have a num_tickets field
+        maxTickets = 1
     currentTickets = mongo.db.Ticket.count_documents({"event_id":eventId})
     numTickets = min(maxTickets, max(1, numTickets))
     if currentTickets >= maxTickets:
@@ -288,6 +291,10 @@ def purchase():
         generateTickets(item['event_id'], mongo.db.Users.find_one({"email":CurrentUser.email})['_id'], 1)
     flash("Purchase successful! Thank you.", "success")
 
+    try:
+        session.pop('cart', None)
+    except:
+        print("")
     # Redirect to the checkout page or a dedicated confirmation page with a success message
     return redirect(url_for('checkout'))
 
