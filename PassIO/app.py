@@ -146,6 +146,7 @@ def login():
 
     user = mongo.db.Users.find_one({"email": email, "password": password})
     if user:
+        user_id = str(user['_id'])
         special_key = user.get("special key", "")
         global CurrentUser
         if special_key == "admin":
@@ -158,7 +159,7 @@ def login():
             CurrentUser.special_key = special_key
         else:
             CurrentUser = Attendee(user["name"], email)
-
+        CurrentUser.id = user_id
         # Redirect to a dashboard or profile page
         return redirect(url_for('home'))
     else:
@@ -275,8 +276,8 @@ def checkout():
             event_detail = {
                 "name": event['name'],
                 "num_tickets": item['num_tickets'],
-                "price": event.get('price', 0),
-                "total_price": item['num_tickets'] * event.get('price',0)
+                "ticket_price": event.get('ticket_price', 0),
+                "total_price": item['num_tickets'] * event.get('ticket_price',0)
             }
             events_in_cart.append(event_detail)
             total += event_detail["total_price"]
@@ -488,6 +489,29 @@ def myevents():
     else:
         flash('You do not have permission to view this page.', 'error')
         return redirect(url_for('home'))
+
+
+@app.route('/mytickets')
+def mytickets():
+    if not CurrentUser:
+        flash("Please log in to view your tickets.", "info")
+        return redirect(url_for('loginRegister'))
+
+    user_id = ObjectId(CurrentUser.id)
+    user_tickets = mongo.db.Ticket.find({'user_id': user_id})
+    ticket_event_info = []
+    for ticket in user_tickets:
+        event = mongo.db.Event.find_one({"_id": ObjectId(ticket["event_id"])})
+        if event:
+            ticket_event_info.append({
+                "ticket_id": str(ticket["_id"]),
+                "event_name": event["name"],
+                "event_description": event["description"],
+                "event_date": event["event_date"],
+                "event_location": event["location"],
+            })
+
+    return render_template('mytickets.html', ticket_event_info=ticket_event_info)
 
 
 if __name__ == '__main__':
