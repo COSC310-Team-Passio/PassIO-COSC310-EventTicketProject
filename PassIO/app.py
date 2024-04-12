@@ -43,7 +43,7 @@ def events_submit():
         'num_tickets': num_tickets,
         'ticket_price': ticket_price,
         'verified': 'false',
-        'cancelled': 'false',
+        'cancelled': False,
         'host': CurrentUser.email
     })
     #Moving this to purchase time
@@ -117,7 +117,7 @@ def editevent():
 
 @app.route('/hostEvents')
 def hostEvents():
-    host_events = mongo.db.Event.find({'host': mongo.db.Users.find_one({"email": CurrentUser.email})})
+    host_events = mongo.db.Event.find({'host': CurrentUser.email})
     host_events = list(host_events)
     return render_template('hostEvents.html', user=CurrentUser, host_events=host_events)
 

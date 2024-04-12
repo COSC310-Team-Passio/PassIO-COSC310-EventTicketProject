@@ -29,7 +29,7 @@
             <h1 class="display-4 mt-3">My Events</h1>
             <div class="row mt-3">
                 <div class="col-md-12">
-                    <h3>Active Events</h3>
+                    <h2>Active Events</h2>
                     {% for event in host_events %}
                     {% if not event['cancelled'] %}
                     <div class="card mb-3">
@@ -54,6 +54,9 @@
                         </div>
                     </div>
                     {% endif %}
+                    {% else %}
+                    <br>
+                    <p>No active events.</p>
                     {% endfor %}
                 </div>
             </div>
@@ -64,7 +67,7 @@
         <div class="container">
             <div class="row mt-3">
                 <div class="col-md-12">
-                    <h3>Cancelled Events</h3>
+                    <h2>Cancelled Events</h2>
                     {% for event in host_events %}
                     {% if event['cancelled'] %}
                     <div class="card mb-3">
@@ -79,6 +82,9 @@
                         </div>
                     </div>
                     {% endif %}
+                    {% else %}
+                    <br>
+                    <p>No cancelled events.</p>
                     {% endfor %}
                 </div>
             </div>
