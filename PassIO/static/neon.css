@@ -6537,4 +6537,31 @@ mark.secondary {
   border-left: solid darkgray 1px;
 }
 
+/* Event details page styling */
+
+.everything-container {
+  width: 100%;
+  display: flex;
+  justify-content: space-evenly;
+  align-items: center;
+}
+
+.details-container {
+  max-width: 40%;
+  margin-left: 10em;
+}
+
+.img-container {
+  max-width: 40%;
+}
+
+/* Go back button styling on event details page */
+.gback-button {
+  background-color: black;
+  color: white;
+  float: left;
+  margin-left: 1.5em;
+  border: none;
+  margin-bottom: 30px;
+}
 

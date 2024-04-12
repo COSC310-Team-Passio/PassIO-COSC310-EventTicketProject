@@ -26,10 +26,9 @@
                     </a>
                     <div class="dropdown-menu" aria-labelledby="navbarDropdownMenuLink">
                         {% if CurrentUser.special_key == 'host' %}
-                        <a class="dropdown-item" href="/hostEvents">Event History</a>
                         <a class="dropdown-item" href="/customerprofile">Profile</a>
+                        <a class="dropdown-item" href="/hostEvents">My Events</a>
                         {% elif not CurrentUser.special_key %}
-                        <a class="dropdown-item" href="#">Purchase History</a>
                         <a class="dropdown-item" href="/customerprofile">Profile</a>
                         {% endif %}
                         <a class="dropdown-item" href="/mytickets">My Tickets</a>

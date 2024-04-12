@@ -89,6 +89,16 @@ def loginRegister():
     return render_template('loginandregister.html')
 
 
+@app.route('/eventDetails')
+def evenDetail():
+    event_id = request.args.get('id')  # Get event ID from query parameter
+    if event_id:
+        event = mongo.db.Event.find_one({"_id": ObjectId(event_id)})
+        if event:
+            return render_template('eventDetails.html', event=event)
+    return redirect(url_for('index'))
+
+
 @app.route('/eventapproval')
 def eventapproval():
     unapproved_events = mongo.db.Event.find({"verified": "false"})
