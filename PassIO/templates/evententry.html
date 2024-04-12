@@ -27,39 +27,39 @@
     <div class="row">
       <div class="col-12 mt-3">
         <h1 class="display-4">Event Entry</h1>
-          <form action="/events_submit" method="post" class="needs-validation" novalidate="">
+          <form action="/events_submit" method="post" class="needs-validation">
             <div class="mb-3">
               <label for="e_name">Name</label>
-              <input type="text" class="form-control" id="e_name" name="e_name" required="">
+              <input type="text" class="form-control" id="e_name" name="e_name" required>
             </div>
             <div class="mb-3">
               <label for="e_location">Location</label>
-              <input type="text" class="form-control" id="e_location" name="e_location" required="">
+              <input type="text" class="form-control" id="e_location" name="e_location" required>
             </div>
             <div class="mb-3">
               <label for="e_artist">Artist</label>
-              <input type="text" class="form-control" id="e_artist" name="e_artist" required="">
+              <input type="text" class="form-control" id="e_artist" name="e_artist" required>
             </div>
             <div class="mb-3">
               <label for="e_genre">Genre</label>
-              <input type="text" class="form-control" id="e_genre" name="e_genre" required="">
+              <input type="text" class="form-control" id="e_genre" name="e_genre" required>
             </div>
             <div class="mb-3">
               <label for="e_description">Description</label>
-              <textarea class="form-control" id="e_description" name="e_description" required=""></textarea>
+              <textarea class="form-control" id="e_description" name="e_description" required></textarea>
             </div>
             <!-- New fields for event date and number of tickets -->
             <div class="mb-3">
               <label for="e_date">Event Date</label>
-              <input type="date" class="form-control" id="e_date" name="e_date" required="">
+              <input type="date" class="form-control" id="e_date" name="e_date" required>
             </div>
             <div class="mb-3">
               <label for="e_tickets">Number of Tickets</label>
-              <input type="number" class="form-control" id="e_tickets" name="e_tickets" min="1" required="">
+              <input type="number" class="form-control" id="e_tickets" name="e_tickets" min="1" required>
             </div>
             <div class="mb-3">
               <label for="e_price">Price of Tickets</label>
-              <input type="number" class="form-control" id="e_price" name="e_price" min="1" required="">
+              <input type="number" class="form-control" id="e_price" name="e_price" min="1" required>
             </div>
             <button type="submit" class="btn btn-primary">Submit</button>
           </form>
