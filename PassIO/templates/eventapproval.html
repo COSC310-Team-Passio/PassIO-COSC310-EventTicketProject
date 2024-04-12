@@ -27,20 +27,20 @@
       <div class="container">
         <div class="row mt-3">
           <div class="col-md-12">
-            <h3>Unapproved Events</h3>
+            <h1>Unapproved Events</h1>
             {% for event in unapproved_events %}
               <div class="card mb-3">
-                <div class="card-header">{{ event.name }}</div>
+                <h2 class="card-header mt-1">{{ event.name }}</h2>
                 <div class="card-body">
                   <h5 class="card-title">Artist: {{ event.artist }}</h5>
                   <p class="card-text">Description: {{ event.description }}</p>
                   <p class="card-text">Genre: {{ event.genre }}</p>
-                  <p class="card-text">Date: {{ event.date }}</p>
+                  <p class="card-text">Date: {{ event.event_date }}</p>
                   <p class="card-text">Location: {{ event.location }}</p>
                   <p class="card-text">Number of Tickets: {{ event.num_tickets }}</p>
-                  <p class="card-text">Price: ${{ event.price }}</p>
-                  <div class="d-flex justify-content-between">
-                    <form action="/approve_event" method="post">
+                  <p class="card-text">Price: ${{ event.ticket_price }}</p>
+                  <div class="d-flex justify-content-center">
+                    <form action="/approve_event" method="post" class="mr-3">
                       <input type="hidden" name="event_id" value="{{ event._id }}">
                       <button type="submit" class="btn btn-primary">Approve</button>
                     </form>

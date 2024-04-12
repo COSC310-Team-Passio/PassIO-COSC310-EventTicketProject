@@ -52,20 +52,26 @@ def events_submit():
 
 def generateTickets(eventId: ObjectId, userId: ObjectId, numTickets: int):
     tickets = []
-    try:
-        maxTickets = mongo.db.Event.find_one({"_id":eventId})['num_tickets']
-    except: # Some of the events in the db don't have a num_tickets field
-        maxTickets = 1
-    currentTickets = mongo.db.Ticket.count_documents({"event_id":eventId})
-    numTickets = min(maxTickets, max(1, numTickets))
-    if currentTickets + numTickets > maxTickets:
+    event = mongo.db.Event.find_one({"_id": eventId})
+    if not event:
+        flash("Event does not exist.", 'error')
+        return
+
+    maxTickets = event['num_tickets']
+    currentTickets = mongo.db.Ticket.count_documents({"event_id": eventId})
+
+    # Check if there are enough tickets available to fulfill this purchase.
+    if currentTickets >= maxTickets:
         flash("Event is sold out", 'error')
         return
-    for i in range(currentTickets, numTickets):
+
+    for i in range(currentTickets, min(currentTickets + numTickets, maxTickets)):
         tickets.append({"user_id": userId, "event_id": eventId, "seat_number": i})
-    mongo.db.Ticket.insert_many(tickets)
-    flash("Purchase successful! Thank you.", "success")
-    return
+
+    if tickets:
+        mongo.db.Ticket.insert_many(tickets)
+    else:
+        flash("No tickets generated.", "error")
 
 
 @app.route('/events_entry')
@@ -153,14 +159,16 @@ def login():
             CurrentUser = Admin(user["name"], email, special_key)
             unapproved_events = mongo.db.Event.find({"verified": "false"})
             CurrentUser.special_key = special_key
+            CurrentUser.id = user_id
             return render_template('customerprofile.html', user=CurrentUser, unapproved_events=unapproved_events)
         elif special_key == "host":
             CurrentUser = Host(user["name"], email, special_key, [])
             CurrentUser.special_key = special_key
+            CurrentUser.id = user_id
         else:
             CurrentUser = Attendee(user["name"], email)
-        CurrentUser.id = user_id
-        # Redirect to a dashboard or profile page
+            CurrentUser.id = user_id
+
         return redirect(url_for('home'))
     else:
         logSuccess = False
@@ -199,66 +207,6 @@ def register():
         # Redirect to profile page with success message
         return redirect(url_for('customerprofile', regSuccess=True))
 
-'''
-@app.route('/checkout')
-def checkout():
-    if CurrentUser == None:
-        return render_template('loginandregister.html')
-    num_tickets = request.args.get('num_tickets', 0)
-    num_tickets = min(max(int(num_tickets), 1), 5)  # Acts as Math.clamp would in other languages
-    event_id = request.args.get('event_id')
-    event_id = ObjectId(event_id)
-    ticket_query = {"event_id": event_id, "user_id": ""}
-    ticket_query = mongo.db.Ticket.find(ticket_query)
-    tickets = []
-    total = 0
-    for i in range(0, num_tickets):
-        try:
-            t = ticket_query[i]
-            tickets.append({"_id": str(t['_id']), "price": t['price'], "seat_number": t['seat_number'],
-                            "event_id": str(t['event_id']), "user_id": None})
-            total += t['price']
-        except IndexError:
-            break
-    session['t'] = tickets
-    return render_template('checkout.html', tickets=tickets, total=total, event_id=event_id, numTickets=num_tickets)
-
-
-@app.route('/purchase', methods=["POST"])
-def purchase():
-    # TODO put the form input names in, or don't maybe, we really only need the one
-    fName = request.args.get("");
-    lName = request.args.get("")
-    address1 = request.args.get("");
-    address2 = request.args.get("")
-    province = request.args.get("");
-    postalCode = request.args.get("")
-
-    ccName = request.args.get("");
-    ccNum = request.args.get("cc-number")
-    ccExpiration = request.args.get("");
-    ccCVV = request.args.get("")
-
-    tickets = session.pop('t', None)
-    if tickets is None:
-        print("no available tickets")
-        return redirect(url_for('events'))
-        # Go back to events? idk, the only time this would happen is if there were no valid tickets for the checkout function to list
-    # Process valid card details but like we're really just checking the card number
-    # TODO
-    # if ccNum is valid # The credit card checking algorithm probably needs its own function, and I don't want to go find out what it is right now and it also doesn't matter as much as the rest of this loop
-    if True:  # the if ccNum is valid check would replace this if statement
-        targetUserId = mongo.db.Users.find_one({"email": CurrentUser.email})['_id']
-        for t in tickets:
-            mongo.db.Ticket.find_one_and_replace({'_id': ObjectId(t['_id'])},
-                                                 {"_id": ObjectId(t['_id']), "price": t['price'],
-                                                  "seat_number": t['seat_number'], "event_id": ObjectId(t['event_id']),
-                                                  "user_id": targetUserId})
-        return (
-            'purchase_success.html')  # maybe we just go back to the main page with a purchase complete message instead
-    else:
-        return (purchase_failure.html)
-'''
 
 @app.route('/checkout')
 def checkout():
@@ -289,11 +237,21 @@ def checkout():
 @app.route('/purchase', methods=["POST"])
 def purchase():
     # After processing, clear the session cart and show a success message
-    cart = session.pop('cart', None)  # Clear any remaining cart session just to be safe
+    cart = session.pop('cart', None)
+    if cart is None:
+        flash('No items in cart.', 'error')
+        return redirect(url_for('checkout'))
+
     userId = mongo.db.Users.find_one({"email": CurrentUser.email})['_id']
     for item in cart:
-        generateTickets(ObjectId(item['event_id']), userId, item['num_tickets'])
+        if item['num_tickets'] > 0:
+            generateTickets(ObjectId(item['event_id']), userId, item['num_tickets'])
+        else:
+            flash('Invalid number of tickets.', 'error')
+
+    flash('Purchase successful! Thank you.', 'success')
     return redirect(url_for('checkout'))
+
 
 @app.route('/admin')
 def admin():
@@ -455,21 +413,18 @@ def add_to_cart():
     event_id = request.args.get('event_id')
     num_tickets = int(request.args.get('num_tickets', 1))
 
-    # Simple validation to ensure the event exists
     event = mongo.db.Event.find_one({"_id": ObjectId(event_id)})
     if not event:
         flash('Event not found', 'danger')
         return redirect(url_for('events'))
 
-    # Add or update the event in the cart
     cart = session.get('cart')
     event_in_cart = next((item for item in cart if item['event_id'] == event_id), None)
     if event_in_cart:
-        # Assuming you want to replace the number of tickets, not increment
         event_in_cart['num_tickets'] = num_tickets
     else:
         cart.append({'event_id': event_id, 'num_tickets': num_tickets})
-    session['cart'] = cart  # Reassign to update the session
+    session['cart'] = cart
 
     flash('Ticket added to cart!', 'success')
     return redirect(url_for('checkout'))
@@ -509,6 +464,7 @@ def mytickets():
                 "event_description": event["description"],
                 "event_date": event["event_date"],
                 "event_location": event["location"],
+                "ticket_price": event["ticket_price"]
             })
 
     return render_template('mytickets.html', ticket_event_info=ticket_event_info)

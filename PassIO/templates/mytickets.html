@@ -27,6 +27,7 @@
           <p class="card-text">{{ ticket_info.event_description }}</p>
           <p class="card-text">Date: {{ ticket_info.event_date }}</p>
           <p class="card-text">Location: {{ ticket_info.event_location }}</p>
+          <p class="card-text">${{ "%.2f"|format(ticket_info.ticket_price) }}</p>
         </div>
       </div>
     {% else %}
