@@ -22,7 +22,7 @@ def home():
     return render_template('index.html', events=all_events)
 
 
-@app.route('/events_submit', methods=["POST"])  # This is throwing an error currently
+@app.route('/events_submit', methods=["POST"])
 def events_submit():
     name = request.form.get('e_name')
     location = request.form.get('e_location')
@@ -33,21 +33,20 @@ def events_submit():
     event_date = datetime.strptime(event_date_str, '%Y-%m-%d') if event_date_str else None
     num_tickets = int(request.form.get('e_tickets', 0))
     ticket_price = float(request.form.get('e_price'))
-    eventObj = mongo.db.Event.insert_one({
+    mongo.db.Event.insert_one({
         'name': name,
         'location': location,
         'description': description,
         'artist': artist,
         'genre': genre,
-        'event_date': event_date,  # Ensure your MongoDB is set to store dates correctly
+        'event_date': event_date,
         'num_tickets': num_tickets,
         'ticket_price': ticket_price,
         'verified': 'false',
         'cancelled': False,
         'host': CurrentUser.email
     })
-    #Moving this to purchase time
-    return render_template('myevents.html')
+    return redirect(url_for('eventapproval'))
 
 
 def generateTickets(eventId: ObjectId, userId: ObjectId, numTickets: int):
@@ -86,7 +85,7 @@ def loginRegister():
 
 @app.route('/eventDetails')
 def evenDetail():
-    event_id = request.args.get('id')  # Get event ID from query parameter
+    event_id = request.args.get('id')
     if event_id:
         event = mongo.db.Event.find_one({"_id": ObjectId(event_id)})
         if event:
@@ -112,7 +111,7 @@ def eventapproval():
 
 @app.route('/editevent', methods=['POST'])
 def editevent():
-    event_id = request.form.get('event_id')  # Get event ID from hidden filed
+    event_id = request.form.get('event_id')
     if event_id:
         event = mongo.db.Event.find_one({"_id": ObjectId(event_id)})
         if event:
@@ -182,8 +181,6 @@ def login():
         logSuccess = False
         logIssue = "No user found under: " + email
 
-    # Probably will go back to the home page and give a little "successfully registered/logged in instead"
-    # Failed login would not change the page
     if logSuccess:
         return redirect(url_for('home'))
     else:
@@ -226,7 +223,7 @@ def checkout():
     cart_items = session.get('cart', [])
     events_in_cart = []
     total = 0
-    num_tickets = 0  # Initialize num_tickets
+    num_tickets = 0
 
     for item in cart_items:
         event = mongo.db.Event.find_one({"_id": ObjectId(item['event_id'])})
@@ -262,10 +259,6 @@ def purchase():
     flash('Purchase successful! Thank you.', 'success')
     return redirect(url_for('checkout'))
 
-
-@app.route('/admin')
-def admin():
-    return render_template('admin.html')
 
 
 @app.route('/search', methods=['GET', 'POST'])
@@ -361,11 +354,10 @@ def update_profile():
 
 @app.route('/logout', methods=['GET', 'POST'])
 def logout():
-    # Your logic to handle logout, e.g., clearing the CurrentUser or session
     global CurrentUser
     CurrentUser = None
     # Redirect to home page or login page after logout
-    return redirect('/')
+    return redirect(url_for('loginRegister'))
 
 
 @app.context_processor

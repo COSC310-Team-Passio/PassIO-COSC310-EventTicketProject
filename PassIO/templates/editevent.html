@@ -21,6 +21,16 @@
 <body class="text-center">
   {% include 'navbar.html' %}
   <div class="container">
+    <!-- Flash messages -->
+    {% with messages = get_flashed_messages(with_categories=true) %}
+        {% if messages %}
+            {% for category, message in messages %}
+                <div class="alert alert-{{ category }}" role="alert">
+                    {{ message }}
+                </div>
+            {% endfor %}
+        {% endif %}
+    {% endwith %}
     <h1 class="display-4 mt-3">Edit Event</h1>
       <form action="/update_event" method="post" class="needs-validation" novalidate="">
         <input type="hidden" name="event_id" value="{{ event._id }}">

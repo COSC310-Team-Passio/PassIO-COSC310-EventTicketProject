@@ -26,6 +26,16 @@
     {% if CurrentUser.special_key == "host" %}
     <div class="py-2">
         <div class="container">
+            <!-- Flash messages -->
+                {% with messages = get_flashed_messages(with_categories=true) %}
+                    {% if messages %}
+                        {% for category, message in messages %}
+                            <div class="alert alert-{{ category }}" role="alert">
+                                {{ message }}
+                            </div>
+                        {% endfor %}
+                    {% endif %}
+                {% endwith %}
             <h1 class="display-4 mt-3">My Events</h1>
             <div class="row mt-3">
                 <div class="col-md-12">
