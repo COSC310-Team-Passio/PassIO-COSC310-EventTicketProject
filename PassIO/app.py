@@ -469,7 +469,7 @@ def add_to_cart():
 
 @app.route('/awaiting_approval')
 def awaiting_approval():
-    return render_template('awaitingapproval.html')
+    return render_template('myevents.html')
 
 
 if __name__ == '__main__':

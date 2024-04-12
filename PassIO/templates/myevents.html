@@ -1,6 +1,5 @@
-<!DOCTYPE html>
+ <!DOCTYPE html>
 <html lang="en">
-
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
@@ -17,11 +16,44 @@
   <!-- Script: Animated entrance -->
   <script src="../static/js/animate-in.js"></script>
 </head>
-
 <body class="text-center">
   {% include 'navbar.html' %}
   <div class="container">
-    <h1 class="display-4 mt-3">Waiting Approval</h1>
+    <h1 class="display-4 mt-3">My Events</h1>
+
+    <h2 class="mt-5">Waiting for Approval</h2>
+    <div class="row">
+      {% for event in waiting_approval_events %}
+      <div class="col-md-4">
+        <!-- Event card structure -->
+      </div>
+      {% else %}
+      <p>No events waiting for approval.</p>
+      {% endfor %}
+    </div>
+
+    <h2 class="mt-5">Approved Events</h2>
+    <div class="row">
+      {% for event in approved_events %}
+      <div class="col-md-4">
+        <!-- Event card structure -->
+      </div>
+      {% else %}
+      <p>No approved events.</p>
+      {% endfor %}
+    </div>
+
+    <h2 class="mt-5">Declined Events</h2>
+    <div class="row">
+      {% for event in declined_events %}
+      <div class="col-md-4">
+        <!-- Event card structure -->
+      </div>
+      {% else %}
+      <p>No declined events.</p>
+      {% endfor %}
+    </div>
+
   </div>
   {% include 'footer.html' %}
   <!-- JavaScript dependencies -->
@@ -31,5 +63,4 @@
   <!-- Script: Smooth scrolling between anchors in a same page -->
   <script src="../static/js/smooth-scroll.js"></script>
 </body>
-
 </html>
