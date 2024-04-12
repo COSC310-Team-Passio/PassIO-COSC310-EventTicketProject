@@ -10,8 +10,6 @@
     <meta name="keywords" content="Pingendo conference event neon free template bootstrap 4">
     <!-- CSS dependencies -->
     <link rel="stylesheet" href="../static/neon.css">
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css"
-        type="text/css">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.1.1/css/all.min.css">
     <!-- Script: Make my navbar transparent when the document is scrolled to top -->
     <script src="../static/js/navbar-ontop.js"></script>
@@ -51,18 +49,15 @@
                         <p>{{ event.genre }}</p>
                         <p>{{ event.event_date }}</p>
                         <p style="color: aquamarine;">${{ "%.2f"|format(event.ticket_price) }}</p>
-                        <a href="/add_to_cart?event_id={{ event._id }}&num_tickets=1" class="btn btn-primary">Add Ticket
-                            to
-                            Cart</a>
-                        {% if CurrentUser and CurrentUser.email == event.host %}
-                        <a href="/editevent?id={{ event._id }}" class="btn btn-secondary">Edit Event</a>
-                        {% endif %}
+                        <a href="/add_to_cart?event_id={{ event._id }}&num_tickets=1" class="btn btn-primary">Add Ticket to Cart</a>
                     </div>
                 </div>
             </div>
         </div>
     </div>
     <!-- Footer -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css"
+        type="text/css">
     {% include 'footer.html' %}
     <!-- JavaScript dependencies -->
     <script src="https://code.jquery.com/jquery-3.3.1.min.js"></script>

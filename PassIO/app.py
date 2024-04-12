@@ -43,7 +43,7 @@ def events_submit():
         'num_tickets': num_tickets,
         'ticket_price': ticket_price,
         'verified': 'false',
-        'cancelled': 'false',
+        'cancelled': False,
         'host': CurrentUser.email
     })
     #Moving this to purchase time
@@ -105,9 +105,9 @@ def eventapproval():
     return render_template('eventapproval.html', user=CurrentUser, unapproved_events=unapproved_events)
 
 
-@app.route('/editevent')
+@app.route('/editevent', methods=['POST'])
 def editevent():
-    event_id = request.args.get('id')  # Get event ID from query parameter
+    event_id = request.form.get('event_id')  # Get event ID from hidden filed
     if event_id:
         event = mongo.db.Event.find_one({"_id": ObjectId(event_id)})
         if event:
@@ -117,7 +117,7 @@ def editevent():
 
 @app.route('/hostEvents')
 def hostEvents():
-    host_events = mongo.db.Event.find({'host': mongo.db.Users.find_one({"email": CurrentUser.email})})
+    host_events = mongo.db.Event.find({'host': CurrentUser.email})
     host_events = list(host_events)
     return render_template('hostEvents.html', user=CurrentUser, host_events=host_events)
 

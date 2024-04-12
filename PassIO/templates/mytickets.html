@@ -23,7 +23,7 @@
     {% for ticket_info in ticket_event_info %}
       <div class="card mb-4 shadow-sm">
         <div class="card-body">
-          <h5 class="card-title">{{ ticket_info.event_name }}</h5>
+          <h3 class="card-title" style="color: yellow;">{{ ticket_info.event_name }}</h3>
           <p class="card-text">{{ ticket_info.event_description }}</p>
           <p class="card-text">Date: {{ ticket_info.event_date }}</p>
           <p class="card-text">Location: {{ ticket_info.event_location }}</p>
