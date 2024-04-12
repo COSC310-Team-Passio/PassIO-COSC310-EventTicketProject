@@ -63,6 +63,7 @@ def generateTickets(eventId: ObjectId, userId: ObjectId, numTickets: int):
     for i in range(currentTickets, numTickets):
         tickets.append({"user_id": userId, "event_id": eventId, "seat_number": i})
     mongo.db.Ticket.insert_many(tickets)
+    flash("Purchase successful! Thank you.", "success")
     return
 
 
@@ -118,9 +119,9 @@ def update_event():
             'artist': request.form.get('artist'),
             'genre': request.form.get('genre'),
             'description': request.form.get('description'),
-            'date': event_date,
+            'event_date': event_date,
             'num_tickets': int(request.form.get('num_tickets')),
-            'price': float(request.form.get('price')),
+            'ticket_price': float(request.form.get('price')),
             'verified': 'false'
         }
 
@@ -273,12 +274,12 @@ def checkout():
             event_detail = {
                 "name": event['name'],
                 "num_tickets": item['num_tickets'],
-                "price": event.get('price', 0),  # Use get with a default value in case 'price' is not defined
-                "total_price": item['num_tickets'] * event.get('price', 0)
+                "price": event.get('price', 0),
+                "total_price": item['num_tickets'] * event.get('price',0)
             }
             events_in_cart.append(event_detail)
             total += event_detail["total_price"]
-            num_tickets += item['num_tickets']  # Update the total number of tickets
+            num_tickets += item['num_tickets']
 
     return render_template('checkout.html', events_in_cart=events_in_cart, total=total, num_tickets=num_tickets)
 
@@ -289,7 +290,6 @@ def purchase():
     cart = session.pop('cart', None)  # Clear any remaining cart session just to be safe
     for item in cart:
         generateTickets(item['event_id'], mongo.db.Users.find_one({"email":CurrentUser.email})['_id'], 1)
-    flash("Purchase successful! Thank you.", "success")
 
     try:
         session.pop('cart', None)
@@ -466,6 +466,11 @@ def add_to_cart():
 
     flash('Ticket added to cart!', 'success')
     return redirect(url_for('checkout'))
+
+@app.route('/awaiting_approval')
+def awaiting_approval():
+    return render_template('awaitingapproval.html')
+
 
 if __name__ == '__main__':
     app.run(debug=True, host='0.0.0.0', port=5001)
