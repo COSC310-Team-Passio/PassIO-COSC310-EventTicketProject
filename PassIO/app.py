@@ -213,7 +213,9 @@ def register():
         # Set the global CurrentUser based on the role derived from special_key
         global CurrentUser
         CurrentUser = Attendee(name, email)
-
+        user = mongo.db.Users.find_one({"email": email, "password": password})
+        user_id = str(user['_id'])
+        CurrentUser.id = user_id
         # Redirect to profile page with success message
         return redirect(url_for('customerprofile', regSuccess=True))
 
