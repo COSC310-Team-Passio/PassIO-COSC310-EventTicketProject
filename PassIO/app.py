@@ -298,7 +298,7 @@ def search():
                 "$and": [
                     query,
                     {"verified": "verified"},
-                    {"date": {'$gte': search_date, '$lt': search_date + timedelta(days=1)}}
+                    {"event_date": {'$gte': search_date, '$lt': search_date + timedelta(days=1)}}
                 ]
             }
 
