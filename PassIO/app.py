@@ -47,7 +47,7 @@ def events_submit():
         'host': CurrentUser.email
     })
     #Moving this to purchase time
-    return render_template('evententry.html')
+    return render_template('myevents.html')
 
 
 def generateTickets(eventId: ObjectId, userId: ObjectId, numTickets: int):
@@ -58,7 +58,7 @@ def generateTickets(eventId: ObjectId, userId: ObjectId, numTickets: int):
         maxTickets = 1
     currentTickets = mongo.db.Ticket.count_documents({"event_id":eventId})
     numTickets = min(maxTickets, max(1, numTickets))
-    if currentTickets >= maxTickets:
+    if currentTickets + numTickets > maxTickets:
         flash("Event is sold out", 'error')
         return
     for i in range(currentTickets, numTickets):
@@ -289,14 +289,9 @@ def checkout():
 def purchase():
     # After processing, clear the session cart and show a success message
     cart = session.pop('cart', None)  # Clear any remaining cart session just to be safe
+    userId = mongo.db.Users.find_one({"email": CurrentUser.email})['_id']
     for item in cart:
-        generateTickets(item['event_id'], mongo.db.Users.find_one({"email":CurrentUser.email})['_id'], 1)
-
-    try:
-        session.pop('cart', None)
-    except:
-        print("")
-    # Redirect to the checkout page or a dedicated confirmation page with a success message
+        generateTickets(ObjectId(item['event_id']), userId, item['num_tickets'])
     return redirect(url_for('checkout'))
 
 @app.route('/admin')
