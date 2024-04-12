@@ -43,7 +43,8 @@ def events_submit():
         'num_tickets': num_tickets,
         'ticket_price': ticket_price,
         'verified': 'false',
-        'cancelled': 'false'
+        'cancelled': 'false',
+        'host': CurrentUser.email
     })
     #Moving this to purchase time
     return render_template('evententry.html')
@@ -439,6 +440,16 @@ def cancel_event():
         flash('You do not have permission to perform this action.', 'error')
         return redirect(url_for('customerprofile'))
 
+@app.route('/decline_event', methods=['POST'])
+def decline_event():
+    if 'event_id' in request.form:
+        event_id = request.form['event_id']
+        mongo.db.Event.update_one({'_id': ObjectId(event_id)}, {'$set': {'verified': 'declined'}})
+        flash('Event declined successfully.', 'success')
+    else:
+        flash('Event decline failed. No ID provided.', 'error')
+    return redirect(url_for('eventapproval'))
+
 
 @app.route('/add_to_cart')
 def add_to_cart():
@@ -467,9 +478,21 @@ def add_to_cart():
     flash('Ticket added to cart!', 'success')
     return redirect(url_for('checkout'))
 
-@app.route('/awaiting_approval')
-def awaiting_approval():
-    return render_template('myevents.html')
+
+@app.route('/myevents')
+def myevents():
+    if CurrentUser is not None and CurrentUser.special_key == 'host':
+        waiting_approval_events = mongo.db.Event.find({"verified": "false", "host": CurrentUser.email})
+        approved_events = mongo.db.Event.find({"verified": "verified", "host": CurrentUser.email})
+        declined_events = mongo.db.Event.find({"verified": "declined", "host": CurrentUser.email})
+
+        return render_template('myevents.html',
+                               waiting_approval_events=waiting_approval_events,
+                               approved_events=approved_events,
+                               declined_events=declined_events)
+    else:
+        flash('You do not have permission to view this page.', 'error')
+        return redirect(url_for('home'))
 
 
 if __name__ == '__main__':
