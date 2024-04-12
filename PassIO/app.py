@@ -43,27 +43,35 @@ def events_submit():
         'num_tickets': num_tickets,
         'ticket_price': ticket_price,
         'verified': 'false',
-        'cancelled': 'false'
+        'cancelled': 'false',
+        'host': CurrentUser.email
     })
     #Moving this to purchase time
-    return render_template('evententry.html')
+    return render_template('myevents.html')
 
 
 def generateTickets(eventId: ObjectId, userId: ObjectId, numTickets: int):
     tickets = []
-    try:
-        maxTickets = mongo.db.Event.find_one({"_id":eventId})['num_tickets']
-    except: # Some of the events in the db don't have a num_tickets field
-        maxTickets = 1
-    currentTickets = mongo.db.Ticket.count_documents({"event_id":eventId})
-    numTickets = min(maxTickets, max(1, numTickets))
+    event = mongo.db.Event.find_one({"_id": eventId})
+    if not event:
+        flash("Event does not exist.", 'error')
+        return
+
+    maxTickets = event['num_tickets']
+    currentTickets = mongo.db.Ticket.count_documents({"event_id": eventId})
+
+    # Check if there are enough tickets available to fulfill this purchase.
     if currentTickets >= maxTickets:
         flash("Event is sold out", 'error')
         return
-    for i in range(currentTickets, numTickets):
+
+    for i in range(currentTickets, min(currentTickets + numTickets, maxTickets)):
         tickets.append({"user_id": userId, "event_id": eventId, "seat_number": i})
-    mongo.db.Ticket.insert_many(tickets)
-    return
+
+    if tickets:
+        mongo.db.Ticket.insert_many(tickets)
+    else:
+        flash("No tickets generated.", "error")
 
 
 @app.route('/events_entry')
@@ -79,6 +87,16 @@ def hostentry():
 @app.route('/loginandregister')
 def loginRegister():
     return render_template('loginandregister.html')
+
+
+@app.route('/eventDetails')
+def evenDetail():
+    event_id = request.args.get('id')  # Get event ID from query parameter
+    if event_id:
+        event = mongo.db.Event.find_one({"_id": ObjectId(event_id)})
+        if event:
+            return render_template('eventDetails.html', event=event)
+    return redirect(url_for('index'))
 
 
 @app.route('/eventapproval')
@@ -118,9 +136,9 @@ def update_event():
             'artist': request.form.get('artist'),
             'genre': request.form.get('genre'),
             'description': request.form.get('description'),
-            'date': event_date,
+            'event_date': event_date,
             'num_tickets': int(request.form.get('num_tickets')),
-            'price': float(request.form.get('price')),
+            'ticket_price': float(request.form.get('price')),
             'verified': 'false'
         }
 
@@ -144,20 +162,23 @@ def login():
 
     user = mongo.db.Users.find_one({"email": email, "password": password})
     if user:
+        user_id = str(user['_id'])
         special_key = user.get("special key", "")
         global CurrentUser
         if special_key == "admin":
             CurrentUser = Admin(user["name"], email, special_key)
             unapproved_events = mongo.db.Event.find({"verified": "false"})
             CurrentUser.special_key = special_key
+            CurrentUser.id = user_id
             return render_template('customerprofile.html', user=CurrentUser, unapproved_events=unapproved_events)
         elif special_key == "host":
             CurrentUser = Host(user["name"], email, special_key, [])
             CurrentUser.special_key = special_key
+            CurrentUser.id = user_id
         else:
             CurrentUser = Attendee(user["name"], email)
+            CurrentUser.id = user_id
 
-        # Redirect to a dashboard or profile page
         return redirect(url_for('home'))
     else:
         logSuccess = False
@@ -196,66 +217,6 @@ def register():
         # Redirect to profile page with success message
         return redirect(url_for('customerprofile', regSuccess=True))
 
-'''
-@app.route('/checkout')
-def checkout():
-    if CurrentUser == None:
-        return render_template('loginandregister.html')
-    num_tickets = request.args.get('num_tickets', 0)
-    num_tickets = min(max(int(num_tickets), 1), 5)  # Acts as Math.clamp would in other languages
-    event_id = request.args.get('event_id')
-    event_id = ObjectId(event_id)
-    ticket_query = {"event_id": event_id, "user_id": ""}
-    ticket_query = mongo.db.Ticket.find(ticket_query)
-    tickets = []
-    total = 0
-    for i in range(0, num_tickets):
-        try:
-            t = ticket_query[i]
-            tickets.append({"_id": str(t['_id']), "price": t['price'], "seat_number": t['seat_number'],
-                            "event_id": str(t['event_id']), "user_id": None})
-            total += t['price']
-        except IndexError:
-            break
-    session['t'] = tickets
-    return render_template('checkout.html', tickets=tickets, total=total, event_id=event_id, numTickets=num_tickets)
-
-
-@app.route('/purchase', methods=["POST"])
-def purchase():
-    # TODO put the form input names in, or don't maybe, we really only need the one
-    fName = request.args.get("");
-    lName = request.args.get("")
-    address1 = request.args.get("");
-    address2 = request.args.get("")
-    province = request.args.get("");
-    postalCode = request.args.get("")
-
-    ccName = request.args.get("");
-    ccNum = request.args.get("cc-number")
-    ccExpiration = request.args.get("");
-    ccCVV = request.args.get("")
-
-    tickets = session.pop('t', None)
-    if tickets is None:
-        print("no available tickets")
-        return redirect(url_for('events'))
-        # Go back to events? idk, the only time this would happen is if there were no valid tickets for the checkout function to list
-    # Process valid card details but like we're really just checking the card number
-    # TODO
-    # if ccNum is valid # The credit card checking algorithm probably needs its own function, and I don't want to go find out what it is right now and it also doesn't matter as much as the rest of this loop
-    if True:  # the if ccNum is valid check would replace this if statement
-        targetUserId = mongo.db.Users.find_one({"email": CurrentUser.email})['_id']
-        for t in tickets:
-            mongo.db.Ticket.find_one_and_replace({'_id': ObjectId(t['_id'])},
-                                                 {"_id": ObjectId(t['_id']), "price": t['price'],
-                                                  "seat_number": t['seat_number'], "event_id": ObjectId(t['event_id']),
-                                                  "user_id": targetUserId})
-        return (
-            'purchase_success.html')  # maybe we just go back to the main page with a purchase complete message instead
-    else:
-        return (purchase_failure.html)
-'''
 
 @app.route('/checkout')
 def checkout():
@@ -273,12 +234,12 @@ def checkout():
             event_detail = {
                 "name": event['name'],
                 "num_tickets": item['num_tickets'],
-                "price": event.get('price', 0),  # Use get with a default value in case 'price' is not defined
-                "total_price": item['num_tickets'] * event.get('price', 0)
+                "ticket_price": event.get('ticket_price', 0),
+                "total_price": item['num_tickets'] * event.get('ticket_price',0)
             }
             events_in_cart.append(event_detail)
             total += event_detail["total_price"]
-            num_tickets += item['num_tickets']  # Update the total number of tickets
+            num_tickets += item['num_tickets']
 
     return render_template('checkout.html', events_in_cart=events_in_cart, total=total, num_tickets=num_tickets)
 
@@ -286,17 +247,21 @@ def checkout():
 @app.route('/purchase', methods=["POST"])
 def purchase():
     # After processing, clear the session cart and show a success message
-    cart = session.pop('cart', None)  # Clear any remaining cart session just to be safe
-    for item in cart:
-        generateTickets(item['event_id'], mongo.db.Users.find_one({"email":CurrentUser.email})['_id'], 1)
-    flash("Purchase successful! Thank you.", "success")
+    cart = session.pop('cart', None)
+    if cart is None:
+        flash('No items in cart.', 'error')
+        return redirect(url_for('checkout'))
 
-    try:
-        session.pop('cart', None)
-    except:
-        print("")
-    # Redirect to the checkout page or a dedicated confirmation page with a success message
+    userId = mongo.db.Users.find_one({"email": CurrentUser.email})['_id']
+    for item in cart:
+        if item['num_tickets'] > 0:
+            generateTickets(ObjectId(item['event_id']), userId, item['num_tickets'])
+        else:
+            flash('Invalid number of tickets.', 'error')
+
+    flash('Purchase successful! Thank you.', 'success')
     return redirect(url_for('checkout'))
+
 
 @app.route('/admin')
 def admin():
@@ -439,6 +404,16 @@ def cancel_event():
         flash('You do not have permission to perform this action.', 'error')
         return redirect(url_for('customerprofile'))
 
+@app.route('/decline_event', methods=['POST'])
+def decline_event():
+    if 'event_id' in request.form:
+        event_id = request.form['event_id']
+        mongo.db.Event.update_one({'_id': ObjectId(event_id)}, {'$set': {'verified': 'declined'}})
+        flash('Event declined successfully.', 'success')
+    else:
+        flash('Event decline failed. No ID provided.', 'error')
+    return redirect(url_for('eventapproval'))
+
 
 @app.route('/add_to_cart')
 def add_to_cart():
@@ -448,24 +423,62 @@ def add_to_cart():
     event_id = request.args.get('event_id')
     num_tickets = int(request.args.get('num_tickets', 1))
 
-    # Simple validation to ensure the event exists
     event = mongo.db.Event.find_one({"_id": ObjectId(event_id)})
     if not event:
         flash('Event not found', 'danger')
         return redirect(url_for('events'))
 
-    # Add or update the event in the cart
     cart = session.get('cart')
     event_in_cart = next((item for item in cart if item['event_id'] == event_id), None)
     if event_in_cart:
-        # Assuming you want to replace the number of tickets, not increment
         event_in_cart['num_tickets'] = num_tickets
     else:
         cart.append({'event_id': event_id, 'num_tickets': num_tickets})
-    session['cart'] = cart  # Reassign to update the session
+    session['cart'] = cart
 
     flash('Ticket added to cart!', 'success')
     return redirect(url_for('checkout'))
+
+
+@app.route('/myevents')
+def myevents():
+    if CurrentUser is not None and CurrentUser.special_key == 'host':
+        waiting_approval_events = mongo.db.Event.find({"verified": "false", "host": CurrentUser.email})
+        approved_events = mongo.db.Event.find({"verified": "verified", "host": CurrentUser.email})
+        declined_events = mongo.db.Event.find({"verified": "declined", "host": CurrentUser.email})
+
+        return render_template('myevents.html',
+                               waiting_approval_events=waiting_approval_events,
+                               approved_events=approved_events,
+                               declined_events=declined_events)
+    else:
+        flash('You do not have permission to view this page.', 'error')
+        return redirect(url_for('home'))
+
+
+@app.route('/mytickets')
+def mytickets():
+    if not CurrentUser:
+        flash("Please log in to view your tickets.", "info")
+        return redirect(url_for('loginRegister'))
+
+    user_id = ObjectId(CurrentUser.id)
+    user_tickets = mongo.db.Ticket.find({'user_id': user_id})
+    ticket_event_info = []
+    for ticket in user_tickets:
+        event = mongo.db.Event.find_one({"_id": ObjectId(ticket["event_id"])})
+        if event:
+            ticket_event_info.append({
+                "ticket_id": str(ticket["_id"]),
+                "event_name": event["name"],
+                "event_description": event["description"],
+                "event_date": event["event_date"],
+                "event_location": event["location"],
+                "ticket_price": event["ticket_price"]
+            })
+
+    return render_template('mytickets.html', ticket_event_info=ticket_event_info)
+
 
 if __name__ == '__main__':
     app.run(debug=True, host='0.0.0.0', port=5001)

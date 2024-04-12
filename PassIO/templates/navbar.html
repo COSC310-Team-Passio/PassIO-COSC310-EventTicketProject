@@ -10,6 +10,7 @@
                 <li class="nav-item"> <a class="nav-link" href="/checkout">Checkout</a> </li>
                 {% if CurrentUser.special_key == 'host' %}
                 <li class="nav-item"> <a class="nav-link" href="/events_entry">Event Entry</a> </li>
+                <li class="nav-item"> <a class="nav-link" href="/myevents">My Events</a> </li>
                 {% endif %}
                 {% if CurrentUser.special_key == 'admin' %}
                 <li class="nav-item"> <a class="nav-link" href="/eventapproval">Event Approval</a> </li>
@@ -25,12 +26,12 @@
                     </a>
                     <div class="dropdown-menu" aria-labelledby="navbarDropdownMenuLink">
                         {% if CurrentUser.special_key == 'host' %}
-                        <a class="dropdown-item" href="/hostEvents">Event History</a>
                         <a class="dropdown-item" href="/customerprofile">Profile</a>
+                        <a class="dropdown-item" href="/hostEvents">My Events</a>
                         {% elif not CurrentUser.special_key %}
-                        <a class="dropdown-item" href="#">Purchase History</a>
                         <a class="dropdown-item" href="/customerprofile">Profile</a>
                         {% endif %}
+                        <a class="dropdown-item" href="/mytickets">My Tickets</a>
                         <a class="dropdown-item" href="/logout" id="navbar-sign-out">Sign out</a>
                     </div>
                 </li>

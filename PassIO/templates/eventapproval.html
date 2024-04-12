@@ -5,7 +5,7 @@
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <!-- PAGE settings -->
-  <link rel="icon" href="../static/assets/conference/favicon.png">
+  <link rel="icon" href="../static/assets/images/favicon.png">
   <title>Customer Profile</title>
   <meta name="description" content="Write description here.">
   <meta name="keywords" content="Write keywords here.">
@@ -27,22 +27,32 @@
       <div class="container">
         <div class="row mt-3">
           <div class="col-md-12">
-            <h3>Unapproved Events</h3>
+            <h1>Unapproved Events</h1>
             {% for event in unapproved_events %}
               <div class="card mb-3">
-                <div class="row no-gutters">
-                  <div class="col align-items-center">
-                    <div class="card-body align-items-center">
-                      <h5 class="card-title">{{ event.name }}</h5>
-                      <p class="card-text">{{ event.description }}</p>
-                      <form action="/approve_event" method="post">
-                        <input type="hidden" name="event_id" value="{{ event._id }}">
-                        <button type="submit" class="btn btn-primary">Approve</button>
-                      </form>
-                    </div>
+                <h2 class="card-header mt-1">{{ event.name }}</h2>
+                <div class="card-body">
+                  <h5 class="card-title">Artist: {{ event.artist }}</h5>
+                  <p class="card-text">Description: {{ event.description }}</p>
+                  <p class="card-text">Genre: {{ event.genre }}</p>
+                  <p class="card-text">Date: {{ event.event_date }}</p>
+                  <p class="card-text">Location: {{ event.location }}</p>
+                  <p class="card-text">Number of Tickets: {{ event.num_tickets }}</p>
+                  <p class="card-text">Price: ${{ event.ticket_price }}</p>
+                  <div class="d-flex justify-content-center">
+                    <form action="/approve_event" method="post" class="mr-3">
+                      <input type="hidden" name="event_id" value="{{ event._id }}">
+                      <button type="submit" class="btn btn-primary">Approve</button>
+                    </form>
+                    <form action="/decline_event" method="post">
+                      <input type="hidden" name="event_id" value="{{ event._id }}">
+                      <button type="submit" class="btn btn-danger">Decline</button>
+                    </form>
                   </div>
                 </div>
               </div>
+            {% else %}
+              <p>No events awaiting approval.</p>
             {% endfor %}
           </div>
         </div>

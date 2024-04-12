@@ -1,0 +1,79 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <!-- PAGE settings -->
+    <link rel="icon" href="../static/assets/images/favicon.png">
+    <title>PassIO</title>
+    <meta name="keywords" content="Pingendo conference event neon free template bootstrap 4">
+    <!-- CSS dependencies -->
+    <link rel="stylesheet" href="../static/neon.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css"
+        type="text/css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.1.1/css/all.min.css">
+    <!-- Script: Make my navbar transparent when the document is scrolled to top -->
+    <script src="../static/js/navbar-ontop.js"></script>
+    <script src="../static/js/navbar-ontop.js"></script>
+    <!-- Script: Animated entrance -->
+    <script src="../static/js/animate-in.js"></script>
+    <script src="../static/js/animate-in.js"></script>
+    <script>
+        function goBack() {
+            window.history.back();
+        }
+    </script>
+</head>
+
+<body class="text-center">
+    <!-- Navbar -->
+    {% include 'navbar.html' %}
+    <!-- Events -->
+    <div class="py-5" id="speakers">
+        <div class="container">
+            <div class="row">
+                <!-- Go back butto  -->
+                <button onclick="goBack()" class="gback-button">
+                    <i class="fa-solid fa-chevron-left"></i> Go Back
+                </button>
+                <div class="everything-container">
+                    <!-- include img-fluid in class attribute if you want original image size -->
+                    <div class="img-container">
+                        <img src="../static/assets/images/image{{ event.event_id }}.jpg"
+                            class="center-block my-3 shadowed" width="100%" height="100%">
+                    </div>
+                    <div class="details-container">
+                        <h1 class="mb-0" style="color: yellow;"><b>{{ event.name }}</b></h1>
+                        <p>{{ event.artist }}</p>
+                        <p>{{ event.description }}</p>
+                        <p>{{ event.location }}</p>
+                        <p>{{ event.genre }}</p>
+                        <p>{{ event.event_date }}</p>
+                        <p style="color: aquamarine;">${{ "%.2f"|format(event.ticket_price) }}</p>
+                        <a href="/add_to_cart?event_id={{ event._id }}&num_tickets=1" class="btn btn-primary">Add Ticket
+                            to
+                            Cart</a>
+                        {% if CurrentUser and CurrentUser.email == event.host %}
+                        <a href="/editevent?id={{ event._id }}" class="btn btn-secondary">Edit Event</a>
+                        {% endif %}
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <!-- Footer -->
+    {% include 'footer.html' %}
+    <!-- JavaScript dependencies -->
+    <script src="https://code.jquery.com/jquery-3.3.1.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.3/umd/popper.min.js"
+        integrity="sha384-ZMP7rVo3mIykV+2+9J3UJ46jBk0WLaUAdn689aCwoqbBJiSnjAK/l8WvCWPIPm49"
+        crossorigin="anonymous"></script>
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.1.3/js/bootstrap.min.js"
+        integrity="sha384-ChfqqxuZUCnJSK3+MXmPNIyE6ZbWh2IMqE241rYiqJxyMiZ6OW/JmZQ5stwEULTy"
+        crossorigin="anonymous"></script>
+    <!-- Script: Smooth scrolling between anchors in a same page -->
+    <script src="../static/js/smooth-scroll.js"></script>
+</body>
+
+</html>

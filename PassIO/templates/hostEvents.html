@@ -5,7 +5,7 @@
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <!-- PAGE settings -->
-    <link rel="icon" href="../static/assets/conference/favicon.png">
+    <link rel="icon" href="../static/assets/images/favicon.png">
     <title>Customer Profile</title>
     <meta name="description" content="Write description here.">
     <meta name="keywords" content="Write keywords here.">
@@ -28,7 +28,7 @@
         <div class="container">
             <div class="row mt-3">
                 <div class="col-md-12">
-                    <h3>My Events</h3>
+                    <h3>Active Events</h3>
                     {% for event in host_events %}
                     {% if not event['cancelled'] %}
                     <div class="card mb-3">

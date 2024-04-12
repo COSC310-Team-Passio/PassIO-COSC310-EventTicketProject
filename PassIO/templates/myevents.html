@@ -1,0 +1,100 @@
+ <!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <!-- PAGE settings -->
+  <link rel="icon" href="../static/assets/images/favicon.png">
+  <title>PassIO</title>
+  <meta name="description" content="Events available to purchase tickets for on PassIO">
+  <meta name="keywords" content="Events, purchase, ticket, PassIO">
+  <!-- CSS dependencies -->
+  <link rel="stylesheet" href="../static/neon.css">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css" type="text/css">
+  <!-- Script: Make my navbar transparent when the document is scrolled to top -->
+  <script src="../static/js/navbar-ontop.js"></script>
+  <!-- Script: Animated entrance -->
+  <script src="../static/js/animate-in.js"></script>
+</head>
+<body class="text-center">
+  {% include 'navbar.html' %}
+    <div class="container">
+      <h1 class="display-4 mt-3">My Events</h1>
+      <h2 class="mt-5">Waiting for Approval</h2>
+      <div class="row">
+        {% for event in waiting_approval_events %}
+        <div class="col-md-4">
+          <div class="card mb-4 shadow-sm">
+            <div class="card-body">
+              <h2 class="card-title">{{ event.name }}</h2>
+              <p class="card-text">{{ event.description }}</p>
+              <p class="card-text">{{ event.location }}</p>
+              <p class="card-text">{{ event.artist }}</p>
+              <p class="card-text">{{ event.genre }}</p>
+              <p class="card-text">{{ event.event_date }}</p>
+              <p class="card-text">{{ event.num_tickets }}</p>
+              <p class="text-muted">${{ "%.2f"|format(event.ticket_price) }}</p>
+              <p class="card-text"><small class="text-muted">Date: {{ event.event_date }}</small></p>
+            </div>
+          </div>
+        </div>
+        {% else %}
+        <p>No events waiting for approval.</p>
+        {% endfor %}
+      </div>
+
+      <h2 class="mt-5">Approved Events</h2>
+      <div class="row">
+        {% for event in approved_events %}
+        <div class="col-md-4">
+          <div class="card mb-4 shadow-sm">
+            <div class="card-body">
+              <h2 class="card-title">{{ event.name }}</h2>
+              <p class="card-text">{{ event.description }}</p>
+              <p class="card-text">{{ event.location }}</p>
+              <p class="card-text">{{ event.artist }}</p>
+              <p class="card-text">{{ event.genre }}</p>
+              <p class="card-text">{{ event.event_date }}</p>
+              <p class="card-text">{{ event.num_tickets }}</p>
+              <p class="text-muted">${{ "%.2f"|format(event.ticket_price) }}</p>
+              <p class="card-text"><small class="text-muted">Date: {{ event.event_date }}</small></p>
+            </div>
+          </div>
+        </div>
+        {% else %}
+        <p>No approved events.</p>
+        {% endfor %}
+      </div>
+
+      <h2 class="mt-5">Declined Events</h2>
+      <div class="row">
+        {% for event in declined_events %}
+        <div class="col-md-4">
+          <div class="card mb-4 shadow-sm">
+            <div class="card-body">
+              <h2 class="card-title">{{ event.name }}</h2>
+              <p class="card-text">{{ event.description }}</p>
+              <p class="card-text">{{ event.location }}</p>
+              <p class="card-text">{{ event.artist }}</p>
+              <p class="card-text">{{ event.genre }}</p>
+              <p class="card-text">{{ event.event_date }}</p>
+              <p class="card-text">{{ event.num_tickets }}</p>
+              <p class="text-muted">${{ "%.2f"|format(event.ticket_price) }}</p>
+              <p class="card-text"><small class="text-muted">Date: {{ event.event_date }}</small></p>
+            </div>
+          </div>
+        </div>
+        {% else %}
+        <p>No declined events.</p>
+        {% endfor %}
+      </div>
+    </div>
+  {% include 'footer.html' %}
+  <!-- JavaScript dependencies -->
+  <script src="https://code.jquery.com/jquery-3.3.1.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.3/umd/popper.min.js" integrity="sha384-ZMP7rVo3mIykV+2+9J3UJ46jBk0WLaUAdn689aCwoqbBJiSnjAK/l8WvCWPIPm49" crossorigin="anonymous"></script>
+  <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.1.3/js/bootstrap.min.js" integrity="sha384-ChfqqxuZUCnJSK3+MXmPNIyE6ZbWh2IMqE241rYiqJxyMiZ6OW/JmZQ5stwEULTy" crossorigin="anonymous"></script>
+  <!-- Script: Smooth scrolling between anchors in a same page -->
+  <script src="../static/js/smooth-scroll.js"></script>
+</body>
+</html>
