@@ -101,8 +101,18 @@ def evenDetail():
 
 @app.route('/eventapproval')
 def eventapproval():
-    unapproved_events = mongo.db.Event.find({"verified": "false"})
-    return render_template('eventapproval.html', user=CurrentUser, unapproved_events=unapproved_events)
+    if CurrentUser is not None and CurrentUser.special_key == 'host':
+        waiting_approval_events = mongo.db.Event.find({"verified": "false", "host": CurrentUser.email})
+        approved_events = mongo.db.Event.find({"verified": "verified", "host": CurrentUser.email})
+        declined_events = mongo.db.Event.find({"verified": "declined", "host": CurrentUser.email})
+
+        return render_template('eventapproval.html',
+                               waiting_approval_events=waiting_approval_events,
+                               approved_events=approved_events,
+                               declined_events=declined_events)
+    else:
+        flash('You do not have permission to view this page.', 'error')
+        return redirect(url_for('home'))
 
 
 @app.route('/editevent', methods=['POST'])
@@ -113,13 +123,6 @@ def editevent():
         if event:
             return render_template('editevent.html', event=event)
     return redirect(url_for('events'))
-
-
-@app.route('/hostEvents')
-def hostEvents():
-    host_events = mongo.db.Event.find({'host': CurrentUser.email})
-    host_events = list(host_events)
-    return render_template('hostEvents.html', user=CurrentUser, host_events=host_events)
 
 
 @app.route('/update_event', methods=['POST'])
@@ -149,7 +152,7 @@ def update_event():
         )
 
         flash('Event updated successfully.', 'success')
-        return redirect(url_for('home'))
+        return redirect(url_for('eventapproval'))
     else:
         flash('Failed to update event.', 'error')
         return redirect(url_for('editevent', id=event_id))
@@ -444,18 +447,9 @@ def add_to_cart():
 
 @app.route('/myevents')
 def myevents():
-    if CurrentUser is not None and CurrentUser.special_key == 'host':
-        waiting_approval_events = mongo.db.Event.find({"verified": "false", "host": CurrentUser.email})
-        approved_events = mongo.db.Event.find({"verified": "verified", "host": CurrentUser.email})
-        declined_events = mongo.db.Event.find({"verified": "declined", "host": CurrentUser.email})
-
-        return render_template('myevents.html',
-                               waiting_approval_events=waiting_approval_events,
-                               approved_events=approved_events,
-                               declined_events=declined_events)
-    else:
-        flash('You do not have permission to view this page.', 'error')
-        return redirect(url_for('home'))
+    host_events = mongo.db.Event.find({'host': CurrentUser.email})
+    host_events = list(host_events)
+    return render_template('hostEvents.html', user=CurrentUser, host_events=host_events)
 
 
 @app.route('/mytickets')
