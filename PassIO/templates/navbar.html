@@ -12,7 +12,7 @@
                 <li class="nav-item"> <a class="nav-link" href="/events_entry">Event Entry</a> </li>
                 {% endif %}
                 {% if CurrentUser.special_key == 'admin' %}
-                <li class="nav-item"> <a class="nav-link" href="/eventapproval">Event Approval</a> </li>
+                <li class="nav-item"> <a class="nav-link" href="/eventapprovaladmin">Event Approval</a> </li>
                 {% endif %}
             </ul>
             <ul class="navbar-nav">
@@ -24,12 +24,10 @@
                         Account
                     </a>
                     <div class="dropdown-menu" aria-labelledby="navbarDropdownMenuLink">
-                        {% if CurrentUser.special_key == 'host' %}
                         <a class="dropdown-item" href="/customerprofile">Profile</a>
+                        {% if CurrentUser.special_key == 'host' %}
                         <a class="dropdown-item" href="/myevents">My Events</a>
                         <a class="dropdown-item" href="/eventapproval">Event Approvals</a>
-                        {% elif not CurrentUser.special_key %}
-                        <a class="dropdown-item" href="/customerprofile">Profile</a>
                         {% endif %}
                         <a class="dropdown-item" href="/mytickets">My Tickets</a>
                         <a class="dropdown-item" href="/logout" id="navbar-sign-out">Sign out</a>

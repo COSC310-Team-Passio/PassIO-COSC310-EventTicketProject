@@ -100,13 +100,19 @@ def eventapproval():
         approved_events = mongo.db.Event.find({"verified": "verified", "host": CurrentUser.email})
         declined_events = mongo.db.Event.find({"verified": "declined", "host": CurrentUser.email})
 
-        return render_template('eventapproval.html',
+        return render_template('eventapprovalhost.html',
                                waiting_approval_events=waiting_approval_events,
                                approved_events=approved_events,
                                declined_events=declined_events)
     else:
         flash('You do not have permission to view this page.', 'error')
         return redirect(url_for('home'))
+
+
+@app.route('/eventapprovaladmin')
+def eventapprovaladmin():
+    unapproved_events = mongo.db.Event.find({"verified": "false"})
+    return render_template('eventapprovaladmin.html', user=CurrentUser, unapproved_events=unapproved_events)
 
 
 @app.route('/editevent', methods=['POST'])
@@ -232,7 +238,7 @@ def checkout():
                 "name": event['name'],
                 "num_tickets": item['num_tickets'],
                 "ticket_price": event.get('ticket_price', 0),
-                "total_price": item['num_tickets'] * event.get('ticket_price',0)
+                "total_price": item['num_tickets'] * event.get('ticket_price', 0)
             }
             events_in_cart.append(event_detail)
             total += event_detail["total_price"]
@@ -258,7 +264,6 @@ def purchase():
 
     flash('Purchase successful! Thank you.', 'success')
     return redirect(url_for('checkout'))
-
 
 
 @app.route('/search', methods=['GET', 'POST'])
@@ -387,6 +392,7 @@ def cancel_event():
     else:
         flash('You do not have permission to perform this action.', 'error')
         return redirect(url_for('customerprofile'))
+
 
 @app.route('/decline_event', methods=['POST'])
 def decline_event():
