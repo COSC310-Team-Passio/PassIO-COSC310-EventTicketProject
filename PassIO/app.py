@@ -79,11 +79,6 @@ def events_entry():
     return render_template('evententry.html')
 
 
-@app.route('/hostEntry')
-def hostentry():
-    return render_template('hostEntry.html')
-
-
 @app.route('/loginandregister')
 def loginRegister():
     return render_template('loginandregister.html')
@@ -373,14 +368,6 @@ def logout():
     return redirect('/')
 
 
-@app.route('/host')
-def host():
-    users = mongo.db.User.find({})
-    for user in users:
-        app.logger.debug(user)
-    return render_template('host.html')
-
-
 @app.context_processor
 def inject_user():
     return dict(CurrentUser=CurrentUser)
@@ -449,7 +436,7 @@ def add_to_cart():
 def myevents():
     host_events = mongo.db.Event.find({'host': CurrentUser.email})
     host_events = list(host_events)
-    return render_template('hostEvents.html', user=CurrentUser, host_events=host_events)
+    return render_template('myevents.html', user=CurrentUser, host_events=host_events)
 
 
 @app.route('/mytickets')
