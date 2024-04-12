@@ -105,9 +105,9 @@ def eventapproval():
     return render_template('eventapproval.html', user=CurrentUser, unapproved_events=unapproved_events)
 
 
-@app.route('/editevent')
+@app.route('/editevent', methods=['POST'])
 def editevent():
-    event_id = request.args.get('id')  # Get event ID from query parameter
+    event_id = request.form.get('event_id')  # Get event ID from hidden filed
     if event_id:
         event = mongo.db.Event.find_one({"_id": ObjectId(event_id)})
         if event:
