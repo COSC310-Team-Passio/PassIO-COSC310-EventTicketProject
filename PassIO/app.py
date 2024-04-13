@@ -374,7 +374,7 @@ def inject_user():
 def approve_event():
     if CurrentUser is not None and CurrentUser.special_key == "admin":
         event_id = request.form.get('event_id')
-        mongo.db.Event.update_one({'_id': ObjectId(event_id)}, {'$set': {'verified': 'verified'}})
+        mongo.db.Event.update_one({'_id': ObjectId(event_id)}, {'$set': {'verified': 'verified', 'cancelled': False}})
         flash('Event approved successfully.', 'success')
         return redirect(url_for('eventapproval'))
     else:
@@ -386,9 +386,9 @@ def approve_event():
 def cancel_event():
     if CurrentUser is not None and CurrentUser.special_key == "host":
         event_id = request.form.get('event_id')
-        mongo.db.Event.update_one({'_id': ObjectId(event_id)}, {'$set': {'cancelled': True}})
+        mongo.db.Event.update_one({'_id': ObjectId(event_id)}, {'$set': {'cancelled': True, 'verified': 'false'}})
         flash('Event cancelled successfully.', 'success')
-        return redirect(url_for('hostEvents'))
+        return redirect(url_for('myevents'))
     else:
         flash('You do not have permission to perform this action.', 'error')
         return redirect(url_for('customerprofile'))
