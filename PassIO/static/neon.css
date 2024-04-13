@@ -6557,7 +6557,7 @@ mark.secondary {
 
 /* Go back button styling on event details page */
 .gback-button {
-  background-color: black;
+  background-color: #111111;
   color: white;
   float: left;
   margin-left: 1.5em;

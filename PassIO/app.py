@@ -22,7 +22,7 @@ def home():
     return render_template('index.html', events=all_events)
 
 
-@app.route('/events_submit', methods=["POST"])  # This is throwing an error currently
+@app.route('/events_submit', methods=["POST"])
 def events_submit():
     name = request.form.get('e_name')
     location = request.form.get('e_location')
@@ -33,21 +33,20 @@ def events_submit():
     event_date = datetime.strptime(event_date_str, '%Y-%m-%d') if event_date_str else None
     num_tickets = int(request.form.get('e_tickets', 0))
     ticket_price = float(request.form.get('e_price'))
-    eventObj = mongo.db.Event.insert_one({
+    mongo.db.Event.insert_one({
         'name': name,
         'location': location,
         'description': description,
         'artist': artist,
         'genre': genre,
-        'event_date': event_date,  # Ensure your MongoDB is set to store dates correctly
+        'event_date': event_date,
         'num_tickets': num_tickets,
         'ticket_price': ticket_price,
         'verified': 'false',
         'cancelled': False,
         'host': CurrentUser.email
     })
-    #Moving this to purchase time
-    return render_template('myevents.html')
+    return redirect(url_for('eventapproval'))
 
 
 def generateTickets(eventId: ObjectId, userId: ObjectId, numTickets: int):
@@ -79,11 +78,6 @@ def events_entry():
     return render_template('evententry.html')
 
 
-@app.route('/hostEntry')
-def hostentry():
-    return render_template('hostEntry.html')
-
-
 @app.route('/loginandregister')
 def loginRegister():
     return render_template('loginandregister.html')
@@ -91,7 +85,7 @@ def loginRegister():
 
 @app.route('/eventDetails')
 def evenDetail():
-    event_id = request.args.get('id')  # Get event ID from query parameter
+    event_id = request.args.get('id')
     if event_id:
         event = mongo.db.Event.find_one({"_id": ObjectId(event_id)})
         if event:
@@ -101,25 +95,34 @@ def evenDetail():
 
 @app.route('/eventapproval')
 def eventapproval():
+    if CurrentUser is not None and CurrentUser.special_key == 'host':
+        waiting_approval_events = mongo.db.Event.find({"verified": "false", "host": CurrentUser.email})
+        approved_events = mongo.db.Event.find({"verified": "verified", "host": CurrentUser.email})
+        declined_events = mongo.db.Event.find({"verified": "declined", "host": CurrentUser.email})
+
+        return render_template('eventapprovalhost.html',
+                               waiting_approval_events=waiting_approval_events,
+                               approved_events=approved_events,
+                               declined_events=declined_events)
+    else:
+        flash('You do not have permission to view this page.', 'error')
+        return redirect(url_for('home'))
+
+
+@app.route('/eventapprovaladmin')
+def eventapprovaladmin():
     unapproved_events = mongo.db.Event.find({"verified": "false"})
-    return render_template('eventapproval.html', user=CurrentUser, unapproved_events=unapproved_events)
+    return render_template('eventapprovaladmin.html', user=CurrentUser, unapproved_events=unapproved_events)
 
 
 @app.route('/editevent', methods=['POST'])
 def editevent():
-    event_id = request.form.get('event_id')  # Get event ID from hidden filed
+    event_id = request.form.get('event_id')
     if event_id:
         event = mongo.db.Event.find_one({"_id": ObjectId(event_id)})
         if event:
             return render_template('editevent.html', event=event)
     return redirect(url_for('events'))
-
-
-@app.route('/hostEvents')
-def hostEvents():
-    host_events = mongo.db.Event.find({'host': CurrentUser.email})
-    host_events = list(host_events)
-    return render_template('hostEvents.html', user=CurrentUser, host_events=host_events)
 
 
 @app.route('/update_event', methods=['POST'])
@@ -149,7 +152,7 @@ def update_event():
         )
 
         flash('Event updated successfully.', 'success')
-        return redirect(url_for('home'))
+        return redirect(url_for('eventapproval'))
     else:
         flash('Failed to update event.', 'error')
         return redirect(url_for('editevent', id=event_id))
@@ -184,8 +187,6 @@ def login():
         logSuccess = False
         logIssue = "No user found under: " + email
 
-    # Probably will go back to the home page and give a little "successfully registered/logged in instead"
-    # Failed login would not change the page
     if logSuccess:
         return redirect(url_for('home'))
     else:
@@ -213,7 +214,9 @@ def register():
         # Set the global CurrentUser based on the role derived from special_key
         global CurrentUser
         CurrentUser = Attendee(name, email)
-
+        user = mongo.db.Users.find_one({"email": email, "password": password})
+        user_id = str(user['_id'])
+        CurrentUser.id = user_id
         # Redirect to profile page with success message
         return redirect(url_for('customerprofile', regSuccess=True))
 
@@ -226,7 +229,7 @@ def checkout():
     cart_items = session.get('cart', [])
     events_in_cart = []
     total = 0
-    num_tickets = 0  # Initialize num_tickets
+    num_tickets = 0
 
     for item in cart_items:
         event = mongo.db.Event.find_one({"_id": ObjectId(item['event_id'])})
@@ -235,7 +238,7 @@ def checkout():
                 "name": event['name'],
                 "num_tickets": item['num_tickets'],
                 "ticket_price": event.get('ticket_price', 0),
-                "total_price": item['num_tickets'] * event.get('ticket_price',0)
+                "total_price": item['num_tickets'] * event.get('ticket_price', 0)
             }
             events_in_cart.append(event_detail)
             total += event_detail["total_price"]
@@ -261,11 +264,6 @@ def purchase():
 
     flash('Purchase successful! Thank you.', 'success')
     return redirect(url_for('checkout'))
-
-
-@app.route('/admin')
-def admin():
-    return render_template('admin.html')
 
 
 @app.route('/search', methods=['GET', 'POST'])
@@ -305,7 +303,7 @@ def search():
                 "$and": [
                     query,
                     {"verified": "verified"},
-                    {"date": {'$gte': search_date, '$lt': search_date + timedelta(days=1)}}
+                    {"event_date": {'$gte': search_date, '$lt': search_date + timedelta(days=1)}}
                 ]
             }
 
@@ -361,19 +359,10 @@ def update_profile():
 
 @app.route('/logout', methods=['GET', 'POST'])
 def logout():
-    # Your logic to handle logout, e.g., clearing the CurrentUser or session
     global CurrentUser
     CurrentUser = None
     # Redirect to home page or login page after logout
-    return redirect('/')
-
-
-@app.route('/host')
-def host():
-    users = mongo.db.User.find({})
-    for user in users:
-        app.logger.debug(user)
-    return render_template('host.html')
+    return redirect(url_for('loginRegister'))
 
 
 @app.context_processor
@@ -403,6 +392,7 @@ def cancel_event():
     else:
         flash('You do not have permission to perform this action.', 'error')
         return redirect(url_for('customerprofile'))
+
 
 @app.route('/decline_event', methods=['POST'])
 def decline_event():
@@ -442,18 +432,9 @@ def add_to_cart():
 
 @app.route('/myevents')
 def myevents():
-    if CurrentUser is not None and CurrentUser.special_key == 'host':
-        waiting_approval_events = mongo.db.Event.find({"verified": "false", "host": CurrentUser.email})
-        approved_events = mongo.db.Event.find({"verified": "verified", "host": CurrentUser.email})
-        declined_events = mongo.db.Event.find({"verified": "declined", "host": CurrentUser.email})
-
-        return render_template('myevents.html',
-                               waiting_approval_events=waiting_approval_events,
-                               approved_events=approved_events,
-                               declined_events=declined_events)
-    else:
-        flash('You do not have permission to view this page.', 'error')
-        return redirect(url_for('home'))
+    host_events = mongo.db.Event.find({'host': CurrentUser.email})
+    host_events = list(host_events)
+    return render_template('myevents.html', user=CurrentUser, host_events=host_events)
 
 
 @app.route('/mytickets')

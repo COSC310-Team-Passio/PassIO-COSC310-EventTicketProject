@@ -1,0 +1,98 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <!-- PAGE settings -->
+  <link rel="icon" href="../static/assets/images/favicon.png">
+  <title>Event Approval</title>
+  <meta name="description" content="Event approval page">
+  <meta name="keywords" content="Events, approval, ticket, PassIO">
+{% include 'cssdependencies.html' %}
+</head>
+<body class="text-center">
+  {% include 'navbar.html' %}
+    <div class="container">
+      <!-- Flash messages -->
+      {% with messages = get_flashed_messages(with_categories=true) %}
+          {% if messages %}
+              {% for category, message in messages %}
+                  <div class="alert alert-{{ category }}" role="alert">
+                      {{ message }}
+                  </div>
+              {% endfor %}
+          {% endif %}
+      {% endwith %}
+      <h1 class="display-4 mt-3">Event Approvals</h1>
+      <h2 class="mt-5">Waiting for Approval</h2>
+      <div class="row">
+        {% for event in waiting_approval_events %}
+        <div class="col-md-4">
+          <div class="card mb-4 shadow-sm">
+            <div class="card-body">
+              <h2 class="card-title">{{ event.name }}</h2>
+              <p class="card-text">{{ event.description }}</p>
+              <p class="card-text">{{ event.location }}</p>
+              <p class="card-text">{{ event.artist }}</p>
+              <p class="card-text">{{ event.genre }}</p>
+              <p class="card-text">{{ event.event_date }}</p>
+              <p class="card-text">{{ event.num_tickets }}</p>
+              <p class="text-muted">${{ "%.2f"|format(event.ticket_price) }}</p>
+              <p class="card-text"><small class="text-muted">Date: {{ event.event_date }}</small></p>
+            </div>
+          </div>
+        </div>
+        {% else %}
+        <p>No events waiting for approval.</p>
+        {% endfor %}
+      </div>
+
+      <h2 class="mt-5">Approved Events</h2>
+      <div class="row">
+        {% for event in approved_events %}
+        <div class="col-md-4">
+          <div class="card mb-4 shadow-sm">
+            <div class="card-body">
+              <h2 class="card-title">{{ event.name }}</h2>
+              <p class="card-text">{{ event.description }}</p>
+              <p class="card-text">{{ event.location }}</p>
+              <p class="card-text">{{ event.artist }}</p>
+              <p class="card-text">{{ event.genre }}</p>
+              <p class="card-text">{{ event.event_date }}</p>
+              <p class="card-text">{{ event.num_tickets }}</p>
+              <p class="text-muted">${{ "%.2f"|format(event.ticket_price) }}</p>
+              <p class="card-text"><small class="text-muted">Date: {{ event.event_date }}</small></p>
+            </div>
+          </div>
+        </div>
+        {% else %}
+        <p>No approved events.</p>
+        {% endfor %}
+      </div>
+
+      <h2 class="mt-5">Declined Events</h2>
+      <div class="row">
+        {% for event in declined_events %}
+        <div class="col-md-4">
+          <div class="card mb-4 shadow-sm">
+            <div class="card-body">
+              <h2 class="card-title">{{ event.name }}</h2>
+              <p class="card-text">{{ event.description }}</p>
+              <p class="card-text">{{ event.location }}</p>
+              <p class="card-text">{{ event.artist }}</p>
+              <p class="card-text">{{ event.genre }}</p>
+              <p class="card-text">{{ event.event_date }}</p>
+              <p class="card-text">{{ event.num_tickets }}</p>
+              <p class="text-muted">${{ "%.2f"|format(event.ticket_price) }}</p>
+              <p class="card-text"><small class="text-muted">Date: {{ event.event_date }}</small></p>
+            </div>
+          </div>
+        </div>
+        {% else %}
+        <p>No declined events.</p>
+        {% endfor %}
+      </div>
+    </div>
+  {% include 'footer.html' %}
+</body>
+</html>
